@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Nexus_Horizon_Game")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91fdb2289df3c2924a70ae03b3511708b6186c8d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bba93b3d411e56866b2fe6f830195a0953e20ae4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Nexus_Horizon_Game")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Nexus_Horizon_Game")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
