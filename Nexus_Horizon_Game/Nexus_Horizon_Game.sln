@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexus_Horizon_Game", "Nexus_Horizon_Game\Nexus_Horizon_Game.csproj", "{BC1DFBAC-1C93-4DC6-97D1-962CC9EB36A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexus_Horizon_Game", "Nexus_Horizon_Game.csproj", "{4A0CFB30-9B9B-4FC9-8C15-A641C7FA6A9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BC1DFBAC-1C93-4DC6-97D1-962CC9EB36A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC1DFBAC-1C93-4DC6-97D1-962CC9EB36A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC1DFBAC-1C93-4DC6-97D1-962CC9EB36A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC1DFBAC-1C93-4DC6-97D1-962CC9EB36A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A0CFB30-9B9B-4FC9-8C15-A641C7FA6A9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A0CFB30-9B9B-4FC9-8C15-A641C7FA6A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A0CFB30-9B9B-4FC9-8C15-A641C7FA6A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A0CFB30-9B9B-4FC9-8C15-A641C7FA6A9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
