@@ -17,6 +17,7 @@ https://drive.google.com/drive/folders/1hXKTHFjSAVDIV4PFKbgt298w0cLT2ArF?usp=dri
 
 Example:
 
+```cs
 /// <summary>
 /// Does something.
 /// </summary>
@@ -24,3 +25,4 @@ Example:
 /// <param name="b">The second number.</param>
 /// <returns>The sum of the two numbers.</returns>
 int DoSomthing(int a, int b);
+```
