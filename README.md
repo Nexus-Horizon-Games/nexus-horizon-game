@@ -2,15 +2,16 @@
 Game for CPT_S 487
 
 
-### GoogleDrive|Folder
+## GoogleDrive|Folder
 https://drive.google.com/drive/folders/1hXKTHFjSAVDIV4PFKbgt298w0cLT2ArF?usp=drive_link
 
-## Naming Conventions
-### NAMING_CONVENTION EXAMPLE TYPES
+## Coding Conventions
+
+### Naming Convention Example Types
 - camelCase, (Ex. example), [Fields, Parameters]
 - PascalCase, (Ex. Example), [Functions, Events, Properties]
 
-## Commenting
+### Commenting
 - summary
 - paramaters
 - return
@@ -26,3 +27,9 @@ Example:
 /// <returns>The sum of the two numbers.</returns>
 int DoSomthing(int a, int b);
 ```
+
+### Other
+
+Use 4 spaces for indents.
+
+For everything else use standard coding conventions layed out by Microsoft here: https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
