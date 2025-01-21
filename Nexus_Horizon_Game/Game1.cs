@@ -8,6 +8,7 @@ namespace Nexus_Horizon_Game
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private Scene currentScene;
 
         public Game1()
         {
@@ -18,7 +19,7 @@ namespace Nexus_Horizon_Game
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            currentScene = SceneLoader.LoadScene();
 
             base.Initialize();
         }
@@ -35,7 +36,7 @@ namespace Nexus_Horizon_Game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            currentScene.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -44,7 +45,7 @@ namespace Nexus_Horizon_Game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            currentScene.Draw(gameTime);
 
             base.Draw(gameTime);
         }
