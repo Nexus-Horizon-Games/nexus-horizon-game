@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 namespace Nexus_Horizon_Game.Components
 {
@@ -22,7 +22,7 @@ namespace Nexus_Horizon_Game.Components
                     return true;
                 }
             }
-
+            
             return false;
         }
     }

@@ -1,4 +1,4 @@
-﻿using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
 using System.Numerics;
 
