@@ -15,6 +15,7 @@ namespace Nexus_Horizon_Game.Components
 
         int spriteID = -1;
 
+        /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
             if (other is SpriteComponent o)
@@ -26,6 +27,18 @@ namespace Nexus_Horizon_Game.Components
             }
 
             return false;
+        }
+
+        /// <inheritdoc/>
+        public bool IsEmptyComponent()
+        {
+            return spriteID == -1;
+        }
+
+        /// <inheritdoc/>
+        public static IComponent MakeEmptyComponent()
+        {
+            return new SpriteComponent(-1);
         }
     }
 }

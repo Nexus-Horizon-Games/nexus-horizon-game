@@ -2,6 +2,7 @@ using Nexus_Horizon_Game.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Nexus_Horizon_Game
 {
@@ -25,14 +26,6 @@ namespace Nexus_Horizon_Game
             else
             {
                 newEntity = nextId;
-
-                foreach (Type type in this.componentLists.Keys)
-                {
-                    List<IComponent> componentList;
-                    this.componentLists.TryGetValue(type, out componentList);
-                    componentList.Add(default);
-                }
-
                 nextId++;
             }
 
@@ -51,47 +44,33 @@ namespace Nexus_Horizon_Game
 
             foreach (IComponent component in components)
             {
-                if (!this.componentLists.TryGetValue(component.GetType(), out List<IComponent> componentList))
+                var makeEmptyComponent = component.GetType().GetMethod("MakeEmptyComponent");
+
+                if (!this.componentLists.TryGetValue(component.GetType(), out List<IComponent> componentList)) // if component list does not exist
                 {
                     List<IComponent> newComponentList = new List<IComponent>();
-                    for (int i = 0; i < nextId; i++)
+
+                    // add blank components in any gaps
+                    while (newEntity > newComponentList.Count)
                     {
-                        if (i == newEntity) { newComponentList.Add(component); }
-                        else { newComponentList.Add(default); }
+                        newComponentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
                     }
 
+                    newComponentList.Add(component);
+
                     this.componentLists.Add(component.GetType(), newComponentList);
-
-                    return newEntity;
                 }
-
-                componentList[newEntity] = component;
-            }
-
-
-            // To hard for me to implement
-            /*int newEntity = nextId;
-            nextId++;
-
-            foreach (IComponent component in components)
-            {
-                if (!componentLists.ContainsKey(component.GetType()))
+                else // component list does exist
                 {
-                    var type = component.GetType();
-                    var listType = typeof(List<>).MakeGenericType(type);
-                    componentLists.Add(component.GetType(), Activator.CreateInstance(listType));
-                }
+                    // add blank components in any gaps
+                    while (newEntity > componentList.Count)
+                    {
+                        componentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
+                    }
 
-                var componentList = componentLists[component.GetType()] as IList;
-                if (newEntity < componentList.Count)
-                {
                     componentList[newEntity] = component;
                 }
-                else
-                {
-                    componentList.Add(component);
-                }
-            }*/
+            }
 
             return newEntity;
         }
@@ -104,10 +83,14 @@ namespace Nexus_Horizon_Game
         {
             // may need to allow each component to do some cleanup before enitity being destroyed.
 
-            foreach (List<IComponent> component in componentLists.Values)
+            foreach (List<IComponent> componentList in componentLists.Values)
             {
-                component[entity] = default;
+                if (entity >= componentList.Count) { continue; } // the component list is too small, so no need to remove anything
+
+                var makeEmptyComponent = componentList[entity].GetType().GetMethod("MakeEmptyComponent");
+                componentList[entity] = makeEmptyComponent?.Invoke(null, null) as IComponent;
             }
+
             destroyedEntities.Enqueue(entity);
         }
 
@@ -128,7 +111,7 @@ namespace Nexus_Horizon_Game
                 // add blank components in any gaps
                 while (entity > componentList.Count)
                 {
-                    componentList.Add(default);
+                    componentList.Add(T.MakeEmptyComponent());
                 }
 
                 componentList.Add(component);
@@ -143,17 +126,22 @@ namespace Nexus_Horizon_Game
         public void RemoveComponent<T>(int entity) where T : IComponent
         {
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return; }
-            componentList[entity] = default;
+            if (entity >= componentList.Count) { return; } // the component list is too small, so no need to remove anything
+
+            componentList[entity] = T.MakeEmptyComponent();
         }
 
         /// <summary>
         /// creates a enumeration query of the type of components specified.
+        /// NOTE: empty components will be contained in this query.
         /// </summary>
         /// <typeparam name="T"> type of component. </typeparam>
         /// <returns> query of components of the type. </returns>
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
             componentLists.TryGetValue(typeof(T), out var componentList);
+
+            // NOTE: empty components will be returned in this list.
             return componentList.Cast<T>();
         }
 
@@ -163,12 +151,9 @@ namespace Nexus_Horizon_Game
             var entities = new List<int>();
             for (int i = 0; i < componentList.Count; i++)
             {
-                if (componentList[i] != default)
+                if (!componentList[i].IsEmptyComponent())
                 {
-                    if (!componentList[i].Equals(default(T)))
-                    {
-                        entities.Add(i);
-                    }
+                    entities.Add(i);
                 }
             }
 
@@ -184,7 +169,9 @@ namespace Nexus_Horizon_Game
         public bool HasComponent<T>(int entity) where T : IComponent
         {
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return false; } // does not have component since it does not exist in dictionary
-            return componentList[entity] != default;
+            if (entity >= componentList.Count) { return false; } // does not have component since the component list is too small
+
+            return !componentList[entity].IsEmptyComponent();
         }
     }
 }
