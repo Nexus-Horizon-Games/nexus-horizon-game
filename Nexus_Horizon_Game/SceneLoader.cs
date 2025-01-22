@@ -22,14 +22,14 @@ namespace Nexus_Horizon_Game
             scene.World.AddComponent(player, new SpriteComponent(4));
 
             int enemy1 = scene.World.CreateEntity();
-            scene.World.AddComponent(enemy1, new TransformComponent(new Vector2(2.0f, 0.0f)));
+            scene.World.AddComponent(enemy1, new TransformComponent(new Vector2(300.0f, 0.0f)));
             scene.World.AddComponent(enemy1, new SpriteComponent(0));
 
             int enemy2 = scene.World.CreateEntity();
             scene.World.AddComponent(enemy2, new SpriteComponent(56));
 
             int enemy3 = scene.World.CreateEntity();
-            scene.World.AddComponent(enemy3, new TransformComponent(new Vector2(3.0f, 0.0f)));
+            scene.World.AddComponent(enemy3, new TransformComponent(new Vector2(500.0f, 200.0f)));
 
             {
                 var list = scene.World.GetComponents<TransformComponent>();
@@ -55,7 +55,7 @@ namespace Nexus_Horizon_Game
             scene.World.RemoveComponent<SpriteComponent>(enemy1);
 
 
-            int enemy4 = scene.World.CreateEntity(new List<IComponent> { new TransformComponent(new Vector2(4.0f, 0.0f)), new SpriteComponent(2), new TestComponent(0) });
+            int enemy4 = scene.World.CreateEntity(new List<IComponent> { new TransformComponent(new Vector2(200.0f, 20.0f)), new SpriteComponent(2), new TestComponent(0) });
 
             return scene;
         }

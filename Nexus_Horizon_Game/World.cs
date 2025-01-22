@@ -140,7 +140,6 @@ namespace Nexus_Horizon_Game
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
             componentLists.TryGetValue(typeof(T), out var componentList);
-
             // NOTE: empty components will be returned in this list.
             return componentList.Cast<T>();
         }
