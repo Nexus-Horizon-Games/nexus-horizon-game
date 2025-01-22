@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal interface IComponent
+    internal interface IComponent : IEquatable<IComponent>
     {
     }
 }

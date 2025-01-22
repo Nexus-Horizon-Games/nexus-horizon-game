@@ -15,7 +15,20 @@ namespace Nexus_Horizon_Game.Components
             this.rotation = rotation;
         }
 
-        public Vector2 position;
-        public double rotation;
+        public Vector2 position = new Vector2(0.0f, 0.0f);
+        public double rotation = double.PositiveInfinity;
+
+        public bool Equals(IComponent other)
+        {
+            if (other is TransformComponent o)
+            {
+                if (position == o.position && rotation == o.rotation)
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
     }
 }
