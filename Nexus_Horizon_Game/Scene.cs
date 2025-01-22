@@ -6,7 +6,7 @@ namespace Nexus_Horizon_Game
 {
     internal class Scene
     {
-        private EntityComponentSystem ecs = new EntityComponentSystem();
+        private World world = new World();
 
         public void Update(GameTime gameTime)
         {
@@ -16,6 +16,6 @@ namespace Nexus_Horizon_Game
         {
         }
 
-        public EntityComponentSystem ECS { get { return ecs; } }
+        public World World { get { return world; } }
     }
 }
