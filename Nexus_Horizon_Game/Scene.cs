@@ -1,21 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Nexus_Horizon_Game
 {
     internal class Scene
     {
-        private EntityComponentSystem ecs = new EntityComponentSystem();
+        private World world = new World();
 
         public void Update(GameTime gameTime)
         {
+            // Get entities with component
+            // get component enumeration then through each component do the update for it.
         }
 
         public void Draw(GameTime gameTime)
         {
+            // Get entities with component
+            // get component enumeration then through each component do the draw for it.
         }
 
-        public EntityComponentSystem ECS { get { return ecs; } }
+        public World World { get { return world; } }
     }
 }
