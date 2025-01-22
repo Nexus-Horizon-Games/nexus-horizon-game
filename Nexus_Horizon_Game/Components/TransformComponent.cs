@@ -13,6 +13,7 @@ namespace Nexus_Horizon_Game.Components
         public Vector2 position = new Vector2(0.0f, 0.0f);
         public double rotation = double.PositiveInfinity;
 
+        /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
             if (other is TransformComponent o)
@@ -24,6 +25,18 @@ namespace Nexus_Horizon_Game.Components
             }
             
             return false;
+        }
+
+        /// <inheritdoc/>
+        public bool IsEmptyComponent()
+        {
+            return Equals(MakeEmptyComponent());
+        }
+
+        /// <inheritdoc/>
+        public static IComponent MakeEmptyComponent()
+        {
+            return new TransformComponent(new Vector2(0.0f, 0.0f), double.NegativeInfinity);
         }
     }
 }
