@@ -9,7 +9,7 @@ namespace Nexus_Horizon_Game
     internal class World
     {
         private Dictionary<Type, List<IComponent>> componentLists = new();
-        private Queue<int> destroyedEntities = new();
+        private PriorityQueue<int, int> destroyedEntities = new();
         private int nextId = 0;
 
         /// <summary>
@@ -81,6 +81,8 @@ namespace Nexus_Horizon_Game
         /// <param name="entity"> ID of entity wanting to be destroyed. </param>
         public void DestroyEntity(int entity)
         {
+            if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
+
             // may need to allow each component to do some cleanup before enitity being destroyed.
 
             foreach (List<IComponent> componentList in componentLists.Values)
@@ -91,11 +93,13 @@ namespace Nexus_Horizon_Game
                 componentList[entity] = makeEmptyComponent?.Invoke(null, null) as IComponent;
             }
 
-            destroyedEntities.Enqueue(entity);
+            destroyedEntities.Enqueue(entity, entity);
         }
 
         public void AddComponent<T>(int entity, T component) where T : IComponent
         {
+            if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
+
             if (!componentLists.ContainsKey(typeof(T)))
             {
                 componentLists.Add(component.GetType(), new List<IComponent>());
@@ -125,6 +129,7 @@ namespace Nexus_Horizon_Game
         /// <param name="entity"> the Id of the entity. </param>
         public void RemoveComponent<T>(int entity) where T : IComponent
         {
+            if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return; }
             if (entity >= componentList.Count) { return; } // the component list is too small, so no need to remove anything
 
@@ -133,15 +138,14 @@ namespace Nexus_Horizon_Game
 
         /// <summary>
         /// creates a enumeration query of the type of components specified.
-        /// NOTE: empty components will be contained in this query.
         /// </summary>
         /// <typeparam name="T"> type of component. </typeparam>
         /// <returns> query of components of the type. </returns>
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
             componentLists.TryGetValue(typeof(T), out var componentList);
-            // NOTE: empty components will be returned in this list.
-            return componentList.Cast<T>();
+
+            return componentList.Cast<T>().Where<T>((component) => !component.IsEmptyComponent());
         }
 
         public List<int> GetEntitiesWithComponent<T>() where T : IComponent
@@ -167,10 +171,22 @@ namespace Nexus_Horizon_Game
         /// <returns> true when entity has component otherwise false. </returns>
         public bool HasComponent<T>(int entity) where T : IComponent
         {
+            if (!this.IsEntityAlive(entity)) { return false; } // entity is either destroyed or has not been created yet
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return false; } // does not have component since it does not exist in dictionary
             if (entity >= componentList.Count) { return false; } // does not have component since the component list is too small
 
             return !componentList[entity].IsEmptyComponent();
+        }
+
+        /// <summary>
+        /// whether the entity is currently not destroyed and has been created.
+        /// </summary>
+        /// <param name="entity"> current entity under check. </param>
+        /// <returns> true when entity is not destroyed. </returns>
+        public bool IsEntityAlive(int entity)
+        {
+            return destroyedEntities.UnorderedItems.Where((element) => element.ToTuple().Item1 == entity).Count() > 0 && // not in destroyed
+                entity < nextId; // entity has been created in ECS before
         }
     }
 }
