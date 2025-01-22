@@ -1,0 +1,74 @@
+#Main Idea
+- Our Vision Project for our game that mimicks "Touhou Fuujinroku ~ Mountain Of Faith" developed by Mediascape, is a guinea pig trying to escape
+the clutches of a chef. 
+
+#Player
+- [Health : 6] [Lives: 3]
+- Player is awarded lives at point milestones
+- taking damage loses point, dealing damage increases points
+- Controls
+	* Arrow Keys to move around
+	* Shift slows movement
+	* esc pauses the game
+- Hitbox smaller than sprite 5 x 5 pixels, holding shift will show colored white dot of hitbox
+- bullets come out of self untill you get orbs
+
+#Enemies
+- The four enemies that will be in the game will be,
+	* first grunt enemy will be a bird with egg projecticles, [Health : 1.25]
+	* the second grunt enemy will be a cat with hairball projectiles, [Health : 0.65]
+	* the mid boss will be an evil guinea pig working with the chef with hamster ball projectiles, [Health : 2.5]
+	* and the final boss will be the chef throwing coal or another projecticle. [Health : 32] 
+- enemies upon death drop PowerUps
+
+# PowerUps
+- [Point Item: Grass]
+	* Increases point counter in game
+- [Power Item: Carrot] 
+	* [Power Points Start: 0]
+    * increases power counter [Min: 0, Max: 5]
+	* the more power the higher the mutliplier damage output
+	* gain faith points when max power
+- [Faith Point Items: Bible] 
+    * each grabbed gained depending on difficulty [Easy: 5_000], [Normal: 5_000], [Hard 8_000], [Lunatic 10_000], Extra [10,000]
+    * [Faith Points Start: 50_000] [Min: 50_000, Max: 999_990]
+	* increases the amount of points gained (every point item collected increases by this much)
+	* inverse of a cooldown timer 3 sec, when empty lose 600 no enemies, 10,800 when no enemies
+	* decreases on death us (Faith Score - 50,000) / 3
+
+#Phases - Wave/Stage
+- The First Phase will last 40
+    * the FIRST wave lasts 10 seconds, 3 different groups of cats come into the scene from the right, left, and top
+	      and then shoot straight projectiles. 
+		  right group goes out of scene to the left together, 
+		  left group goes out of scene to the right together, 
+		  top leaves back to the top in random directions.
+    * the SECOND wave lasts 6 seconds, 1 group of cats come from the top will charge downwards and the others will stay shooting 2 angled projectiles 
+	      and leaving upwards in random directions
+	      and a bird will shoot 6 projecticles forming a diamond in bursts, 3 times entering from the 
+	* the THIRD wave lasts 14 seconds 
+		  3 birds will enter moving back and forth with the same attack pattern as previous
+		  groups of cats will come in doing 2 angle projectiles and straight ones 
+- The Second Phase (Mid-Boss "Evil Guinea Pig") will last 45 sec
+    * Stage One 15 sec 
+	     pulsates a ring of a circle three times and moves around.
+		 cats coming in from left and right every 3 seconds to shoot and then leave at the 10 second mark 3 groups of them stop and shoot once. 
+	* stage Two 30 sec
+	     while moving pulsates a ring of a circle three times outward followed by stopping becoming invinsible and shooting lasers out of eyes
+		 showing trajectory and then the hitbox being placed with visual
+- The Third Phase will last 35
+	* the FIRST wave lasts 15 seconds
+		2 birds show up seconds apart shooting same pattern as before but now has small lasers but its targeted and stays until wave ends.
+		a matrix of cats come from the top checkered shoot 2 angle projecticles and then leave after,
+		then cats come in at an angle towards player some going after player some shooting angled projectiles until wave is over
+    * the SECOND wave lasts 20 seconds
+		4 birds same as previous wave
+		some cats are constantly going down scene coming from the top
+		cats come in at an angle towards player some going after player some shooting angled projectiles twice one at 5 sec and again at 10 sec
+		cats come forming a forming a circle and some shoot straight projectiles and some 2 angled projectiles
+	
+- The Final Phase (Final-Boss "Chef") will last 60 seconds
+    * Stage One 25 seconds 
+	Chef will use the attack patterns in video [1:36-02:22]
+	* Stage Two 35 seconds
+	Chef will use the attack patterns in video [3:07-03:52]
