@@ -7,8 +7,11 @@ namespace Nexus_Horizon_Game
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
         private Scene currentScene;
+
+        // temp:
+        private SpriteBatch spriteBatch;
+        private Texture2D spriteTexture;
 
         public Game1()
         {
@@ -28,7 +31,8 @@ namespace Nexus_Horizon_Game
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // temp:
+            spriteTexture = Content.Load<Texture2D>("HowTo_DrawSprite_Character");
         }
 
         protected override void Update(GameTime gameTime)
@@ -45,7 +49,11 @@ namespace Nexus_Horizon_Game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            currentScene.Draw(gameTime);
+            spriteBatch.Begin();
+
+            currentScene.Draw(gameTime, spriteBatch, spriteTexture);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
