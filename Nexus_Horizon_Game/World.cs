@@ -142,18 +142,30 @@ namespace Nexus_Horizon_Game
         /// <returns> query of components of the type. </returns>
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
-            componentLists.TryGetValue(typeof(T), out var componentList);
-
-            if (componentList == null) { return null; }
+            if (!componentLists.TryGetValue(typeof(T), out var componentList)) { return null; };
 
             return componentList.Cast<T>().Where<T>((component) => !component.IsEmptyComponent());
         }
 
+        /// <summary>
+        /// Gets the component from the entity specified.
+        /// </summary>
+        /// <typeparam name="T"> type of IComponent </typeparam>
+        /// <param name="entity"> entity ID. </param>
+        /// <returns> component of entity. </returns>
+        public T GetComponentFromEntity<T>(int entity) where T : IComponent
+        {
+            if (!this.IsEntityAlive(entity)) { return (T)T.MakeEmptyComponent(); } // entity is either destroyed or has not been created yet
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return (T)T.MakeEmptyComponent(); }
+            if (entity >= componentList.Count) { return (T)T.MakeEmptyComponent(); } // the component list is too small, so no need to remove anything
+
+            return (T)componentList[entity];
+        }
+
+
         public List<int> GetEntitiesWithComponent<T>() where T : IComponent
         {
-            componentLists.TryGetValue(typeof(T), out List<IComponent> componentList);
-
-            if (componentList == null) { return null; }
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return null; };
 
             var entities = new List<int>();
             for (int i = 0; i < componentList.Count; i++)
