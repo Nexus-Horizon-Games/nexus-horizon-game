@@ -2,7 +2,6 @@ using Nexus_Horizon_Game.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Nexus_Horizon_Game
 {
@@ -145,12 +144,17 @@ namespace Nexus_Horizon_Game
         {
             componentLists.TryGetValue(typeof(T), out var componentList);
 
+            if (componentList == null) { return null; }
+
             return componentList.Cast<T>().Where<T>((component) => !component.IsEmptyComponent());
         }
 
         public List<int> GetEntitiesWithComponent<T>() where T : IComponent
         {
             componentLists.TryGetValue(typeof(T), out List<IComponent> componentList);
+
+            if (componentList == null) { return null; }
+
             var entities = new List<int>();
             for (int i = 0; i < componentList.Count; i++)
             {
