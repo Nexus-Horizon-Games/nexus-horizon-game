@@ -1,10 +1,11 @@
 using Microsoft.Xna.Framework;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Nexus_Horizon_Game.Components
 {
     internal struct SpriteComponent : IComponent
     {
-        public int spriteID = -1;
+        public string textureName = "";
         public Vector2 position = Vector2.Zero;
         public float rotation = 0.0f;
         public Color color = Color.White;
@@ -12,9 +13,18 @@ namespace Nexus_Horizon_Game.Components
         public float z = 0.0f; // between 0 and 1
         public Rectangle? sourceRectangle = null; // used to render only a section of an image (for tiles)
 
-        public SpriteComponent(int spriteID)
+        public SpriteComponent(string textureName)
         {
-            this.spriteID = spriteID;
+            this.textureName = textureName;
+        }
+
+        public SpriteComponent(string textureName, Color color, Rectangle? sourceRectangle = null, float scale = 1.0f, float z = 0.0f)
+        {
+            this.textureName = textureName;
+            this.color = color;
+            this.sourceRectangle = sourceRectangle;
+            this.scale = scale;
+            this.z = z;
         }
 
         /// <inheritdoc/>
@@ -22,7 +32,7 @@ namespace Nexus_Horizon_Game.Components
         {
             if (other is SpriteComponent o)
             {
-                if (spriteID == o.spriteID &&
+                if (textureName == o.textureName &&
                     position == o.position &&
                     rotation == o.rotation &&
                     color == o.color &&
@@ -40,13 +50,13 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool IsEmptyComponent()
         {
-            return spriteID == -1;
+            return textureName == "";
         }
 
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            return new SpriteComponent(-1);
+            return new SpriteComponent("");
         }
     }
 }

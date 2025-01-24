@@ -1,6 +1,5 @@
+using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using System.Collections.Generic;
-using System.Numerics;
 
 namespace Nexus_Horizon_Game
 {
@@ -14,13 +13,12 @@ namespace Nexus_Horizon_Game
 
             int player = scene.World.CreateEntity();
             scene.World.AddComponent(player, new TransformComponent(new Vector2(0.0f, 0.0f)));
-            scene.World.AddComponent(player, new SpriteComponent(4));
+            scene.World.AddComponent(player, new SpriteComponent("guinea_pig", Color.White, scale: 1.0f));
 
             int player2 = scene.World.CreateEntity();
-            var sprite = new SpriteComponent(4);
-            sprite.rotation = 2.0f;
-            sprite.scale = 6.0f;
-            scene.World.AddComponent(player2, new TransformComponent(new Vector2(300.0f, 200.0f)));
+            var sprite = new SpriteComponent("guinea_pig");
+            sprite.scale = 1.0f;
+            scene.World.AddComponent(player2, new TransformComponent(new Vector2(5.0f, 10.0f)));
             scene.World.AddComponent(player2, sprite);
 
             return scene;

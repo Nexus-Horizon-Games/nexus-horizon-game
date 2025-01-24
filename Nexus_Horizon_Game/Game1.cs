@@ -9,9 +9,6 @@ namespace Nexus_Horizon_Game
         private GraphicsDeviceManager graphics;
         private Scene currentScene;
 
-        // temp:
-        private Texture2D spriteTexture;
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -28,10 +25,7 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            Renderer.Init(graphics, 600, 650, new SpriteBatch(GraphicsDevice));
-
-            // temp:
-            spriteTexture = Content.Load<Texture2D>("guinea_pig");
+            Renderer.Init(graphics, 600, 680, 150.0f, new SpriteBatch(GraphicsDevice), Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -49,7 +43,7 @@ namespace Nexus_Horizon_Game
             GraphicsDevice.Clear(Color.CornflowerBlue);
             Renderer.BeginRender();
 
-            currentScene.Draw(gameTime, spriteTexture);
+            currentScene.Draw(gameTime);
 
             Renderer.EndRender();
 
