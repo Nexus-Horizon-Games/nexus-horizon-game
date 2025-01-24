@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nexus_Horizon_Game.Components;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Nexus_Horizon_Game
@@ -20,8 +19,7 @@ namespace Nexus_Horizon_Game
 
                 if (!transformComp.IsEmptyComponent() && !spriteComp.IsEmptyComponent())
                 {
-                    Renderer.Draw(spriteTexture, transformComp.position, Color.White);
-                    Renderer.Draw(spriteTexture, transformComp.position, null, Color.White, (float)transformComp.rotation, Vector2.Zero, 5.0f, SpriteEffects.None, 0.0f);
+                    Renderer.Draw(spriteTexture, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.z);
                 }
             }
         }
