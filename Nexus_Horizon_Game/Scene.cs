@@ -13,10 +13,9 @@ namespace Nexus_Horizon_Game
             // get component enumeration then through each component do the update for it.
         }
 
-        public void Draw(GameTime gameTime, Texture2D spriteTexture) // spriteTexture being passed here should only be temporary
+        public void Draw(GameTime gameTime)
         {
-
-            RenderSystem.Draw(world, gameTime, spriteTexture);
+            RenderSystem.Draw(world, gameTime);
             // Get entities with component
             // get component enumeration then through each component do the draw for it.
         }
