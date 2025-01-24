@@ -12,50 +12,16 @@ namespace Nexus_Horizon_Game
 
             // TODO: parse the scene from JSON here
 
-            /*int player = scene.World.CreateEntity(new List<IComponent>{ 
-                new TransformComponent(new Vector2(0.0f, 0.0f)),
-                new SpriteComponent(0)
-            });*/
-
             int player = scene.World.CreateEntity();
             scene.World.AddComponent(player, new TransformComponent(new Vector2(0.0f, 0.0f)));
             scene.World.AddComponent(player, new SpriteComponent(4));
 
-            int enemy1 = scene.World.CreateEntity();
-            scene.World.AddComponent(enemy1, new TransformComponent(new Vector2(300.0f, 0.0f)));
-            scene.World.AddComponent(enemy1, new SpriteComponent(0));
-
-            int enemy2 = scene.World.CreateEntity();
-            scene.World.AddComponent(enemy2, new SpriteComponent(56));
-
-            int enemy3 = scene.World.CreateEntity();
-            scene.World.AddComponent(enemy3, new TransformComponent(new Vector2(500.0f, 200.0f)));
-
-            {
-                var list = scene.World.GetComponents<TransformComponent>();
-                var list2 = scene.World.GetComponents<SpriteComponent>();
-                var entities = scene.World.GetEntitiesWithComponent<TransformComponent>();
-                var entities2 = scene.World.GetEntitiesWithComponent<SpriteComponent>();
-
-                bool enemy1HaveTransform = scene.World.HasComponent<TransformComponent>(enemy1);
-                bool enemy2HaveTransform = scene.World.HasComponent<TransformComponent>(enemy2);
-            }
-
-            scene.World.DestroyEntity(enemy2);
-
-            {
-                var list = scene.World.GetComponents<TransformComponent>();
-                var list2 = scene.World.GetComponents<SpriteComponent>();
-                var entities = scene.World.GetEntitiesWithComponent<TransformComponent>();
-                var entities2 = scene.World.GetEntitiesWithComponent<SpriteComponent>();
-
-                bool enemy1HaveTransform = scene.World.HasComponent<TransformComponent>(enemy1);
-            }
-
-            scene.World.RemoveComponent<SpriteComponent>(enemy1);
-
-
-            int enemy4 = scene.World.CreateEntity(new List<IComponent> { new TransformComponent(new Vector2(200.0f, 20.0f)), new SpriteComponent(2), new TestComponent(0) });
+            int player2 = scene.World.CreateEntity();
+            var sprite = new SpriteComponent(4);
+            sprite.rotation = 2.0f;
+            sprite.scale = 6.0f;
+            scene.World.AddComponent(player2, new TransformComponent(new Vector2(300.0f, 200.0f)));
+            scene.World.AddComponent(player2, sprite);
 
             return scene;
         }

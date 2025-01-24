@@ -201,7 +201,7 @@ namespace Nexus_Horizon_Game
         /// <returns> true when entity is not destroyed. </returns>
         public bool IsEntityAlive(int entity)
         {
-            return destroyedEntities.UnorderedItems.Where((element) => element.ToTuple().Item1 == entity).Count() > 0 && // not in destroyed
+            return destroyedEntities.UnorderedItems.Where((element) => element.ToTuple().Item1 == entity).Count() == 0 && // not in destroyed
                 entity < nextId; // entity has been created in ECS before
         }
     }

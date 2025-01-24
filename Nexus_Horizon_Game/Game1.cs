@@ -10,7 +10,6 @@ namespace Nexus_Horizon_Game
         private Scene currentScene;
 
         // temp:
-        private SpriteBatch spriteBatch;
         private Texture2D spriteTexture;
 
         public Game1()
@@ -29,10 +28,10 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            Renderer.Init(graphics, 600, 650, new SpriteBatch(GraphicsDevice));
 
             // temp:
-            spriteTexture = Content.Load<Texture2D>("HowTo_DrawSprite_Character");
+            spriteTexture = Content.Load<Texture2D>("guinea_pig");
         }
 
         protected override void Update(GameTime gameTime)
@@ -48,12 +47,11 @@ namespace Nexus_Horizon_Game
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            Renderer.BeginRender();
 
-            spriteBatch.Begin();
+            currentScene.Draw(gameTime, spriteTexture);
 
-            currentScene.Draw(gameTime, spriteBatch, spriteTexture);
-
-            spriteBatch.End();
+            Renderer.EndRender();
 
             base.Draw(gameTime);
         }
