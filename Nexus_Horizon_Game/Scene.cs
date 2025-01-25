@@ -1,11 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game
 {
     internal class Scene
     {
         private World world = new World();
+
+        public void Initialize()
+        {
+
+        }
+
+        public void LoadContent()
+        {
+            Renderer.LoadContent(new List<string>{ "guinea_pig" });
+        }
 
         public void Update(GameTime gameTime)
         {

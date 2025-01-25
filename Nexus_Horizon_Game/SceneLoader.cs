@@ -16,10 +16,8 @@ namespace Nexus_Horizon_Game
             scene.World.AddComponent(player, new SpriteComponent("guinea_pig", Color.White, scale: 1.0f));
 
             int player2 = scene.World.CreateEntity();
-            var sprite = new SpriteComponent("guinea_pig");
-            sprite.scale = 1.0f;
-            scene.World.AddComponent(player2, new TransformComponent(new Vector2(5.0f, 10.0f)));
-            scene.World.AddComponent(player2, sprite);
+            scene.World.AddComponent(player2, new TransformComponent(new Vector2(50.0f, 10.0f)));
+            scene.World.AddComponent(player2, new SpriteComponent("guinea_pig"));
 
             return scene;
         }
