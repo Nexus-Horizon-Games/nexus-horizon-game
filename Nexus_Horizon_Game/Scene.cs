@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Entity_Type_Behaviours;
 
 namespace Nexus_Horizon_Game
 {
@@ -11,19 +12,20 @@ namespace Nexus_Horizon_Game
         {
             PhysicsSystem.Update(world, gameTime);
 
-            /*
-            var entitiesWithBullet = world.GetEntitiesWithComponent<BulletComponent>();
-            foreach (var entity in entitiesWithBullet)
+            // definitely needs reworked to only pull a specfic entity and update only that.
+            var entitiesWithPlayer = world.GetEntitiesWithComponent<PlayerComponent>();
+            if (entitiesWithPlayer is not null)
             {
-                if (world.EntityHasComponent<PhysicsBody2DComponent>(entity))
+                foreach (var entity in entitiesWithPlayer)
                 {
-                    PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(entity);
-                    physicsBodyComponent = Bullet.Update(gameTime, physicsBodyComponent);
-                    Debug.WriteLine($"Velocity: {physicsBodyComponent.Velocity}");
-                    world.SetComponentInEntity<PhysicsBody2DComponent>(entity, physicsBodyComponent);
+                    if (world.EntityHasComponent<PhysicsBody2DComponent>(entity))
+                    {
+                        PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(entity);
+                        world.SetComponentInEntity<PhysicsBody2DComponent>(entity, Player.Update(gameTime, physicsBodyComponent));
+                    }
                 }
             }
-            */
+
         }
 
         public void Draw(GameTime gameTime)
