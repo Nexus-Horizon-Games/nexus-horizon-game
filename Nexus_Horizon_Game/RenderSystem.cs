@@ -1,13 +1,14 @@
-﻿using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nexus_Horizon_Game.Components;
 using System.Linq;
 
 namespace Nexus_Horizon_Game
 {
     internal class RenderSystem
     {
-        public static void Draw(World world, GameTime gameTime, SpriteBatch spriteBatch, Texture2D spriteTexture) // spriteBatch and spriteTexture being passed here should only be temporary
+        public static void Draw(World world, GameTime gameTime)
         {
             var transformComponents = world.GetComponents<TransformComponent>().ToList();
             var spriteComponents = world.GetComponents<SpriteComponent>().ToList();
@@ -19,6 +20,7 @@ namespace Nexus_Horizon_Game
 
                 if (world.EntityHasComponent<SpriteComponent>(entity))
                 {
+                    Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.z);
                     var transform = world.GetComponentFromEntity<TransformComponent>(entity);
                     var sprite = world.GetComponentFromEntity<SpriteComponent>(entity);
 
