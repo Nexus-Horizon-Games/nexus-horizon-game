@@ -19,6 +19,7 @@ namespace Nexus_Horizon_Game
         protected override void Initialize()
         {
             currentScene = SceneLoader.LoadScene();
+            currentScene.Initialize();
 
             base.Initialize();
         }
@@ -26,6 +27,7 @@ namespace Nexus_Horizon_Game
         protected override void LoadContent()
         {
             Renderer.Init(graphics, 600, 680, 150.0f, new SpriteBatch(GraphicsDevice), Content);
+            currentScene.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
