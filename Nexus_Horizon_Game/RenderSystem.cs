@@ -1,7 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Nexus_Horizon_Game.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Nexus_Horizon_Game.Components;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Nexus_Horizon_Game
@@ -13,14 +12,17 @@ namespace Nexus_Horizon_Game
             var transformComponents = world.GetComponents<TransformComponent>().ToList();
             var spriteComponents = world.GetComponents<SpriteComponent>().ToList();
 
-            for (var i = 0; i < MathHelper.Min(transformComponents.Count(), spriteComponents.Count()); i++)
-            {
-                var transformComp = transformComponents[i];
-                var spriteComp = spriteComponents[i];
+            var entitiesWithSprites = world.GetEntitiesWithComponent<SpriteComponent>();
 
-                if (!transformComp.IsEmptyComponent() && !spriteComp.IsEmptyComponent())
+            foreach (int entity in entitiesWithSprites)
+            {
+
+                if (world.EntityHasComponent<SpriteComponent>(entity))
                 {
-                    spriteBatch.Draw(spriteTexture, transformComp.position, Color.White);
+                    var transform = world.GetComponentFromEntity<TransformComponent>(entity);
+                    var sprite = world.GetComponentFromEntity<SpriteComponent>(entity);
+
+                    spriteBatch.Draw(spriteTexture, transform.position, Color.White);
                 }
             }
         }

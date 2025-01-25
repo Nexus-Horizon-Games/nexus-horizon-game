@@ -9,16 +9,26 @@ namespace Nexus_Horizon_Game
 
         public void Update(GameTime gameTime)
         {
-            // Get entities with component
-            // get component enumeration then through each component do the update for it.
+            PhysicsSystem.Update(world, gameTime);
+
+            /*
+            var entitiesWithBullet = world.GetEntitiesWithComponent<BulletComponent>();
+            foreach (var entity in entitiesWithBullet)
+            {
+                if (world.EntityHasComponent<PhysicsBody2DComponent>(entity))
+                {
+                    PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(entity);
+                    physicsBodyComponent = Bullet.Update(gameTime, physicsBodyComponent);
+                    Debug.WriteLine($"Velocity: {physicsBodyComponent.Velocity}");
+                    world.SetComponentInEntity<PhysicsBody2DComponent>(entity, physicsBodyComponent);
+                }
+            }
+            */
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Texture2D spriteTexture) // spriteBatch and spriteTexture being passed here should only be temporary
         {
-
             RenderSystem.Draw(world, gameTime, spriteBatch, spriteTexture);
-            // Get entities with component
-            // get component enumeration then through each component do the draw for it.
         }
 
         public World World { get { return world; } }
