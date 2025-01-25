@@ -1,10 +1,10 @@
 using Microsoft.Xna.Framework;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Nexus_Horizon_Game.Components
 {
     internal struct SpriteComponent : IComponent
     {
+        private bool isEmpty;
         public string textureName = "";
         public Vector2 position = Vector2.Zero;
         public float rotation = 0.0f;
@@ -15,9 +15,15 @@ namespace Nexus_Horizon_Game.Components
 
         public SpriteComponent(string textureName)
         {
+            this.isEmpty = false;
             this.textureName = textureName;
         }
 
+        bool IComponent.IsEmpty
+        {
+            get => isEmpty;
+            set => isEmpty = value;
+        }
         public SpriteComponent(string textureName, Color color, Rectangle? sourceRectangle = null, float scale = 1.0f, float z = 0.0f)
         {
             this.textureName = textureName;
@@ -50,13 +56,15 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool IsEmptyComponent()
         {
-            return textureName == "";
+            return isEmpty;
         }
 
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            return new SpriteComponent("");
+            SpriteComponent sprite = new SpriteComponent("");
+            sprite.isEmpty = true;
+            return sprite;
         }
     }
 }
