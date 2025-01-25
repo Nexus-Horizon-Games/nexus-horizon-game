@@ -11,21 +11,7 @@ namespace Nexus_Horizon_Game
         public void Update(GameTime gameTime)
         {
             PhysicsSystem.Update(world, gameTime);
-
-            // definitely needs reworked to only pull a specfic entity and update only that.
-            var entitiesWithPlayer = world.GetEntitiesWithComponent<PlayerComponent>();
-            if (entitiesWithPlayer is not null)
-            {
-                foreach (var entity in entitiesWithPlayer)
-                {
-                    if (world.EntityHasComponent<PhysicsBody2DComponent>(entity))
-                    {
-                        PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(entity);
-                        world.SetComponentInEntity<PhysicsBody2DComponent>(entity, Player.Update(gameTime, physicsBodyComponent));
-                    }
-                }
-            }
-
+            Player.Update(world, gameTime);
         }
 
         public void Draw(GameTime gameTime)
