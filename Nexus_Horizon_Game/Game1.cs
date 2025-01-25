@@ -12,7 +12,7 @@ namespace Nexus_Horizon_Game
         // temp:
         private SpriteBatch spriteBatch;
         private Texture2D spriteTexture;
-
+        // private Texture2D spriteTextureBullet;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);

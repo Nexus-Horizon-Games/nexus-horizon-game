@@ -1,6 +1,8 @@
-using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
-using System.Numerics;
+using Microsoft.Xna.Framework;
+
+using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Components;
 
 namespace Nexus_Horizon_Game
 {
@@ -9,13 +11,13 @@ namespace Nexus_Horizon_Game
         public static Scene LoadScene()
         {
             var scene = new Scene();
-
             // TODO: parse the scene from JSON here
 
             /*int player = scene.World.CreateEntity(new List<IComponent>{ 
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new SpriteComponent(0)
             });*/
+
 
             int player = scene.World.CreateEntity();
             scene.World.AddComponent(player, new TransformComponent(new Vector2(0.0f, 0.0f)));
@@ -37,8 +39,8 @@ namespace Nexus_Horizon_Game
                 var entities = scene.World.GetEntitiesWithComponent<TransformComponent>();
                 var entities2 = scene.World.GetEntitiesWithComponent<SpriteComponent>();
 
-                bool enemy1HaveTransform = scene.World.HasComponent<TransformComponent>(enemy1);
-                bool enemy2HaveTransform = scene.World.HasComponent<TransformComponent>(enemy2);
+                bool enemy1HaveTransform = scene.World.EntityHasComponent<TransformComponent>(enemy1);
+                bool enemy2HaveTransform = scene.World.EntityHasComponent<TransformComponent>(enemy2);
             }
 
             scene.World.DestroyEntity(enemy2);
@@ -49,13 +51,19 @@ namespace Nexus_Horizon_Game
                 var entities = scene.World.GetEntitiesWithComponent<TransformComponent>();
                 var entities2 = scene.World.GetEntitiesWithComponent<SpriteComponent>();
 
-                bool enemy1HaveTransform = scene.World.HasComponent<TransformComponent>(enemy1);
+                bool enemy1HaveTransform = scene.World.EntityHasComponent<TransformComponent>(enemy1);
             }
 
             scene.World.RemoveComponent<SpriteComponent>(enemy1);
 
 
-            int enemy4 = scene.World.CreateEntity(new List<IComponent> { new TransformComponent(new Vector2(200.0f, 20.0f)), new SpriteComponent(2), new TestComponent(0) });
+            int enemy4 = scene.World.CreateEntity(new List<IComponent> { new TransformComponent(new Vector2(200.0f, 20.0f)), new SpriteComponent(2) });
+
+
+            var bulletFactory = new BulletFactory(ref scene);
+            int bullet = bulletFactory.CreateEntity();
+
+
 
             return scene;
         }

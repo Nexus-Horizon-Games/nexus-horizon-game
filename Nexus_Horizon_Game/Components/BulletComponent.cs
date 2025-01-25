@@ -1,14 +1,12 @@
-namespace Nexus_Horizon_Game.Components
+﻿namespace Nexus_Horizon_Game.Components
 {
-    internal struct SpriteComponent : IComponent
+    internal struct BulletComponent : IComponent
     {
         private bool isEmpty;
 
-        int spriteID = -1;
-        public SpriteComponent(int spriteID)
+        public BulletComponent()
         {
-            this.isEmpty = false;
-            this.spriteID = spriteID;
+            isEmpty = false;
         }
 
         bool IComponent.IsEmpty
@@ -20,9 +18,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is SpriteComponent o)
+            if (other is BulletComponent o)
             {
-                if (spriteID == o.spriteID)
+                if ((object)other == (object)this)
                 {
                     return true;
                 }
@@ -40,9 +38,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            SpriteComponent sprite = new SpriteComponent(-1);
-            sprite.isEmpty = true;
-            return sprite;
+            BulletComponent bullet = new BulletComponent();
+            bullet.isEmpty = true;
+            return bullet;
         }
     }
 }

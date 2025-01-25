@@ -67,7 +67,7 @@ namespace Nexus_Horizon_Game
                         componentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
                     }
 
-                    componentList[newEntity] = component;
+                    componentList.Add(component);
                 }
             }
 
@@ -95,6 +95,12 @@ namespace Nexus_Horizon_Game
             destroyedEntities.Enqueue(entity, entity);
         }
 
+        /// <summary>
+        /// Adds a component to the entity specified.
+        /// </summary>
+        /// <typeparam name="T"> component adding to entity. </typeparam>
+        /// <param name="entity"> entity ID. </param>
+        /// <param name="component"> component instance. </param>
         public void AddComponent<T>(int entity, T component) where T : IComponent
         {
             if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
@@ -157,12 +163,33 @@ namespace Nexus_Horizon_Game
         {
             if (!this.IsEntityAlive(entity)) { return (T)T.MakeEmptyComponent(); } // entity is either destroyed or has not been created yet
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return (T)T.MakeEmptyComponent(); }
-            if (entity >= componentList.Count) { return (T)T.MakeEmptyComponent(); } // the component list is too small, so no need to remove anything
+            if (entity >= componentList.Count) { return (T)T.MakeEmptyComponent(); } // the component list is too small
 
             return (T)componentList[entity];
         }
 
+        /// <summary>
+        /// sets the component from the entity specified.
+        /// </summary>
+        /// <typeparam name="T"> type of IComponent </typeparam>
+        /// <param name="entity"> entity ID. </param>
+        /// <param name="component"> component that is overriding entity component. </param></param>
+        /// <returns> false if failed true when successfull. </returns>
+        public bool SetComponentInEntity<T>(int entity, T component) where T : IComponent
+        {
+            if (!this.IsEntityAlive(entity)) { return false; } // entity is either destroyed or has not been created yet
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return false; }
+            if (entity >= componentList.Count) { return false; } // the component list is too small
 
+            componentList[entity] = component;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets all the entities with the specified component.
+        /// </summary>
+        /// <typeparam name="T"> component type. </typeparam>
+        /// <returns> list of ID of entities. </returns>
         public List<int> GetEntitiesWithComponent<T>() where T : IComponent
         {
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return null; };
@@ -185,7 +212,7 @@ namespace Nexus_Horizon_Game
         /// <typeparam name="T"> component being checked on. </typeparam>
         /// <param name="entity"> the id of the entity wanting to check. </param>
         /// <returns> true when entity has component otherwise false. </returns>
-        public bool HasComponent<T>(int entity) where T : IComponent
+        public bool EntityHasComponent<T>(int entity) where T : IComponent
         {
             if (!this.IsEntityAlive(entity)) { return false; } // entity is either destroyed or has not been created yet
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return false; } // does not have component since it does not exist in dictionary
@@ -201,7 +228,7 @@ namespace Nexus_Horizon_Game
         /// <returns> true when entity is not destroyed. </returns>
         public bool IsEntityAlive(int entity)
         {
-            return destroyedEntities.UnorderedItems.Where((element) => element.ToTuple().Item1 == entity).Count() > 0 && // not in destroyed
+            return !destroyedEntities.UnorderedItems.Any((element) => element.ToTuple().Item1 == entity) && // not in destroyed
                 entity < nextId; // entity has been created in ECS before
         }
     }
