@@ -9,14 +9,10 @@ namespace Nexus_Horizon_Game
     {
         public static void Draw(World world, GameTime gameTime)
         {
-            var transformComponents = world.GetComponents<TransformComponent>().ToList();
-            var spriteComponents = world.GetComponents<SpriteComponent>().ToList();
-
             var entitiesWithSprites = world.GetEntitiesWithComponent<SpriteComponent>();
 
             foreach (int entity in entitiesWithSprites)
             {
-
                 if (world.EntityHasComponent<SpriteComponent>(entity))
                 {
                     var transformComp = world.GetComponentFromEntity<TransformComponent>(entity);

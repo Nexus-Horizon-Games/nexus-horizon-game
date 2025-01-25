@@ -24,6 +24,10 @@ namespace Nexus_Horizon_Game
 
             var playerFactory = new PlayerFactory(ref scene);
             int moveablePlayer2 = playerFactory.CreateEntity();
+
+            var bulletFactory = new BulletFactory(ref scene, "BulletSample");
+            int bullet3 = bulletFactory.CreateEntity();
+
             return scene;
         }
     }
