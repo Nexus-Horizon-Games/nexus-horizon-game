@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
@@ -20,8 +22,22 @@ namespace Nexus_Horizon_Game
 
         public void Update(GameTime gameTime)
         {
-            // Get entities with component
-            // get component enumeration then through each component do the update for it.
+            PhysicsSystem.Update(world, gameTime);
+
+            // definitely needs reworked to only pull a specfic entity and update only that.
+            var entitiesWithPlayer = world.GetEntitiesWithComponent<PlayerComponent>();
+            if (entitiesWithPlayer is not null)
+            {
+                foreach (var entity in entitiesWithPlayer)
+                {
+                    if (world.EntityHasComponent<PhysicsBody2DComponent>(entity))
+                    {
+                        PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(entity);
+                        world.SetComponentInEntity<PhysicsBody2DComponent>(entity, Player.Update(gameTime, physicsBodyComponent));
+                    }
+                }
+            }
+
         }
 
         public void Draw(GameTime gameTime)
