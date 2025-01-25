@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -9,10 +9,6 @@ namespace Nexus_Horizon_Game
         private GraphicsDeviceManager graphics;
         private Scene currentScene;
 
-        // temp:
-        private SpriteBatch spriteBatch;
-        private Texture2D spriteTexture;
-        // private Texture2D spriteTextureBullet;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -29,10 +25,7 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // temp:
-            spriteTexture = Content.Load<Texture2D>("HowTo_DrawSprite_Character");
+            Renderer.Init(graphics, 600, 680, 150.0f, new SpriteBatch(GraphicsDevice), Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -48,12 +41,11 @@ namespace Nexus_Horizon_Game
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+            Renderer.BeginRender();
 
-            spriteBatch.Begin();
+            currentScene.Draw(gameTime);
 
-            currentScene.Draw(gameTime, spriteBatch, spriteTexture);
-
-            spriteBatch.End();
+            Renderer.EndRender();
 
             base.Draw(gameTime);
         }
