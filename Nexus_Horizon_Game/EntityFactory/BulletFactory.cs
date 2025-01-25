@@ -17,7 +17,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             return scene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(new Vector2(0.0f, 0.0f)),
-              new SpriteComponent(1),
+              new SpriteComponent("CloudOne"),
               new PhysicsBody2DComponent(),
               new BulletComponent() });
         }

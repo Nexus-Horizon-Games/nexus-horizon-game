@@ -1,7 +1,6 @@
 using Nexus_Horizon_Game.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Nexus_Horizon_Game.Components;
 using System.Linq;
 
 namespace Nexus_Horizon_Game
@@ -20,11 +19,9 @@ namespace Nexus_Horizon_Game
 
                 if (world.EntityHasComponent<SpriteComponent>(entity))
                 {
+                    var transformComp = world.GetComponentFromEntity<TransformComponent>(entity);
+                    var spriteComp = world.GetComponentFromEntity<SpriteComponent>(entity);
                     Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.z);
-                    var transform = world.GetComponentFromEntity<TransformComponent>(entity);
-                    var sprite = world.GetComponentFromEntity<SpriteComponent>(entity);
-
-                    spriteBatch.Draw(spriteTexture, transform.position, Color.White);
                 }
             }
         }

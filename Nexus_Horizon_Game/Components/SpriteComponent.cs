@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Nexus_Horizon_Game.Components
 {
@@ -63,7 +62,7 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            SpriteComponent sprite = new SpriteComponent(-1);
+            SpriteComponent sprite = new SpriteComponent("");
             sprite.isEmpty = true;
             return sprite;
         }
