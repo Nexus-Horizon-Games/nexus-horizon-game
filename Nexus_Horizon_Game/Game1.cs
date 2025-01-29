@@ -26,7 +26,7 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            Renderer.Init(graphics, 600, 680, 150.0f, new SpriteBatch(GraphicsDevice), Content);
+            Renderer.Init(graphics, 600, 680, 200.0f, new SpriteBatch(GraphicsDevice), Content);
             currentScene.LoadContent();
         }
 

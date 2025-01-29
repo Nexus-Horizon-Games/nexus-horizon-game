@@ -17,7 +17,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             int bossEntity = world.CreateEntity(new List<IComponent>
             {
-                new TransformComponent(new Vector2(80.0f, 10.0f)),
+                new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
             });
             
@@ -29,6 +29,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 world.AddComponent(bossEntity, new SpriteComponent("chef_boss"));
                 world.AddComponent(bossEntity, new OnUpdateComponent(ChefBossBehaviour.OnUpdate));
+                world.AddComponent(bossEntity, new StateComponent(ChefBossBehaviour.ChefBossState.Start));
             }
 
             return bossEntity;
