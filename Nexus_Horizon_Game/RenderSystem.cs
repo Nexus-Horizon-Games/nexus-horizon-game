@@ -9,16 +9,14 @@ namespace Nexus_Horizon_Game
     {
         public static void Draw(World world, GameTime gameTime)
         {
-            var entitiesWithSprites = world.GetEntitiesWithComponent<SpriteComponent>();
+            var transformAndSpriteComponents = world.GetComponentsIntersection<TransformComponent, SpriteComponent>().ToList();
 
-            foreach (int entity in entitiesWithSprites)
+            foreach (var tuple in transformAndSpriteComponents)
             {
-                if (world.EntityHasComponent<SpriteComponent>(entity))
-                {
-                    var transformComp = world.GetComponentFromEntity<TransformComponent>(entity);
-                    var spriteComp = world.GetComponentFromEntity<SpriteComponent>(entity);
-                    Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.z);
-                }
+                var transformComp = tuple.Item1;
+                var spriteComp = tuple.Item2;
+
+                Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.z);
             }
         }
     }
