@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game
 {
@@ -20,6 +20,17 @@ namespace Nexus_Horizon_Game
 
         public static int ScreenWidth { get { return width; } }
         public static int ScreenHeight { get { return height; } }
+
+        /// <summary>
+        /// The scaled width of the window (the number of in-game units that are needed to span the entire window width).
+        /// </summary>
+        public static float DrawAreaWidth { get { return width / scale; } }
+
+        /// <summary>
+        /// The scaled height of the window (the number of in-game units that are needed to span the entire window height).
+        /// </summary>
+        public static float DrawAreaHeight { get { return height / scale; } }
+
         public static float Scale { get { return scale; } set { scale = value; } }
 
         /// <summary>
@@ -46,6 +57,12 @@ namespace Nexus_Horizon_Game
             Renderer.spriteBatch = spriteBatch;
 
             textureManager = new ResourceManager<Texture2D>(contentManager);
+        }
+
+        public static void LoadContent(List<string> names)
+        {
+            names.Add("square");
+            textureManager.LoadResources(names);
         }
 
         /// <summary>
@@ -77,6 +94,13 @@ namespace Nexus_Horizon_Game
         public static void Draw(string textureName, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
         {
             spriteBatch.Draw(textureManager.GetResource(textureName), position * Renderer.scale, sourceRectangle, color, rotation, origin, scale * Renderer.scale, effects, layerDepth);
+        }
+
+        public static void DrawRectangle(Vector2 position, Vector2 size, Color color, float rotation = 0.0f, float layerDepth = 0.0f)
+        {
+            spriteBatch.Draw(textureManager.GetResource("square"),
+                new Rectangle((int)(position.X * Renderer.scale), (int)(position.Y * Renderer.scale), (int)(size.X * Renderer.scale), (int)(size.Y * Renderer.scale)),
+                null, color, rotation, Vector2.Zero, SpriteEffects.None, layerDepth);
         }
     }
 }
