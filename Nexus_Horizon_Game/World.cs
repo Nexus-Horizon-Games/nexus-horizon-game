@@ -154,6 +154,23 @@ namespace Nexus_Horizon_Game
         }
 
         /// <summary>
+        /// Creates a enumeration query of tuples of the two types of components specified. Only gets a tuple if the entity has both components (thus, the intersection).
+        /// </summary>
+        /// <typeparam name="T"> type of component. </typeparam>
+        /// <returns> query of components of the type. </returns>
+        public IEnumerable<(T1, T2)> GetComponentsIntersection<T1, T2>()
+            where T1 : IComponent
+            where T2 : IComponent
+        {
+            if (!componentLists.TryGetValue(typeof(T1), out var componentList1)) { return []; };
+            if (!componentLists.TryGetValue(typeof(T2), out var componentList2)) { return []; };
+
+            return componentList1.Cast<T1>().Zip(
+                   componentList2.Cast<T2>()
+                ).Where<(T1, T2)>((components) => !components.Item1.IsEmptyComponent() && !components.Item2.IsEmptyComponent());
+        }
+
+        /// <summary>
         /// Gets the component from the entity specified.
         /// </summary>
         /// <typeparam name="T"> type of IComponent </typeparam>
