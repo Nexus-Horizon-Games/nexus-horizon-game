@@ -3,9 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 
-namespace Nexus_Horizon_Game
+namespace Nexus_Horizon_Game.Systems
 {
-    internal class RenderSystem
+    internal static class RenderSystem
     {
         public static void Draw(World world, GameTime gameTime)
         {

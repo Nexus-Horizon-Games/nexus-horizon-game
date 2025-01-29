@@ -28,6 +28,8 @@ namespace Nexus_Horizon_Game
             var bulletFactory = new BulletFactory(ref scene, "BulletSample");
             int bullet3 = bulletFactory.CreateEntity();
 
+            EnemyFactory.CreateBoss(scene.World, "chef_boss");
+
             return scene;
         }
     }

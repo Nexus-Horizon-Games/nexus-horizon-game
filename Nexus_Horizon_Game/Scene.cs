@@ -3,6 +3,7 @@ using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Nexus_Horizon_Game.Systems;
 
 namespace Nexus_Horizon_Game
 {
@@ -24,6 +25,7 @@ namespace Nexus_Horizon_Game
         {
             PhysicsSystem.Update(world, gameTime);
             Player.Update(world, gameTime);
+            OnUpdateSystem.Update(world, gameTime);
         }
 
         public void Draw(GameTime gameTime)
