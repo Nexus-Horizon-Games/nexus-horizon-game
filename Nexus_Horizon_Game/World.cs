@@ -209,7 +209,7 @@ namespace Nexus_Horizon_Game
         /// <returns> list of ID of entities. </returns>
         public List<int> GetEntitiesWithComponent<T>() where T : IComponent
         {
-            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return null; };
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return []; };
 
             var entities = new List<int>();
             for (int i = 0; i < componentList.Count; i++)
