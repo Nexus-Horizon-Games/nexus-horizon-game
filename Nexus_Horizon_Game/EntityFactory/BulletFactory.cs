@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
+using Nexus_Horizon_Game.Entity_Type_Behaviours;
 
 namespace Nexus_Horizon_Game.EntityFactory
 {
@@ -40,11 +41,12 @@ namespace Nexus_Horizon_Game.EntityFactory
 
             return world.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),
-                new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),
-                new PhysicsBody2DComponent()
-                {
-                    Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
-                },
+              new OnUpdateComponent(Bullet.OnUpdate),
+              new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),
+              new PhysicsBody2DComponent()
+              {
+                  Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
+              },
               new BulletComponent() });
         }
     }
