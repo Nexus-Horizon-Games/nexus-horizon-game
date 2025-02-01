@@ -10,13 +10,14 @@ namespace Nexus_Horizon_Game.Components
         public float rotation = 0.0f;
         public Color color = Color.White;
         public float scale = 1.0f;
-        public float z = 0.0f; // between 0 and 1
         public Rectangle? sourceRectangle = null; // used to render only a section of an image (for tiles)
+        private uint spriteLayer; // layer order of sprite
 
-        public SpriteComponent(string textureName)
+        public SpriteComponent(string textureName, uint spriteLayer = 0)
         {
             this.isEmpty = false;
             this.textureName = textureName;
+            this.spriteLayer = spriteLayer;
         }
 
         bool IComponent.IsEmpty
@@ -24,13 +25,28 @@ namespace Nexus_Horizon_Game.Components
             get => isEmpty;
             set => isEmpty = value;
         }
-        public SpriteComponent(string textureName, Color color, Rectangle? sourceRectangle = null, float scale = 1.0f, float z = 0.0f)
+
+        public float Z // between 0 and 1
+        {
+            get
+            {
+                return this.spriteLayer / uint.MaxValue;
+            }
+        }
+
+        public uint SpriteLayer
+        {
+            get => spriteLayer;
+            set => spriteLayer = value;
+        }
+
+        public SpriteComponent(string textureName, Color color, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0)
         {
             this.textureName = textureName;
             this.color = color;
             this.sourceRectangle = sourceRectangle;
             this.scale = scale;
-            this.z = z;
+            this.spriteLayer = spriteLayer;
         }
 
         /// <inheritdoc/>
@@ -43,7 +59,7 @@ namespace Nexus_Horizon_Game.Components
                     rotation == o.rotation &&
                     color == o.color &&
                     scale == o.scale &&
-                    z == o.z &&
+                    spriteLayer == o.spriteLayer &&
                     sourceRectangle == o.sourceRectangle)
                 {
                     return true;
@@ -62,8 +78,10 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            SpriteComponent sprite = new SpriteComponent("");
-            sprite.isEmpty = true;
+            SpriteComponent sprite = new SpriteComponent("")
+            {
+                isEmpty = true,
+            };
             return sprite;
         }
     }
