@@ -49,25 +49,25 @@ namespace Nexus_Horizon_Game
                 {
                     List<IComponent> newComponentList = new List<IComponent>();
 
-                    // add blank components in any gaps
-                    while (newEntity > newComponentList.Count)
+                    // add blank components all the way to entity.
+                    while (newEntity >= newComponentList.Count)
                     {
                         newComponentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
                     }
 
-                    newComponentList.Add(component);
+                    newComponentList[newEntity] = component;
 
                     this.componentLists.Add(component.GetType(), newComponentList);
                 }
                 else // component list does exist
                 {
                     // add blank components in any gaps
-                    while (newEntity > componentList.Count)
+                    while (newEntity >= componentList.Count)
                     {
                         componentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
                     }
 
-                    componentList.Add(component);
+                    componentList[newEntity] = component;
                 }
             }
 
