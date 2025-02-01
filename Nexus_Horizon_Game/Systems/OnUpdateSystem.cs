@@ -10,15 +10,15 @@ namespace Nexus_Horizon_Game.Systems
 {
     internal static class OnUpdateSystem
     {
-        public static void Update(World world, GameTime gameTime)
+        public static void Update(Scene scene, GameTime gameTime)
         {
-            var entities = world.GetEntitiesWithComponent<OnUpdateComponent>().ToList();
+            var entities = scene.World.GetEntitiesWithComponent<OnUpdateComponent>().ToList();
 
             foreach (var entity in entities)
             {
-                var component = world.GetComponentFromEntity<OnUpdateComponent>(entity);
+                var component = scene.World.GetComponentFromEntity<OnUpdateComponent>(entity);
 
-                component.onUpdate(world, entity, gameTime);
+                component.onUpdate(scene, entity, gameTime);
             }
         }
     }
