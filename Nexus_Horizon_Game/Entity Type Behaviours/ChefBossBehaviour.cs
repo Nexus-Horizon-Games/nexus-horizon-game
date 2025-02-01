@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
+using System;
 using System.Linq;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
@@ -81,22 +82,17 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             var (world, thisEntity) = ((World, int))data;
 
             var bulletFactory = new BulletFactory(world, "BulletSample");
-            var bullet = bulletFactory.CreateEntity();
 
             var bossPosition = world.GetComponentFromEntity<TransformComponent>(thisEntity).position;
 
-            var players = world.GetEntitiesWithComponent<PlayerComponent>().ToList();
-            var playerPosition = world.GetComponentFromEntity<TransformComponent>(players[0]).position;
+            int bullets = 16;
+            float arcInterval = MathHelper.TwoPi / bullets;
 
-            var transform = world.GetComponentFromEntity<TransformComponent>(bullet);
-            transform.position = bossPosition;
-            world.SetComponentInEntity(bullet, transform);
-
-            var body = world.GetComponentFromEntity<PhysicsBody2DComponent>(bullet);
-            var direction = playerPosition - transform.position;
-            direction.Normalize();
-            body.Velocity = direction * 60.0f;
-            world.SetComponentInEntity(bullet, body);
+            for (int i = 0; i < bullets; i++)
+            {
+                Vector2 unit = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
+                var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 60.0f);
+            }
         }
     }
 }
