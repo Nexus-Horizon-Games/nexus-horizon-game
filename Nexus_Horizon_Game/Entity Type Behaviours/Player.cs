@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
+using System.Runtime.CompilerServices;
+using Nexus_Horizon_Game.EntityFactory;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -8,10 +11,17 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     {
         private static int currentEntityID = -1;
 
-        private static bool isWDown = false;
-        private static bool isSDown = false;
-        private static bool isADown = false;
-        private static bool isDDown = false;
+        private static bool isUpArrowDown = false;
+        private static bool isDownArrowDown = false;
+        private static bool isLeftArrowDown = false;
+        private static bool isRightArrowDown = false;
+
+        private static float splitTime = 5f; // the time between shots
+        private static float currentTime = 0f; // the time between shots
+
+        private static bool isZDown = false;
+
+        private static BulletFactory bulletFactoryType;
 
         static Player() { }
 
@@ -35,8 +45,12 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
             if (world.EntityHasComponent<PhysicsBody2DComponent>(currentEntityID))
             {
+                // movement
                 PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(currentEntityID);
                 world.SetComponentInEntity<PhysicsBody2DComponent>(currentEntityID, Player.Movement(physicsBodyComponent));
+
+                //projectiles
+                ShootProjectile(world);
             }
         }
 
@@ -52,21 +66,38 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             float xSpeed = 0;
             float ySpeed = 0;
 
-            if (!isWDown && Keyboard.GetState().IsKeyDown(Keys.W)) { isWDown = true; ySpeed -= speedAmount; }
+            if (!isUpArrowDown && Keyboard.GetState().IsKeyDown(Keys.Up)) { isUpArrowDown = true; ySpeed -= speedAmount; }
 
-            if (isWDown && Keyboard.GetState().IsKeyUp(Keys.W)) { isWDown = false; ySpeed += speedAmount; }
+            if (isUpArrowDown && Keyboard.GetState().IsKeyUp(Keys.Up)) { isUpArrowDown = false; ySpeed += speedAmount; }
 
-            if (!isSDown && Keyboard.GetState().IsKeyDown(Keys.S)) { isSDown = true; ySpeed += speedAmount; }
-            if (isSDown && Keyboard.GetState().IsKeyUp(Keys.S)) { isSDown = false; ySpeed -= speedAmount; }
+            if (!isDownArrowDown && Keyboard.GetState().IsKeyDown(Keys.Down)) { isDownArrowDown = true; ySpeed += speedAmount; }
+            if (isDownArrowDown && Keyboard.GetState().IsKeyUp(Keys.Down)) { isDownArrowDown = false; ySpeed -= speedAmount; }
 
-            if (!isDDown && Keyboard.GetState().IsKeyDown(Keys.D)) { isDDown = true; xSpeed += speedAmount; }
-            if (isDDown && Keyboard.GetState().IsKeyUp(Keys.D)) { isDDown = false; xSpeed -= speedAmount; }
+            if (!isRightArrowDown && Keyboard.GetState().IsKeyDown(Keys.Right)) { isRightArrowDown = true; xSpeed += speedAmount; }
+            if (isRightArrowDown && Keyboard.GetState().IsKeyUp(Keys.Right)) { isRightArrowDown = false; xSpeed -= speedAmount; }
 
-            if (!isADown && Keyboard.GetState().IsKeyDown(Keys.A)) { isADown = true; xSpeed -= speedAmount; }
-            if (isADown && Keyboard.GetState().IsKeyUp(Keys.A)) { isADown = false; xSpeed += speedAmount; }
+            if (!isLeftArrowDown && Keyboard.GetState().IsKeyDown(Keys.Left)) { isLeftArrowDown = true; xSpeed -= speedAmount; }
+            if (isLeftArrowDown && Keyboard.GetState().IsKeyUp(Keys.Left)) { isLeftArrowDown = false; xSpeed += speedAmount; }
 
             physicsBodyComponent.Velocity = new Vector2(physicsBodyComponent.Velocity.X + xSpeed, physicsBodyComponent.Velocity.Y + ySpeed);
             return physicsBodyComponent;
         }
+
+        private static void ShootProjectile(World world)
+        {
+            if (bulletFactoryType == null) { bulletFactoryType = new BulletFactory(world, "BulletSample"); }
+
+            if (!isZDown && Keyboard.GetState().IsKeyDown(Keys.Z))
+            {
+                int bullet3 = bulletFactoryType.CreateEntity(world.GetComponentFromEntity<TransformComponent>(currentEntityID).position, new Vector2(0, -1), 100f);
+                isZDown = true; 
+            }
+
+            if (isZDown && Keyboard.GetState().IsKeyUp(Keys.Z)) 
+            {
+                isZDown = false; 
+            }
+        }
+
     }
 }
