@@ -1,19 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct OnUpdateComponent : IComponent
+    internal struct TimersComponent : IComponent
     {
         private bool isEmpty;
 
-        public delegate void OnUpdate(World world, int thisEntity, GameTime gameTime);
+        public Dictionary<string, Timer> timers;
 
-        public OnUpdate onUpdate;
-
-        public OnUpdateComponent(OnUpdate onUpdate)
+        public TimersComponent(Dictionary<string, Timer> timers)
         {
             this.isEmpty = false;
-            this.onUpdate = onUpdate;
+            this.timers = timers;
         }
 
         bool IComponent.IsEmpty
@@ -25,9 +24,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is OnUpdateComponent o)
+            if (other is TimersComponent o)
             {
-                if (onUpdate == o.onUpdate)
+                if (timers == o.timers)
                 {
                     return true;
                 }
@@ -45,7 +44,7 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            OnUpdateComponent comp = new((World world, int entity, GameTime gameTime) => {});
+            TimersComponent comp = new([]);
             comp.isEmpty = true;
             return comp;
         }

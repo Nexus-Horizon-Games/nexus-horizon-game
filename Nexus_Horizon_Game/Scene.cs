@@ -26,6 +26,7 @@ namespace Nexus_Horizon_Game
             PhysicsSystem.Update(world, gameTime);
             Player.Update(world, gameTime);
             OnUpdateSystem.Update(world, gameTime);
+            TimerSystem.Update(world, gameTime);
         }
 
         public void Draw(GameTime gameTime)
