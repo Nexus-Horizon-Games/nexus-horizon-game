@@ -11,13 +11,15 @@ namespace Nexus_Horizon_Game.Components
         public Color color = Color.White;
         public float scale = 1.0f;
         public Rectangle? sourceRectangle = null; // used to render only a section of an image (for tiles)
-        private uint spriteLayer; // layer order of sprite
+        public bool centered = false;
+        public uint spriteLayer; // layer order of sprite
 
-        public SpriteComponent(string textureName, uint spriteLayer = 0)
+        public SpriteComponent(string textureName, uint spriteLayer = 0, bool centered = false)
         {
             this.isEmpty = false;
             this.textureName = textureName;
             this.spriteLayer = spriteLayer;
+            this.centered = centered;
         }
 
         bool IComponent.IsEmpty
