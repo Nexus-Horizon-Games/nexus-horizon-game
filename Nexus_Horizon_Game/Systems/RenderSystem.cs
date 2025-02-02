@@ -16,6 +16,11 @@ namespace Nexus_Horizon_Game.Systems
                 var transformComp = tuple.Item1;
                 var spriteComp = tuple.Item2;
 
+                if (spriteComp.centered)
+                {
+                    spriteComp.position -= Renderer.GetTextureBounds(spriteComp.textureName) / 2.0f;
+                }
+
                 Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.Z);
             }
         }
