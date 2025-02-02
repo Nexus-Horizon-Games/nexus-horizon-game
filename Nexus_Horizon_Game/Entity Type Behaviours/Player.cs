@@ -59,7 +59,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <returns> result of movement physicsBodyComponent. </returns>
         private static PhysicsBody2DComponent Movement(PhysicsBody2DComponent physicsBodyComponent)
         {
-            float speedAmount = 100f;
+            float speedAmount = 8f;
 
             float xSpeed = 0;
             float ySpeed = 0;
