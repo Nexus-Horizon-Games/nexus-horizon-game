@@ -7,9 +7,9 @@ namespace Nexus_Horizon_Game.Systems
 {
     internal static class RenderSystem
     {
-        public static void Draw(World world, GameTime gameTime)
+        public static void Draw(GameTime gameTime)
         {
-            var transformAndSpriteComponents = world.GetComponentsIntersection<TransformComponent, SpriteComponent>().ToList();
+            var transformAndSpriteComponents = GameM.CurrentScene.World.GetComponentsIntersection<TransformComponent, SpriteComponent>().ToList();
 
             foreach (var tuple in transformAndSpriteComponents)
             {

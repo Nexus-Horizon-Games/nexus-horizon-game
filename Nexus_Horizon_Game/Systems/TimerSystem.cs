@@ -6,9 +6,9 @@ namespace Nexus_Horizon_Game.Systems
 {
     internal static class TimerSystem
     {
-        public static void Update(World world, GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
-            var components = world.GetComponents<TimersComponent>().ToList();
+            var components = GameM.CurrentScene.World.GetComponents<TimersComponent>().ToList();
 
             foreach (var component in components)
             {
