@@ -15,7 +15,12 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private const float IdealY = 40.0f;
 
         private static float timer = 0f;
-        private static IPath some = new CubicCurvePath(new Vector2(0, 0f), new Vector2(0, 80), new Vector2(40, -40), new Vector2(80f, 0f));
+        private static IPath some = new MultiPath([
+            new CubicCurvePath(new Vector2(0, 0f), new Vector2(0, 80), new Vector2(40, -40), new Vector2(80f, 0f)),
+            new QuadraticCurvePath(new Vector2(80.0f, 0f), new Vector2(40f, -40.0f), new Vector2(0f, 0f)),
+            new LinePath(new Vector2(0f, 0f), new Vector2(80f, 80f))
+            ]
+            );
 
         public enum ChefBossState : int
         {
@@ -42,12 +47,12 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             {
                 if (timer < 1f)
                 {
-                    timer += some.GetDeltaT(timer, 1.0f);
-                }
+                    timer += some.GetDeltaT(timer, 0.2f);
 
-                var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
-                transform.position = some.GetPoint(timer);
-                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, transform);
+                    var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
+                    transform.position = some.GetPoint(timer) + new Vector2(40.0f, 40.0f);
+                    GameM.CurrentScene.World.SetComponentInEntity(thisEntity, transform);
+                }
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
             {
@@ -58,7 +63,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private static void StartState(int thisEntity)
         {
             var timerComp = new TimersComponent([]);
-            timerComp.timers.Add("fire_bullets", new Timer(0.2f, OnFireBullets, thisEntity));
+            timerComp.timers.Add("fire_bullets", new Timer(0.4f, OnFireBullets, thisEntity));
             GameM.CurrentScene.World.AddComponent(thisEntity, timerComp);
 
             GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
