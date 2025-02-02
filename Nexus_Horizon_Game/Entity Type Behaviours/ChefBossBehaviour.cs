@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
-using System;
 using Nexus_Horizon_Game.Paths;
-using System.Linq;
+using System;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -12,7 +11,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     /// </summary>
     internal static class ChefBossBehaviour
     {
-        private const float EnteringSpeed = 15.0f;
+        private const float EnteringSpeed = 5.0f;
         private const float IdealY = 40.0f;
 
         private static float timer = 0f;
@@ -43,11 +42,11 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             {
                 if (timer < 1f)
                 {
-                    timer += some.GetDeltaT(timer, 1);
+                    timer += some.GetDeltaT(timer, 1.0f);
                 }
 
                 var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
-                transform.position = some.GetPoint(timer) + new Vector2(60, 60);
+                transform.position = some.GetPoint(timer);
                 GameM.CurrentScene.World.SetComponentInEntity(thisEntity, transform);
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
@@ -92,7 +91,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         {
             var thisEntity = (int)data;
 
-            var bulletFactory = new BulletFactory(world, "BulletSample");
+            var bulletFactory = new BulletFactory("BulletSample");
 
             var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity).position;
 
@@ -102,7 +101,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             for (int i = 0; i < bullets; i++)
             {
                 Vector2 unit = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
-                var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 60.0f);
+                var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 6.0f);
             }
         }
     }
