@@ -25,8 +25,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         {
             TransformComponent transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(entity);
 
-            if ((transform.position.X > Renderer.DrawAreaWidth || transform.position.X < 0) ||
-                (transform.position.Y > Renderer.DrawAreaHeight || transform.position.Y < 0))
+            if ((transform.position.X > GameM.CurrentScene.ArenaRight || transform.position.X < GameM.CurrentScene.ArenaLeft) ||
+                (transform.position.Y > GameM.CurrentScene.ArenaBottom || transform.position.Y < GameM.CurrentScene.ArenaTop))
             {
                 GameM.CurrentScene.World.DestroyEntity(entity);
             }
