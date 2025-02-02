@@ -7,11 +7,9 @@ namespace Nexus_Horizon_Game.EntityFactory
 {
     internal class BulletFactory : EntityFactory
     {
-        private World world;
         private string textureName;
-        public BulletFactory(World world, string textureName)
+        public BulletFactory(string textureName)
         {
-            this.world = world;
             this.textureName = textureName;
         }
 
@@ -21,7 +19,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         /// <returns> entity ID. </returns>
         public override int CreateEntity()
         {
-            return world.CreateEntity(new List<IComponent>
+            return GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),
                 new PhysicsBody2DComponent(),
@@ -39,7 +37,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             direction.Normalize();
 
-            return world.CreateEntity(new List<IComponent>
+            return GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),
               new OnUpdateComponent(Bullet.OnUpdate),
               new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),

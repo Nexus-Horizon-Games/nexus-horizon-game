@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using System.Runtime.CompilerServices;
 using Nexus_Horizon_Game.EntityFactory;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -31,7 +29,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         public static int CurrentEntityID
         {
             get => currentEntityID;
-            set => currentEntityID = value; 
+            set => currentEntityID = value;
         }
 
         /// <summary>
@@ -39,18 +37,18 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// </summary>
         /// <param name="world"> world data of scene </param>
         /// <param name="gameTime"> the gametime of the running program. </param>
-        public static void Update(World world, GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
-            if (!world.IsEntityAlive(currentEntityID)) { return; }
+            if (!GameM.CurrentScene.World.IsEntityAlive(currentEntityID)) { return; }
 
-            if (world.EntityHasComponent<PhysicsBody2DComponent>(currentEntityID))
+            if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(currentEntityID))
             {
                 // movement
-                PhysicsBody2DComponent physicsBodyComponent = world.GetComponentFromEntity<PhysicsBody2DComponent>(currentEntityID);
-                world.SetComponentInEntity<PhysicsBody2DComponent>(currentEntityID, Player.Movement(physicsBodyComponent));
+                PhysicsBody2DComponent physicsBodyComponent = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(currentEntityID);
+                GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(currentEntityID, Player.Movement(physicsBodyComponent));
 
                 //projectiles
-                ShootProjectile(world);
+                ShootProjectile();
             }
         }
 
@@ -83,19 +81,19 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             return physicsBodyComponent;
         }
 
-        private static void ShootProjectile(World world)
+        private static void ShootProjectile()
         {
-            if (bulletFactoryType == null) { bulletFactoryType = new BulletFactory(world, "BulletSample"); }
+            if (bulletFactoryType == null) { bulletFactoryType = new BulletFactory("BulletSample"); }
 
             if (!isZDown && Keyboard.GetState().IsKeyDown(Keys.Z))
             {
-                int bullet3 = bulletFactoryType.CreateEntity(world.GetComponentFromEntity<TransformComponent>(currentEntityID).position, new Vector2(0, -1), 100f);
-                isZDown = true; 
+                int bullet3 = bulletFactoryType.CreateEntity(GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(currentEntityID).position, new Vector2(0, -1), 100f);
+                isZDown = true;
             }
 
-            if (isZDown && Keyboard.GetState().IsKeyUp(Keys.Z)) 
+            if (isZDown && Keyboard.GetState().IsKeyUp(Keys.Z))
             {
-                isZDown = false; 
+                isZDown = false;
             }
         }
 
