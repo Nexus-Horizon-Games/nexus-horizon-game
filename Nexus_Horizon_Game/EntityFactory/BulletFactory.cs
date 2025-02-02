@@ -40,7 +40,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             return GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),
               new OnUpdateComponent(Bullet.OnUpdate),
-              new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),
+              new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0, centered: true),
               new PhysicsBody2DComponent()
               {
                   Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
