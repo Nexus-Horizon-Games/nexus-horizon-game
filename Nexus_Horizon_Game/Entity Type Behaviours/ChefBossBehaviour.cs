@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Paths;
 using System.Linq;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
@@ -12,6 +13,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     {
         private const float EnteringSpeed = 15.0f;
         private const float IdealY = 40.0f;
+
+        private static float timer = 0f;
+        private static IPath some = new CubicCurvePath(new Vector2(0, 0f), new Vector2(0, 80), new Vector2(40, -40), new Vector2(80f, 0f));
 
         public enum ChefBossState : int
         {
@@ -36,7 +40,14 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage1)
             {
+                if (timer < 1f)
+                {
+                    timer += some.GetDeltaT(timer, 1);
+                }
 
+                var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
+                transform.position = some.GetPoint(timer) + new Vector2(60, 60);
+                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, transform);
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
             {
