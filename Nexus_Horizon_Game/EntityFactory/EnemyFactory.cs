@@ -27,7 +27,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             }
             else if (type == "chef_boss") // final boss
             {
-                world.AddComponent(bossEntity, new SpriteComponent("chef_boss"));
+                world.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
                 world.AddComponent(bossEntity, new OnUpdateComponent(ChefBossBehaviour.OnUpdate));
                 world.AddComponent(bossEntity, new StateComponent(ChefBossBehaviour.ChefBossState.Start));
             }
