@@ -7,11 +7,8 @@ namespace Nexus_Horizon_Game.EntityFactory
 {
     internal class PlayerFactory : EntityFactory
     {
-        private Scene scene;
-
-        public PlayerFactory(ref Scene scene)
+        public PlayerFactory()
         {
-            this.scene = scene;
         }
 
         /// <summary>
@@ -20,7 +17,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         /// <returns> entity ID. </returns>
         public override int CreateEntity()
         {
-            int playerEntityID = scene.World.CreateEntity(new List<IComponent>
+            int playerEntityID = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(new Vector2(100.0f, 100.0f)),
               new SpriteComponent("guinea_pig"),
               new PhysicsBody2DComponent(),

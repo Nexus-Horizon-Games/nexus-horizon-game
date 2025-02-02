@@ -6,7 +6,7 @@ namespace Nexus_Horizon_Game.Components
     {
         private bool isEmpty;
 
-        public delegate void OnUpdate(World world, int thisEntity, GameTime gameTime);
+        public delegate void OnUpdate(int thisEntity, GameTime gameTime);
 
         public OnUpdate onUpdate;
 
@@ -45,7 +45,7 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            OnUpdateComponent comp = new((World world, int entity, GameTime gameTime) => {});
+            OnUpdateComponent comp = new((int entity, GameTime gameTime) => { });
             comp.isEmpty = true;
             return comp;
         }
