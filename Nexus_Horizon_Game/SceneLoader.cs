@@ -7,29 +7,27 @@ namespace Nexus_Horizon_Game
 {
     internal static class SceneLoader
     {
-        public static Scene LoadScene()
+        public static void LoadScene(ref Scene currentScene)
         {
-            var scene = new Scene();
+            currentScene = new Scene();
             // TODO: parse the scene from JSON here
 
-            int npc0 = scene.World.CreateEntity();
-            scene.World.AddComponent(npc0, new TransformComponent(new Vector2(0.0f, 0.0f)));
-            scene.World.AddComponent(npc0, new SpriteComponent("guinea_pig", Color.White, scale: 1.0f));
+            int npc0 = currentScene.World.CreateEntity();
+            currentScene.World.AddComponent(npc0, new TransformComponent(new Vector2(0.0f, 0.0f)));
+            currentScene.World.AddComponent(npc0, new SpriteComponent("guinea_pig", Color.White, scale: 1.0f));
 
-            int npc1 = scene.World.CreateEntity();
+            int npc1 = currentScene.World.CreateEntity();
             var sprite = new SpriteComponent("guinea_pig");
             sprite.scale = 1.0f;
-            scene.World.AddComponent(npc1, new TransformComponent(new Vector2(5.0f, 10.0f)));
-            scene.World.AddComponent(npc1, sprite);
+            currentScene.World.AddComponent(npc1, new TransformComponent(new Vector2(5.0f, 10.0f)));
+            currentScene.World.AddComponent(npc1, sprite);
 
-            var playerFactory = new PlayerFactory(ref scene);
+            var playerFactory = new PlayerFactory();
             int moveablePlayer2 = playerFactory.CreateEntity();
 
-            var bulletFactory = new BulletFactory(scene.World, "BulletSample");
+            var bulletFactory = new BulletFactory("BulletSample");
 
-            EnemyFactory.CreateBoss(scene.World, "chef_boss");
-
-            return scene;
+            EnemyFactory.CreateBoss("chef_boss");
         }
     }
 }

@@ -7,29 +7,29 @@ namespace Nexus_Horizon_Game.EntityFactory
 {
     internal static class EnemyFactory
     {
-        public static int CreateEnemy(World world, string type)
+        public static int CreateEnemy(string type)
         {
             // create enemy
             return -1;
         }
 
-        public static int CreateBoss(World world, string type)
+        public static int CreateBoss(string type)
         {
-            int bossEntity = world.CreateEntity(new List<IComponent>
+            int bossEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
             });
-            
+
             if (type == "evil_guinea_pig_boss") // mid boss
             {
 
             }
             else if (type == "chef_boss") // final boss
             {
-                world.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
-                world.AddComponent(bossEntity, new OnUpdateComponent(ChefBossBehaviour.OnUpdate));
-                world.AddComponent(bossEntity, new StateComponent(ChefBossBehaviour.ChefBossState.Start));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("chef_boss"));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new OnUpdateComponent(ChefBossBehaviour.OnUpdate));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(ChefBossBehaviour.ChefBossState.Start));
             }
 
             return bossEntity;

@@ -4,21 +4,29 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Nexus_Horizon_Game
 {
-    public class Game1 : Game
+    public class GameM : Game
     {
         private GraphicsDeviceManager graphics;
-        private Scene currentScene;
+        private static Scene currentScene;
 
-        public Game1()
+        public GameM()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
+        /// <summary>
+        /// current scene of the Game.
+        /// </summary>
+        internal static Scene CurrentScene
+        {
+            get => currentScene;
+        }
+
         protected override void Initialize()
         {
-            currentScene = SceneLoader.LoadScene();
+            SceneLoader.LoadScene(ref currentScene);
             currentScene.Initialize();
 
             base.Initialize();
@@ -32,6 +40,7 @@ namespace Nexus_Horizon_Game
 
         protected override void Update(GameTime gameTime)
         {
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 

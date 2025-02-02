@@ -1,24 +1,20 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Systems
 {
     internal static class OnUpdateSystem
     {
-        public static void Update(World world, GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
-            var entities = world.GetEntitiesWithComponent<OnUpdateComponent>().ToList();
+            var entities = GameM.CurrentScene.World.GetEntitiesWithComponent<OnUpdateComponent>().ToList();
 
             foreach (var entity in entities)
             {
-                var component = world.GetComponentFromEntity<OnUpdateComponent>(entity);
+                var component = GameM.CurrentScene.World.GetComponentFromEntity<OnUpdateComponent>(entity);
 
-                component.onUpdate(world, entity, gameTime);
+                component.onUpdate(entity, gameTime);
             }
         }
     }
