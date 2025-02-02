@@ -14,10 +14,12 @@ namespace Nexus_Horizon_Game.Components
         public bool centered = false;
         public uint spriteLayer; // layer order of sprite
 
-        public SpriteComponent(string textureName, uint spriteLayer = 0, bool centered = false)
+        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false)
         {
-            this.isEmpty = false;
             this.textureName = textureName;
+            this.color = color ?? Color.White;
+            this.sourceRectangle = sourceRectangle;
+            this.scale = scale;
             this.spriteLayer = spriteLayer;
             this.centered = centered;
         }
@@ -40,15 +42,6 @@ namespace Nexus_Horizon_Game.Components
         {
             get => spriteLayer;
             set => spriteLayer = value;
-        }
-
-        public SpriteComponent(string textureName, Color color, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0)
-        {
-            this.textureName = textureName;
-            this.color = color;
-            this.sourceRectangle = sourceRectangle;
-            this.scale = scale;
-            this.spriteLayer = spriteLayer;
         }
 
         /// <inheritdoc/>

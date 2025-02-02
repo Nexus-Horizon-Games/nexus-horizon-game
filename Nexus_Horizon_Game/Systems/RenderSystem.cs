@@ -18,7 +18,7 @@ namespace Nexus_Horizon_Game.Systems
 
                 if (spriteComp.centered)
                 {
-                    spriteComp.position -= Renderer.GetTextureBounds(spriteComp.textureName) / 2.0f;
+                    spriteComp.position -= (Renderer.GetTextureBounds(spriteComp.textureName) * spriteComp.scale) / 2.0f;
                 }
 
                 Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.Z);
