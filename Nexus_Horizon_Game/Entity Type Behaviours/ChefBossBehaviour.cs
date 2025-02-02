@@ -2,6 +2,7 @@
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using System;
+using Nexus_Horizon_Game.Paths;
 using System.Linq;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
@@ -14,6 +15,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private const float EnteringSpeed = 15.0f;
         private const float IdealY = 40.0f;
 
+        private static float timer = 0f;
+        private static IPath some = new CubicCurvePath(new Vector2(0, 0f), new Vector2(0, 80), new Vector2(40, -40), new Vector2(80f, 0f));
+
         public enum ChefBossState : int
         {
             None,
@@ -23,21 +27,28 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Stage2          // the second stage of the fight
         }
 
-        public static void OnUpdate(World world, int thisEntity, GameTime gameTime)
+        public static void OnUpdate(int thisEntity, GameTime gameTime)
         {
-            var state = world.GetComponentFromEntity<StateComponent>(thisEntity);
+            var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(thisEntity);
 
             if ((ChefBossState)state.state == ChefBossState.Start)
             {
-                StartState(world, thisEntity);
+                StartState(thisEntity);
             }
             else if ((ChefBossState)state.state == ChefBossState.EnteringArena)
             {
-                EnteringArenaState(world, thisEntity);
+                EnteringArenaState(thisEntity);
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage1)
             {
-                
+                if (timer < 1f)
+                {
+                    timer += some.GetDeltaT(timer, 1);
+                }
+
+                var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
+                transform.position = some.GetPoint(timer) + new Vector2(60, 60);
+                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, transform);
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
             {
@@ -45,45 +56,45 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
         }
 
-        private static void StartState(World world, int thisEntity)
+        private static void StartState(int thisEntity)
         {
             var timerComp = new TimersComponent([]);
-            timerComp.timers.Add("fire_bullets", new Timer(0.2f, OnFireBullets, (world, thisEntity)));
-            world.AddComponent(thisEntity, timerComp);
+            timerComp.timers.Add("fire_bullets", new Timer(0.2f, OnFireBullets, thisEntity));
+            GameM.CurrentScene.World.AddComponent(thisEntity, timerComp);
 
-            world.SetComponentInEntity(thisEntity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
+            GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
             // Start moving into the arena
-            var body = world.GetComponentFromEntity<PhysicsBody2DComponent>(thisEntity);
+            var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(thisEntity);
             body.Velocity = new Vector2(0.0f, EnteringSpeed);
-            world.SetComponentInEntity(thisEntity, body);
+            GameM.CurrentScene.World.SetComponentInEntity(thisEntity, body);
 
-            world.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.EnteringArena));
+            GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.EnteringArena));
         }
 
-        private static void EnteringArenaState(World world, int thisEntity)
+        private static void EnteringArenaState(int thisEntity)
         {
-            var transform = world.GetComponentFromEntity<TransformComponent>(thisEntity);
+            var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
 
             if (transform.position.Y >= IdealY) // If reached the start y position
             {
-                var body = world.GetComponentFromEntity<PhysicsBody2DComponent>(thisEntity);
+                var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(thisEntity);
                 body.Velocity = Vector2.Zero;
-                world.SetComponentInEntity(thisEntity, body);
+                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, body);
 
-                world.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.Stage1));
-                var timers = world.GetComponentFromEntity<TimersComponent>(thisEntity);
+                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.Stage1));
+                var timers = GameM.CurrentScene.World.GetComponentFromEntity<TimersComponent>(thisEntity);
                 timers.timers["fire_bullets"].Start();
             }
         }
 
         private static void OnFireBullets(GameTime gameTime, object? data)
         {
-            var (world, thisEntity) = ((World, int))data;
+            var thisEntity = (int)data;
 
             var bulletFactory = new BulletFactory(world, "BulletSample");
 
-            var bossPosition = world.GetComponentFromEntity<TransformComponent>(thisEntity).position;
+            var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity).position;
 
             int bullets = 16;
             float arcInterval = MathHelper.TwoPi / bullets;

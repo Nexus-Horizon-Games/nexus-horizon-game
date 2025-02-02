@@ -1,34 +1,34 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
     internal static class Bullet
     {
-        public static void OnUpdate(World world, int thisEntity, GameTime gameTime)
+
+        public static void OnUpdate(int thisEntity, GameTime gameTime)
         {
-            var entityWithPhysics = world.GetEntitiesWithComponent<BulletComponent>();
+            var entityWithPhysics = GameM.CurrentScene.World.GetEntitiesWithComponent<BulletComponent>();
             if (entityWithPhysics is not null)
             {
                 foreach (var entity in entityWithPhysics)
                 {
-                    if (world.EntityHasComponent<TransformComponent>(entity))
+                    if (GameM.CurrentScene.World.EntityHasComponent<TransformComponent>(entity))
                     {
-                        DeleteOnOutOfBounds(world, entity);
+                        DeleteOnOutOfBounds(entity);
                     }
                 }
             }
         }
 
-        private static void DeleteOnOutOfBounds(World world, int entity)
+        private static void DeleteOnOutOfBounds(int entity)
         {
-            TransformComponent transform = world.GetComponentFromEntity<TransformComponent>(entity);
+            TransformComponent transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(entity);
 
             if ((transform.position.X > Renderer.DrawAreaWidth || transform.position.X < 0) ||
                 (transform.position.Y > Renderer.DrawAreaHeight || transform.position.Y < 0))
             {
-                world.DestroyEntity(entity);
+                GameM.CurrentScene.World.DestroyEntity(entity);
             }
         }
     }

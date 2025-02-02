@@ -10,7 +10,6 @@ namespace Nexus_Horizon_Game.Components
             set;
         }
 
-
         /// <summary>
         /// Whether this component is an empty component (ECVS uses this to test if an entity has a component).
         /// </summary>
