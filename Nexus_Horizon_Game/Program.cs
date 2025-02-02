@@ -1,3 +1,3 @@
 ﻿
-using var game = new Nexus_Horizon_Game.Game1();
+using var game = new Nexus_Horizon_Game.GameM();
 game.Run();
