@@ -148,7 +148,7 @@ namespace Nexus_Horizon_Game
         /// <returns> query of components of the type. </returns>
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
-            if (!componentLists.TryGetValue(typeof(T), out var componentList)) { return null; };
+            if (!componentLists.TryGetValue(typeof(T), out var componentList)) { return []; };
 
             return componentList.Cast<T>().Where<T>((component) => !component.IsEmptyComponent());
         }
