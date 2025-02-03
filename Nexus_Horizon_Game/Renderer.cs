@@ -70,7 +70,8 @@ namespace Nexus_Horizon_Game
         /// </summary>
         public static void BeginRender()
         {
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            // SpriteSortMode.Deferred draws in order of drawing
+            spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp);
         }
 
         /// <summary>

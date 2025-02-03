@@ -9,7 +9,7 @@ namespace Nexus_Horizon_Game.Systems
     {
         public static void Draw(GameTime gameTime)
         {
-            var transformAndSpriteComponents = GameM.CurrentScene.World.GetComponentsIntersection<TransformComponent, SpriteComponent>().ToList();
+            var transformAndSpriteComponents = GameM.CurrentScene.World.GetComponentsIntersection<TransformComponent, SpriteComponent>().Where((data) => data.Item2.IsVisible).OrderBy((data) => data.Item2.SpriteLayer);
 
             foreach (var tuple in transformAndSpriteComponents)
             {
