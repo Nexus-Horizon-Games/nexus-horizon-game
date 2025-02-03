@@ -1,12 +1,29 @@
-﻿namespace Nexus_Horizon_Game.Components
+﻿using Nexus_Horizon_Game.EntityFactory;
+
+namespace Nexus_Horizon_Game.Components
 {
     internal struct PlayerComponent : IComponent
     {
         private bool isEmpty;
 
-        public PlayerComponent()
+        private int hitboxVisualEntityID;
+        private BulletFactory bulletFactory;
+
+        public PlayerComponent(int hitboxVisualEntityID)
         {
+            this.hitboxVisualEntityID = hitboxVisualEntityID;
+            this.bulletFactory = new BulletFactory("BulletSample");
             isEmpty = false;
+        }
+
+        public int HitboxVisualEntityID
+        {
+            get => this.hitboxVisualEntityID;
+        }
+
+        public BulletFactory BulletFactory
+        {
+            get => bulletFactory;
         }
 
         bool IComponent.IsEmpty

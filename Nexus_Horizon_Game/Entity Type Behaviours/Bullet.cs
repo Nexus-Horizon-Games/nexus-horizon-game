@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.EntityFactory;
+using System.Xml.Serialization;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -21,6 +23,10 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
         }
 
+        /// <summary>
+        /// deletes the entity of a bullet when out of the radius of the play area
+        /// </summary>
+        /// <param name="entity"></param>
         private static void DeleteOnOutOfBounds(int entity)
         {
             TransformComponent transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(entity);
@@ -30,6 +36,11 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             {
                 GameM.CurrentScene.World.DestroyEntity(entity);
             }
+        }
+
+        private static void FlickerBullet()
+        {
+
         }
     }
 }

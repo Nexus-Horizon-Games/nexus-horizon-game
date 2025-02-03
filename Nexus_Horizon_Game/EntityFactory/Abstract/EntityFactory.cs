@@ -1,4 +1,6 @@
-﻿namespace Nexus_Horizon_Game.EntityFactory
+﻿
+
+namespace Nexus_Horizon_Game.EntityFactory
 {
     /// <summary>
     /// Abstract Factory for entities
@@ -10,5 +12,7 @@
         /// </summary>
         /// <returns> entity ID. </returns>
         public abstract int CreateEntity();
+
+        public abstract void DestroyEntity(int entity);
     }
 }
