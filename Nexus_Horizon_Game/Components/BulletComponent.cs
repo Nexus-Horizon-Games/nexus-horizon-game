@@ -4,9 +4,12 @@
     {
         private bool isEmpty;
 
-        public BulletComponent()
+        private bool flicker;
+
+        public BulletComponent(bool flicker = false)
         {
             isEmpty = false;
+            this.flicker = flicker;
         }
 
         bool IComponent.IsEmpty

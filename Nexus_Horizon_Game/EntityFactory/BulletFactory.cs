@@ -8,6 +8,7 @@ namespace Nexus_Horizon_Game.EntityFactory
     internal class BulletFactory : EntityFactory
     {
         private string textureName;
+
         public BulletFactory(string textureName)
         {
             this.textureName = textureName;
@@ -33,19 +34,24 @@ namespace Nexus_Horizon_Game.EntityFactory
         /// <param name="direction"> the direction the bullet will move (Will be normalized). </param>
         /// <param name="velocity"> the speed the bullet will move in that direction. </param>
         /// <returns> entity id. </returns>
-        public int CreateEntity(Vector2 SpawnPoint, Vector2 direction, float velocity)
+        public int CreateEntity(Vector2 SpawnPoint, Vector2 direction, float velocity, float scale = 0.25f, uint spriteLayer = 0)
         {
             direction.Normalize();
 
             return GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),
               new OnUpdateComponent(Bullet.OnUpdate),
-              new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0, centered: true),
+              new SpriteComponent(textureName, color: Color.White, scale: scale, spriteLayer: spriteLayer, centered: true),
               new PhysicsBody2DComponent()
               {
                   Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
               },
               new BulletComponent() });
+        }
+
+        public override void DestroyEntity(int entity)
+        {
+            GameM.CurrentScene.World.DestroyEntity(entity);
         }
     }
 }
