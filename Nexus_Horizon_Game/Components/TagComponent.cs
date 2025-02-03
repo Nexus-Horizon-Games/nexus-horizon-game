@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nexus_Horizon_Game.Components.Interfaces
+namespace Nexus_Horizon_Game.Components
 {
     internal enum Tag
     {
@@ -13,15 +13,16 @@ namespace Nexus_Horizon_Game.Components.Interfaces
         PROJECTILE,
     }
 
-    internal class TagComponent : IComponent
+    internal struct TagComponent : IComponent
     {
         private bool isEmpty;
 
         private Tag tag;
 
-        public TagComponent()
+        public TagComponent(Tag tag)
         {
             this.isEmpty = false;
+            this.tag = tag;
         }
 
         bool IComponent.IsEmpty
