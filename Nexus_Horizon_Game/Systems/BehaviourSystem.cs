@@ -4,18 +4,15 @@ using System.Linq;
 
 namespace Nexus_Horizon_Game.Systems
 {
-    internal static class TimerSystem
+    internal static class BehaviourSystem
     {
         public static void Update(GameTime gameTime)
         {
-            var components = GameM.CurrentScene.World.GetComponents<TimersComponent>();
+            var components = GameM.CurrentScene.World.GetComponents<BehaviourComponent>().ToList();
 
             foreach (var component in components)
             {
-                foreach (var timer in component.timers)
-                {
-                    timer.Value.Update(gameTime);
-                }
+                component.behaviour.OnUpdate(gameTime);
             }
         }
     }

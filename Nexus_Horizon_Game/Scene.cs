@@ -24,7 +24,6 @@ namespace Nexus_Horizon_Game
 
         public void Initialize()
         {
-
         }
 
         public void LoadContent()
@@ -39,6 +38,7 @@ namespace Nexus_Horizon_Game
             Player.Update(gameTime);
             OnUpdateSystem.Update(gameTime);
             TimerSystem.Update(gameTime);
+            BehaviourSystem.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime)
