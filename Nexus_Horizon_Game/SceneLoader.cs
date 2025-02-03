@@ -12,12 +12,9 @@ namespace Nexus_Horizon_Game
             currentScene = new Scene();
             // TODO: parse the scene from JSON here
 
-            int npc0 = currentScene.World.CreateEntity();
-            currentScene.World.AddComponent(npc0, new TransformComponent(new Vector2(0.0f, 0.0f)));
-            currentScene.World.AddComponent(npc0, new SpriteComponent("guinea_pig", Color.White, scale: 1.0f));
-
+            // For Testing
             int npc1 = currentScene.World.CreateEntity();
-            var sprite = new SpriteComponent("guinea_pig");
+            var sprite = new SpriteComponent("guinea_pig", spriteLayer: 100);
             sprite.scale = 1.0f;
             currentScene.World.AddComponent(npc1, new TransformComponent(new Vector2(5.0f, 10.0f)));
             currentScene.World.AddComponent(npc1, sprite);

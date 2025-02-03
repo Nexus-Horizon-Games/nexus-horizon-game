@@ -35,6 +35,7 @@ namespace Nexus_Horizon_Game
         public void Update(GameTime gameTime)
         {
             PhysicsSystem.Update(gameTime);
+            InputSystem.Update();
             Player.Update(gameTime);
             OnUpdateSystem.Update(gameTime);
             TimerSystem.Update(gameTime);
