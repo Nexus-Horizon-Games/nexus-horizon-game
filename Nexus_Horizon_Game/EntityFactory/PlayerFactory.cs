@@ -22,13 +22,13 @@ namespace Nexus_Horizon_Game.EntityFactory
             int hitboxVisualEntityID = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
                new TransformComponent(new Vector2(100.0f, 100.0f)),
-               new SpriteComponent("PlayerDot", centered: true, scale: 0.01f, spriteLayer: 100, isVisible: false)
+               new SpriteComponent("PlayerDot", centered: true, scale: 0.01f, spriteLayer: 101, isVisible: false)
             });
 
             int playerEntityID = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { 
               new TransformComponent(new Vector2(100.0f, 100.0f)),
-              new SpriteComponent("guinea_pig", centered: true, scale: 1f),
+              new SpriteComponent("guinea_pig", centered: true, scale: 1f, spriteLayer: 100),
               new PhysicsBody2DComponent(),
               new PlayerComponent(hitboxVisualEntityID),
               new TagComponent(Tag.PLAYER) 

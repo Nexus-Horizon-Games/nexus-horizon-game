@@ -117,8 +117,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
             if(InputSystem.IsKeyDown(Keys.Z))
             {
-                bulletFactory.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.3f);
-                bulletFactory.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.3f);
+                bulletFactory.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+                bulletFactory.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
             }
         }
 
