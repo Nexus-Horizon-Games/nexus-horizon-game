@@ -101,8 +101,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 physicsBodyComponent.Velocity = new Vector2(xSpeed * slowMultiplier, ySpeed * slowMultiplier);
             }
 
-            Debug.WriteLine(physicsBodyComponent.Velocity);
-
             return physicsBodyComponent;
         }
 

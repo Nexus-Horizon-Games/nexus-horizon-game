@@ -38,15 +38,18 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             direction.Normalize();
 
-            return GameM.CurrentScene.World.CreateEntity(new List<IComponent>
+            int entity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),
-              new OnUpdateComponent(Bullet.OnUpdate),
               new SpriteComponent(textureName, color: Color.White, scale: scale, spriteLayer: spriteLayer, centered: true),
               new PhysicsBody2DComponent()
               {
                   Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
               },
               new BulletComponent() });
+
+
+            GameM.CurrentScene.World.AddComponent(entity, new BehaviourComponent(new Bullet(entity)));
+            return entity;
         }
 
         public override void DestroyEntity(int entity)
