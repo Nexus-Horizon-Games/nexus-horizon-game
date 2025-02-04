@@ -12,8 +12,11 @@ namespace Nexus_Horizon_Game.Timers
     {
         private float interval = 0.0f;
 
-        private bool stopOnInterval;
+        private float? stopAfter;
+
         private double startTime;
+        private double startIntervalTime;
+
         private object data = null;
 
         /// <summary>
@@ -22,17 +25,18 @@ namespace Nexus_Horizon_Game.Timers
         /// <param name="timeInterval"> the time between each invoke. </param>
         /// <param name="onElapsed"> listener after timer expires. </param>
         /// <param name="data"> data wanted to set through to listener. </param>
-        public LoopTimer(float timeInterval, OnElapsed onElapsed, object data = null, bool stopOnInterval = false)
+        public LoopTimer(float timeInterval, OnElapsed onElapsed, object data = null, float? stopAfter = null)
         {
             interval = timeInterval;
             OnElapsedEvent += onElapsed;
             this.data = data;
-            this.stopOnInterval = stopOnInterval;
+            this.stopAfter = stopAfter;
         }
 
         public override void Start()
         {
             startTime = 0.0;
+            startIntervalTime = 0.0;
             isOn = true;
         }
 
@@ -43,17 +47,18 @@ namespace Nexus_Horizon_Game.Timers
                 return;
             }
 
+            startIntervalTime += gameTime.ElapsedGameTime.TotalSeconds;
             startTime += gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (startTime > interval)
+            if (startIntervalTime > interval)
             {
                 InvokeElapsedEvent(gameTime, data);
-                startTime = 0.0;
+                startIntervalTime = 0.0;
+            }
 
-                if (stopOnInterval)
-                {
-                    Stop();
-                }
+            if (startTime > stopAfter)
+            {
+                Stop();
             }
         }
     }
