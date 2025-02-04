@@ -19,7 +19,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         /// <returns> entity ID. </returns>
         public override int CreateEntity()
         {
-            int hitboxVisualEntityID = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
+            int hitboxEntityID = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
                new TransformComponent(new Vector2(100.0f, 100.0f)),
                new SpriteComponent("PlayerDot", centered: true, scale: 0.01f, spriteLayer: 101, isVisible: false)
@@ -30,20 +30,25 @@ namespace Nexus_Horizon_Game.EntityFactory
               new TransformComponent(new Vector2(100.0f, 100.0f)),
               new SpriteComponent("guinea_pig", centered: true, scale: 1f, spriteLayer: 100),
               new PhysicsBody2DComponent(),
-              new PlayerComponent(hitboxVisualEntityID),
               new TagComponent(Tag.PLAYER) 
             });
+
+            GameM.CurrentScene.World.AddComponent(playerEntityID, new BehaviourComponent(new Player(playerEntityID, hitboxEntityID)));
 
             return playerEntityID;
         }
 
         public override void DestroyEntity(int entity)
         {
-            if (GameM.CurrentScene.World.EntityHasComponent<PlayerComponent>(entity))
+            if (GameM.CurrentScene.World.EntityHasComponent<BehaviourComponent>(entity, out BehaviourComponent behaviourComponent)) 
             {
-                GameM.CurrentScene.World.DestroyEntity(GameM.CurrentScene.World.GetComponentFromEntity<PlayerComponent>(entity).HitboxVisualEntityID);
-                GameM.CurrentScene.World.DestroyEntity(entity);
-                return;
+                if (behaviourComponent.Behaviour is Player player)
+                {
+                    GameM.CurrentScene.World.DestroyEntity(player.HitBoxEntityID);
+                    GameM.CurrentScene.World.DestroyEntity(entity);
+
+                    return;
+                }   
             }
 
             throw new ArgumentException("Cannot use PlayerFactory to destroy non player entity");

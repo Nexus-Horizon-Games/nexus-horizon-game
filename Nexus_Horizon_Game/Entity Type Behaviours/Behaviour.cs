@@ -9,11 +9,16 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
     internal abstract class Behaviour
     {
-        protected int thisEntity = 0;
+        private int entity = 0;
 
-        protected Behaviour(int thisEntity)
+        protected Behaviour(int entity)
         {
-            this.thisEntity = thisEntity;
+            this.entity = entity;
+        }
+
+        protected int Entity
+        {
+            get => entity;
         }
 
         public virtual void OnUpdate(GameTime gameTime) { }

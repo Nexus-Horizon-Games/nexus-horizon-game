@@ -12,7 +12,7 @@ namespace Nexus_Horizon_Game.Systems
 
             foreach (var component in components)
             {
-                component.behaviour.OnUpdate(gameTime);
+                component.Behaviour.OnUpdate(gameTime);
             }
         }
     }
