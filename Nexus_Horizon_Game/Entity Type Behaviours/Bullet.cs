@@ -28,10 +28,5 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 GameM.CurrentScene.World.DestroyEntity(entity);
             }
         }
-
-        private static void FlickerBullet()
-        {
-
-        }
     }
 }

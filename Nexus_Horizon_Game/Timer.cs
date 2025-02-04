@@ -12,14 +12,27 @@ namespace Nexus_Horizon_Game
         private OnElapsed onElapsed;
 
         private bool isOn = false;
+        private bool stopOnInterval;
         private double startTime;
         private object? data = null;
 
-        public Timer(float timeInterval, OnElapsed onElapsed, object? data = null)
+        /// <summary>
+        /// initializes a timer.
+        /// </summary>
+        /// <param name="timeInterval"> the time between each invoke. </param>
+        /// <param name="onElapsed"> listener after timer expires. </param>
+        /// <param name="data"> data wanted to set through to listener. </param>
+        public Timer(float timeInterval, OnElapsed onElapsed, object? data = null, bool stopOnInterval = false)
         {
             interval = timeInterval;
             this.onElapsed = onElapsed;
             this.data = data;
+            this.stopOnInterval = stopOnInterval;
+        }
+
+        public bool IsOn
+        {
+            get => isOn;
         }
 
         public void Start()
@@ -28,9 +41,14 @@ namespace Nexus_Horizon_Game
             isOn = true;
         }
 
-        public void Stop()
+        /// <summary>
+        /// stops the timer.
+        /// </summary>
+        /// <returns> the time the timer was stopped at. </returns>
+        public double Stop()
         {
             isOn = false;
+            return startTime;
         }
 
         public void Update(GameTime gameTime)
@@ -44,8 +62,13 @@ namespace Nexus_Horizon_Game
 
             if (startTime > interval)
             {
-                onElapsed.Invoke(gameTime, data);
-                startTime -= interval;
+                onElapsed?.Invoke(gameTime, data);
+                startTime = 0.0; // why -= interval? could be a few microseconds off
+                
+                if (stopOnInterval)
+                {
+                    this.Stop();
+                }
             }
         }
     }

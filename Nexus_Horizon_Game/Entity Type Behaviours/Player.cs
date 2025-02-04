@@ -31,13 +31,19 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private float yBulletOffset = -2f;
         private float bulletSpeed = 50f;
         private static BulletFactory hamsterBallBullets = new BulletFactory("BulletSample");
-
+        private Timer bulletTimerConstant;
+        private Timer bulletTimerEnd;
+        private Timer bulletTimerEndShots;
+        private const float bulletTimeInterval = 0.05f;
         // collision
         private int hitboxEntityID;
 
         public Player(int playerEntity, int hitboxEntity) : base(playerEntity)
         {
             this.hitboxEntityID = hitboxEntity;
+            this.bulletTimerConstant = new Timer(bulletTimeInterval, this.ShotConstant, null);
+            this.bulletTimerEnd = new Timer(0.2f, null, null, stopOnInterval: true);
+            this.bulletTimerEndShots = new Timer(bulletTimeInterval, this.ShotConstant, null);
             AddListeners();
         }
         
@@ -67,6 +73,10 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
                 //projectiles
                 ContinuousProjectiles();
+
+                this.bulletTimerConstant.Update(gameTime);
+                this.bulletTimerEnd.Update(gameTime);
+                this.bulletTimerEndShots.Update(gameTime);
             }
         }
 
@@ -113,13 +123,38 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            if(InputSystem.IsKeyDown(Keys.Z))
+            if(InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn && !this.bulletTimerEnd.IsOn)
             {
-                hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
-                hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+                bulletTimerConstant.Start();
+            }
+            else if(InputSystem.IsKeyUp(Keys.Z) && this.bulletTimerConstant.IsOn)
+            {
+                bulletTimerConstant.Stop();
+                bulletTimerEnd.Start();
+            }
+
+            // shoot projectiles at then end.
+            if (this.bulletTimerEnd.IsOn && !this.bulletTimerEndShots.IsOn)
+            {
+                this.bulletTimerEndShots.Start();
+            }
+            else if (!this.bulletTimerEnd.IsOn && this.bulletTimerEndShots.IsOn)
+            {
+                this.bulletTimerEndShots.Stop();
             }
         }
 
+        private void ShotConstant(GameTime gameTime, object? data)
+        {
+            Vector2 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+
+            Vector2 shotDirection = new Vector2(0, -1);
+            Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
+            Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
+
+            hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+            hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+        }
 
         /// <summary>
         ///  Slows the player by adding a multiplier to the velocity 
