@@ -8,81 +8,87 @@ using System.Diagnostics;
 using System.ComponentModel.Design;
 using System.Threading;
 using System.Runtime.InteropServices.Marshalling;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
-    internal static class Player
+    internal class Player : Behaviour, IDisposable
     {
+        // For Disposing
+        private bool _disposed = false; // whenever the player is disposed this will be true.
+        private List<(Keys ,Action<Keys>)> keyDownListeners = new List<(Keys, Action<Keys>)>();
+        private List<(Keys, Action<Keys>)> keyUpListeners = new List<(Keys, Action<Keys>)>();
+
         // movement
-        private const float baseSpeed = 12f;
-        private static float slowMultiplier = 1f;
-        private static float xSpeed = 0f;
-        private static float ySpeed = 0f;
+        private const float baseSpeed = 13f;
+        private const float slowMultiplier = 0.40f;
+        private float activeMultiplier = 1f;
+        private float xSpeed = 0f;
+        private float ySpeed = 0f;
 
         // bullets
-        private static float xBulletOffset = 4f;
-        private static float yBulletOffset = -2f;
-        private static float bulletSpeed = 50f;
+        private float xBulletOffset = 4f;
+        private float yBulletOffset = -2f;
+        private float bulletSpeed = 50f;
+        private static BulletFactory hamsterBallBullets = new BulletFactory("BulletSample");
+        private Timer bulletTimerConstant;
+        private Timer bulletTimerEnd;
+        private Timer bulletTimerEndShots;
+        private const float bulletTimeInterval = 0.05f;
+        // collision
+        private int hitboxEntityID;
 
-        static Player() 
+        public Player(int playerEntity, int hitboxEntity) : base(playerEntity)
         {
+            this.hitboxEntityID = hitboxEntity;
+            this.bulletTimerConstant = new Timer(bulletTimeInterval, this.ShotConstant, null);
+            this.bulletTimerEnd = new Timer(0.2f, null, null, stopOnInterval: true);
+            this.bulletTimerEndShots = new Timer(bulletTimeInterval, this.ShotConstant, null);
             AddListeners();
         }
+        
+        /// <summary>
+        /// entity id of player collider.
+        /// </summary>
+        public int HitBoxEntityID
+        {
+            get => HitBoxEntityID;
+        }
+
 
         /// <summary>
         /// updates the player only if it exists
         /// </summary>
-        /// <param name="world"> world data of scene </param>
         /// <param name="gameTime"> the gametime of the running program. </param>
-        public static void Update(GameTime gameTime)
+        public override void OnUpdate(GameTime gameTime)
         {
-            foreach (int playerEntity in GameM.CurrentScene.World.GetEntitiesWithComponent<PlayerComponent>())
-            { 
-                if (!GameM.CurrentScene.World.IsEntityAlive(playerEntity)) { continue; }
+            if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity))
+            {
+                // movement
+                PhysicsBody2DComponent physicsBodyComponent = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
+                GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, this.Movement(physicsBodyComponent));
 
-                if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(playerEntity))
-                {
-                    // movement
-                    PhysicsBody2DComponent physicsBodyComponent = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(playerEntity);
-                    GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(playerEntity, Player.Movement(physicsBodyComponent));
+                // updates the position of the visual
+                UpdateCollisionVisualPosition();
 
-                    // updates the position of the visual
-                    UpdateCollisionVisualPosition(playerEntity);
+                //projectiles
+                ContinuousProjectiles();
 
-                    //projectiles
-                    ContinuousProjectiles(playerEntity);
-                }
+                this.bulletTimerConstant.Update(gameTime);
+                this.bulletTimerEnd.Update(gameTime);
+                this.bulletTimerEndShots.Update(gameTime);
             }
         }
 
-        private static void AddListeners()
+        /// <summary>
+        /// Updates the viusal reperesentation position onto the player
+        /// </summary>
+        /// <param name="playerEntity"></param>
+        private void UpdateCollisionVisualPosition()
         {
-            // add movement
-            InputSystem.AddOnKeyDownListener(Keys.Right, (key) => {  xSpeed += baseSpeed; });
-            InputSystem.AddOnKeyDownListener(Keys.Left, (key) => { xSpeed -= baseSpeed; });
-            InputSystem.AddOnKeyDownListener(Keys.Up, (key) => { ySpeed -= baseSpeed; });
-            InputSystem.AddOnKeyDownListener(Keys.Down, (key) => { ySpeed += baseSpeed; });
-            
-            // add slow
-            InputSystem.AddOnKeyDownListener(Keys.LeftShift, TurnOnSlowAbility);
+            TransformComponent playerTransform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity);
 
-            // remove movement
-            InputSystem.AddOnKeyUpListener(Keys.Right, (key) => { xSpeed -= baseSpeed; });
-            InputSystem.AddOnKeyUpListener(Keys.Left, (key) => { xSpeed += baseSpeed; });
-            InputSystem.AddOnKeyUpListener(Keys.Up, (key) => { ySpeed += baseSpeed; });
-            InputSystem.AddOnKeyUpListener(Keys.Down, (key) => { ySpeed -= baseSpeed; });
-
-            // remove slow
-            InputSystem.AddOnKeyUpListener(Keys.LeftShift, TurnOffSlowAbility);
-            // InputSystem.AddOnKeyUpListener(Keys.Z, OnStopShooting);
-        }
-
-        private static void UpdateCollisionVisualPosition(int playerEntity)
-        {
-            PlayerComponent playerComponent = GameM.CurrentScene.World.GetComponentFromEntity<PlayerComponent>(playerEntity);
-            TransformComponent playerTransform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(playerEntity);
-
-            GameM.CurrentScene.World.SetComponentInEntity<TransformComponent>(playerComponent.HitboxVisualEntityID, playerTransform);
+            GameM.CurrentScene.World.SetComponentInEntity<TransformComponent>(this.hitboxEntityID, playerTransform);
         }
 
         /// <summary>
@@ -90,57 +96,183 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// </summary>
         /// <param name="physicsBodyComponent"> current physicsBody Component. </param>
         /// <returns> result of movement physicsBodyComponent. </returns>
-        private static PhysicsBody2DComponent Movement(PhysicsBody2DComponent physicsBodyComponent)
+        private PhysicsBody2DComponent Movement(PhysicsBody2DComponent physicsBodyComponent)
         {
-            if (MathF.Abs(xSpeed) == MathF.Abs(ySpeed))
+            if (MathF.Abs(xSpeed) == MathF.Abs(ySpeed)) 
             {
-                physicsBodyComponent.Velocity = new Vector2(xSpeed * MathF.Cos(float.Pi/4) * slowMultiplier, ySpeed * MathF.Sin(float.Pi / 4) * slowMultiplier);
+                // fixes diagional movement speed
+                physicsBodyComponent.Velocity = new Vector2(xSpeed * MathF.Cos(float.Pi/4) * activeMultiplier, ySpeed * MathF.Sin(float.Pi / 4) * activeMultiplier);
             }
             else
             {
-                physicsBodyComponent.Velocity = new Vector2(xSpeed * slowMultiplier, ySpeed * slowMultiplier);
+                physicsBodyComponent.Velocity = new Vector2(xSpeed * activeMultiplier, ySpeed * activeMultiplier);
             }
 
             return physicsBodyComponent;
         }
 
-        private static void ContinuousProjectiles(int playerEntity)
+        /// <summary>
+        /// shoots bullets using a timer and only shoots a bullet every time that timer reaches an end.
+        /// </summary>
+        /// <param name="playerEntity">  </param>
+        private void ContinuousProjectiles()
         {
-            BulletFactory bulletFactory = GameM.CurrentScene.World.GetComponentFromEntity<PlayerComponent>(playerEntity).BulletFactory;
-            Vector2 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(playerEntity).position;
+            Vector2 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
 
             Vector2 shotDirection = new Vector2(0, -1);
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            if(InputSystem.IsKeyDown(Keys.Z))
+            if(InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn && !this.bulletTimerEnd.IsOn)
             {
-                bulletFactory.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.3f);
-                bulletFactory.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.3f);
+                bulletTimerConstant.Start();
+            }
+            else if(InputSystem.IsKeyUp(Keys.Z) && this.bulletTimerConstant.IsOn)
+            {
+                bulletTimerConstant.Stop();
+                bulletTimerEnd.Start();
+            }
+
+            // shoot projectiles at then end.
+            if (this.bulletTimerEnd.IsOn && !this.bulletTimerEndShots.IsOn)
+            {
+                this.bulletTimerEndShots.Start();
+            }
+            else if (!this.bulletTimerEnd.IsOn && this.bulletTimerEndShots.IsOn)
+            {
+                this.bulletTimerEndShots.Stop();
             }
         }
 
-        private static void TurnOnSlowAbility(Keys key)
+        private void ShotConstant(GameTime gameTime, object? data)
         {
-            slowMultiplier = 0.5f;
-            foreach (int playerEntity in GameM.CurrentScene.World.GetEntitiesWithComponent<PlayerComponent>())
+            Vector2 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+
+            Vector2 shotDirection = new Vector2(0, -1);
+            Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
+            Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
+
+            hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+            hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+        }
+
+        /// <summary>
+        ///  Slows the player by adding a multiplier to the velocity 
+        /// </summary>
+        /// <param name="key"> the key tied to the slow ability. </param>
+        private void TurnOnSlowAbility(Keys key)
+        {
+            this.activeMultiplier = Player.slowMultiplier;
+
+            SpriteComponent hitboxSpriteComponent = GameM.CurrentScene.World.GetComponentFromEntity<SpriteComponent>(hitboxEntityID);
+            hitboxSpriteComponent.isVisible = true;
+            GameM.CurrentScene.World.SetComponentInEntity<SpriteComponent>(hitboxEntityID, hitboxSpriteComponent);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"> the key tied to the slow ability. </param>
+        private void TurnOffSlowAbility(Keys key)
+        {
+            this.activeMultiplier = 1f;
+
+            SpriteComponent hitboxSpriteComponent = GameM.CurrentScene.World.GetComponentFromEntity<SpriteComponent>(hitboxEntityID);
+            hitboxSpriteComponent.isVisible = false;
+            GameM.CurrentScene.World.SetComponentInEntity<SpriteComponent>(hitboxEntityID, hitboxSpriteComponent);
+        }
+
+        /// <summary>
+        /// adds all the listeners need for a player
+        /// </summary>
+        private void AddListeners()
+        {
+            Action<Keys> action = null;
+
+            // add movement
+            InputSystem.AddOnKeyDownListener(Keys.Right, action = (key) => { xSpeed += baseSpeed; });
+            keyDownListeners.Add((Keys.Right, action));
+            InputSystem.AddOnKeyDownListener(Keys.Left, action = (key) => { xSpeed -= baseSpeed; });
+            keyDownListeners.Add((Keys.Left, action));
+            InputSystem.AddOnKeyDownListener(Keys.Up, action = (key) => { ySpeed -= baseSpeed; });
+            keyDownListeners.Add((Keys.Up, action));
+            InputSystem.AddOnKeyDownListener(Keys.Down, action = (key) => { ySpeed += baseSpeed; });
+            keyDownListeners.Add((Keys.Down, action));
+
+            // add slow
+            InputSystem.AddOnKeyDownListener(Keys.LeftShift, action = TurnOnSlowAbility);
+            keyDownListeners.Add((Keys.LeftShift, action));
+
+            // remove movement
+            InputSystem.AddOnKeyUpListener(Keys.Right, action = (key) => { xSpeed -= baseSpeed; });
+            keyUpListeners.Add((Keys.Right, action));
+            InputSystem.AddOnKeyUpListener(Keys.Left, action = (key) => { xSpeed += baseSpeed; });
+            keyUpListeners.Add((Keys.Left, action));
+            InputSystem.AddOnKeyUpListener(Keys.Up, action = (key) => { ySpeed += baseSpeed; });
+            keyUpListeners.Add((Keys.Up, action));
+            InputSystem.AddOnKeyUpListener(Keys.Down, action = (key) => { ySpeed -= baseSpeed; });
+            keyUpListeners.Add((Keys.Down, action));
+
+            // remove slow
+            InputSystem.AddOnKeyUpListener(Keys.LeftShift, action = TurnOffSlowAbility);
+            keyUpListeners.Add((Keys.LeftShift, action));
+
+            // InputSystem.AddOnKeyUpListener(Keys.Z, OnStopShooting);
+        }
+
+        /// <summary>
+        /// Deconstuctor (known as finalizer by C#)
+        /// </summary>
+        ~Player()
+        {
+            this.Dispose(isDisposedManually: false);
+        }
+
+        /// <summary>
+        /// disposes of the instances disposing of all necessary managed and unmanaged resources
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(isDisposedManually: true);
+            GC.SuppressFinalize(this); // stops the finalizer (deconstuctor) from being called
+        }
+
+        /// <summary>
+        /// disposes of the unmanaged and managed resources used by player
+        /// </summary>
+        /// <param name="isDisposedManually"> true when manually disposing of instance. </param>
+        protected virtual void Dispose(bool isDisposedManually)
+        {
+            // if instance has not been disposed already go ahead and dispose
+            if(!_disposed)
             {
-                PlayerComponent playerComponent = GameM.CurrentScene.World.GetComponentFromEntity<PlayerComponent>(playerEntity);
-                SpriteComponent collisionVisualSpriteComponent = GameM.CurrentScene.World.GetComponentFromEntity<SpriteComponent>(playerComponent.HitboxVisualEntityID);
-                collisionVisualSpriteComponent.isVisible = true;
-                GameM.CurrentScene.World.SetComponentInEntity<SpriteComponent>(playerComponent.HitboxVisualEntityID, collisionVisualSpriteComponent);
+                // if manually disposing go ahead and dispose managed resources
+                if (isDisposedManually)
+                {
+                    // cleaning up managed resources (Has-A Relationship)
+                }
+
+                // cleaning up unmanaged resources (Is-Used-By Relationship)
+                this.DisposeListenersUMR();
+
+                _disposed = true;
             }
         }
 
-        private static void TurnOffSlowAbility(Keys key)
+        /// <summary>
+        /// unsubscribes listeners from the input system
+        /// </summary>
+        private void DisposeListenersUMR()
         {
-            slowMultiplier = 1f;
-            foreach (int playerEntity in GameM.CurrentScene.World.GetEntitiesWithComponent<PlayerComponent>())
+            // add movement
+            foreach ((Keys, Action<Keys>) keyDownListener in this.keyDownListeners)
             {
-                PlayerComponent playerComponent = GameM.CurrentScene.World.GetComponentFromEntity<PlayerComponent>(playerEntity);
-                SpriteComponent collisionVisualSpriteComponent = GameM.CurrentScene.World.GetComponentFromEntity<SpriteComponent>(playerComponent.HitboxVisualEntityID);
-                collisionVisualSpriteComponent.isVisible = false;
-                GameM.CurrentScene.World.SetComponentInEntity<SpriteComponent>(playerComponent.HitboxVisualEntityID, collisionVisualSpriteComponent);
+                InputSystem.RemoveOnKeyDownListener(keyDownListener.Item1, keyDownListener.Item2);
+            }
+
+            foreach ((Keys, Action<Keys>) keyUpListener in this.keyUpListeners)
+            {
+                InputSystem.RemoveOnKeyUpListener(keyUpListener.Item1, keyUpListener.Item2);
             }
         }
 

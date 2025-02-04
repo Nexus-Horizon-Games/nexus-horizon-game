@@ -7,12 +7,17 @@ namespace Nexus_Horizon_Game.Components
     {
         private bool isEmpty;
 
-        public Behaviour behaviour;
+        private Behaviour behaviour = null;
 
         public BehaviourComponent(Behaviour behaviour)
         {
             this.isEmpty = false;
             this.behaviour = behaviour;
+        }
+
+        public Behaviour Behaviour
+        {
+            get => behaviour;   
         }
 
         bool IComponent.IsEmpty
