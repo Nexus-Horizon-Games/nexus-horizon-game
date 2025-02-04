@@ -29,7 +29,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private float bulletSpeed = 50f;
         private static BulletFactory hamsterBallBullets = new BulletFactory("BulletSample");
         private Timer bulletTimerConstant;
-        private Timer bulletTimerEnd;
         private Timer bulletTimerEndShots;
         private const float bulletTimeInterval = 0.05f;
         // collision
@@ -38,9 +37,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         public Player(int playerEntity, int hitboxEntity) : base(playerEntity)
         {
             this.hitboxEntityID = hitboxEntity;
-            this.bulletTimerConstant = new LoopTimer(bulletTimeInterval, this.ShotConstant, null);
-            this.bulletTimerEnd = new LoopTimer(0.2f, null, null, stopOnInterval: true);
-            this.bulletTimerEndShots = new LoopTimer(bulletTimeInterval, this.ShotConstant, null);
+            this.bulletTimerConstant = new LoopTimer(bulletTimeInterval, this.ShotConstant);
+            this.bulletTimerEndShots = new LoopTimer(bulletTimeInterval, this.ShotConstant, stopAfter: 0.2f);
             AddListeners();
         }
         
@@ -72,7 +70,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 ContinuousProjectiles();
 
                 this.bulletTimerConstant.Update(gameTime);
-                this.bulletTimerEnd.Update(gameTime);
                 this.bulletTimerEndShots.Update(gameTime);
             }
         }
@@ -120,24 +117,14 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            if(InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn && !this.bulletTimerEnd.IsOn)
+            if(InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn)
             {
                 bulletTimerConstant.Start();
             }
             else if(InputSystem.IsKeyUp(Keys.Z) && this.bulletTimerConstant.IsOn)
             {
                 bulletTimerConstant.Stop();
-                bulletTimerEnd.Start();
-            }
-
-            // shoot projectiles at then end.
-            if (this.bulletTimerEnd.IsOn && !this.bulletTimerEndShots.IsOn)
-            {
-                this.bulletTimerEndShots.Start();
-            }
-            else if (!this.bulletTimerEnd.IsOn && this.bulletTimerEndShots.IsOn)
-            {
-                this.bulletTimerEndShots.Stop();
+                bulletTimerEndShots.Start();
             }
         }
 
