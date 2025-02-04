@@ -9,18 +9,22 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     /// <summary>
     /// Class that contains the scripts and behavior of the chef boss (the final boss).
     /// </summary>
-    internal static class ChefBossBehaviour
+    internal class ChefBossBehaviour : Behaviour
     {
         private const float EnteringSpeed = 5.0f;
         private const float IdealY = 40.0f;
 
-        private static float timer = 0f;
-        private static IPath some = new MultiPath([
+        private float timer = 0f;
+        private IPath some = new MultiPath([
             new CubicCurvePath(new Vector2(0, 0f), new Vector2(0, 80), new Vector2(40, -40), new Vector2(80f, 0f)),
             new QuadraticCurvePath(new Vector2(80.0f, 0f), new Vector2(40f, -40.0f), new Vector2(0f, 0f)),
             new LinePath(new Vector2(0f, 0f), new Vector2(80f, 80f))
             ]
             );
+
+        public ChefBossBehaviour(int thisEntity) : base(thisEntity)
+        {
+        }
 
         public enum ChefBossState : int
         {
@@ -31,17 +35,17 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Stage2          // the second stage of the fight
         }
 
-        public static void OnUpdate(int thisEntity, GameTime gameTime)
+        public override void OnUpdate(GameTime gameTime)
         {
             var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(thisEntity);
 
             if ((ChefBossState)state.state == ChefBossState.Start)
             {
-                StartState(thisEntity);
+                StartState();
             }
             else if ((ChefBossState)state.state == ChefBossState.EnteringArena)
             {
-                EnteringArenaState(thisEntity);
+                EnteringArenaState();
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage1)
             {
@@ -60,7 +64,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
         }
 
-        private static void StartState(int thisEntity)
+        private void StartState()
         {
             var timerComp = new TimersComponent([]);
             timerComp.timers.Add("fire_bullets", new Timer(0.4f, OnFireBullets, thisEntity));
@@ -76,7 +80,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.EnteringArena));
         }
 
-        private static void EnteringArenaState(int thisEntity)
+        private void EnteringArenaState()
         {
             var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
 
@@ -92,10 +96,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
         }
 
-        private static void OnFireBullets(GameTime gameTime, object? data)
+        private void OnFireBullets(GameTime gameTime, object? data)
         {
-            var thisEntity = (int)data;
-
             var bulletFactory = new BulletFactory("BulletSample");
 
             var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity).position;
