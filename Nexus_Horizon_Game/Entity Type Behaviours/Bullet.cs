@@ -1,33 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.EntityFactory;
-using System.Xml.Serialization;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
-    internal static class Bullet
+    internal class Bullet : Behaviour
     {
-
-        public static void OnUpdate(int thisEntity, GameTime gameTime)
+        public Bullet(int thisEntity) : base(thisEntity)
         {
-            var entityWithPhysics = GameM.CurrentScene.World.GetEntitiesWithComponent<BulletComponent>();
-            if (entityWithPhysics is not null)
-            {
-                foreach (var entity in entityWithPhysics)
-                {
-                    if (GameM.CurrentScene.World.EntityHasComponent<TransformComponent>(entity))
-                    {
-                        DeleteOnOutOfBounds(entity);
-                    }
-                }
-            }
+        }
+
+        public override void OnUpdate(GameTime gameTime)
+        {
+            DeleteOnOutOfBounds(thisEntity);
         }
 
         /// <summary>
         /// deletes the entity of a bullet when out of the radius of the play area
         /// </summary>
         /// <param name="entity"></param>
-        private static void DeleteOnOutOfBounds(int entity)
+        private void DeleteOnOutOfBounds(int entity)
         {
             TransformComponent transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(entity);
 
