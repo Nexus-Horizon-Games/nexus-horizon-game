@@ -4,11 +4,8 @@ using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using System;
 using Nexus_Horizon_Game.Systems;
-using System.Diagnostics;
-using System.ComponentModel.Design;
-using System.Threading;
-using System.Runtime.InteropServices.Marshalling;
 using System.Collections.Generic;
+using Nexus_Horizon_Game.Timers;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -41,9 +38,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         public Player(int playerEntity, int hitboxEntity) : base(playerEntity)
         {
             this.hitboxEntityID = hitboxEntity;
-            this.bulletTimerConstant = new Timer(bulletTimeInterval, this.ShotConstant, null);
-            this.bulletTimerEnd = new Timer(0.2f, null, null, stopOnInterval: true);
-            this.bulletTimerEndShots = new Timer(bulletTimeInterval, this.ShotConstant, null);
+            this.bulletTimerConstant = new LoopTimer(bulletTimeInterval, this.ShotConstant, null);
+            this.bulletTimerEnd = new LoopTimer(0.2f, null, null, stopOnInterval: true);
+            this.bulletTimerEndShots = new LoopTimer(bulletTimeInterval, this.ShotConstant, null);
             AddListeners();
         }
         

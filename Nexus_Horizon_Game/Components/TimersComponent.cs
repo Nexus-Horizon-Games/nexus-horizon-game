@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Nexus_Horizon_Game.Timers;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.Components
 {

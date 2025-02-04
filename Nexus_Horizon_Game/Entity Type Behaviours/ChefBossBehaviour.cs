@@ -2,6 +2,7 @@
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Paths;
+using Nexus_Horizon_Game.Timers;
 using System;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
@@ -13,14 +14,11 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     {
         private const float EnteringSpeed = 5.0f;
         private const float IdealY = 40.0f;
+        private const int CircleBulletsCount = 16;
 
-        private float timer = 0f;
-        private IPath some = new MultiPath([
-            new CubicCurvePath(new Vector2(0, 0f), new Vector2(0, 80), new Vector2(40, -40), new Vector2(80f, 0f)),
-            new QuadraticCurvePath(new Vector2(80.0f, 0f), new Vector2(40f, -40.0f), new Vector2(0f, 0f)),
-            new LinePath(new Vector2(0f, 0f), new Vector2(80f, 80f))
-            ]
-            );
+        private BulletFactory bulletFactory = new BulletFactory("BulletSample");
+
+        private TimerContainer timerContainer = new TimerContainer();
 
         public ChefBossBehaviour(int thisEntity) : base(thisEntity)
         {
@@ -39,6 +37,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         {
             var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(this.Entity);
 
+            timerContainer.Update(gameTime);
+
             if ((ChefBossState)state.state == ChefBossState.Start)
             {
                 StartState();
@@ -49,14 +49,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage1)
             {
-                if (timer < 1f)
-                {
-                    timer += some.GetDeltaT(timer, 0.2f);
 
-                    var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity);
-                    transform.position = some.GetPoint(timer) + new Vector2(40.0f, 40.0f);
-                    GameM.CurrentScene.World.SetComponentInEntity(this.Entity, transform);
-                }
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
             {
@@ -66,9 +59,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void StartState()
         {
-            var timerComp = new TimersComponent([]);
-            timerComp.timers.Add("fire_bullets", new Timer(0.4f, OnFireBullets, this.Entity));
-            GameM.CurrentScene.World.AddComponent(this.Entity, timerComp);
+            timerContainer.AddTimer(new LoopTimer(2.0f, OnFireBullets), "fire_bullets");
 
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
@@ -90,22 +81,25 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 body.Velocity = Vector2.Zero;
                 GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
 
+                timerContainer.GetTimer("fire_bullets").Start();
+
                 GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(ChefBossState.Stage1));
-                var timers = GameM.CurrentScene.World.GetComponentFromEntity<TimersComponent>(this.Entity);
-                timers.timers["fire_bullets"].Start();
             }
         }
 
         private void OnFireBullets(GameTime gameTime, object? data)
         {
-            var bulletFactory = new BulletFactory("BulletSample");
+            FireBulletCircle();
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.3f, (gameTime, data) => FireBulletCircle()));
+        }
 
+        private void FireBulletCircle()
+        {
             var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
 
-            int bullets = 16;
-            float arcInterval = MathHelper.TwoPi / bullets;
+            float arcInterval = MathHelper.TwoPi / CircleBulletsCount;
 
-            for (int i = 0; i < bullets; i++)
+            for (int i = 0; i < CircleBulletsCount; i++)
             {
                 Vector2 unit = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
                 var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 6.0f);
