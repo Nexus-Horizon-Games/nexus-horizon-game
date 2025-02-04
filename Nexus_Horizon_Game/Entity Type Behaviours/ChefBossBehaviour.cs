@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
-using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.Timers;
 using System;
 
@@ -59,7 +58,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void StartState()
         {
-            timerContainer.AddTimer(new LoopTimer(2.0f, OnFireBullets), "fire_bullets");
+            timerContainer.AddTimer(new LoopTimer(2.0f, OnMoveAction), "move_action");
 
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
@@ -81,16 +80,20 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 body.Velocity = Vector2.Zero;
                 GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
 
-                timerContainer.GetTimer("fire_bullets").Start();
+                timerContainer.GetTimer("move_action").Start();
 
                 GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(ChefBossState.Stage1));
             }
         }
 
-        private void OnFireBullets(GameTime gameTime, object? data)
+        private void OnMoveAction(GameTime gameTime, object? data)
         {
-            FireBulletCircle();
-            timerContainer.StartTemporaryTimer(new DelayTimer(0.3f, (gameTime, data) => FireBulletCircle()));
+            var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
+            body.Velocity = new Vector2(RandomGenerator.GetInteger(-1, 1), RandomGenerator.GetInteger(-1, 1)) * 0.5f;
+            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
+
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle()));
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.9f, (gameTime, data) => FireBulletCircle()));
         }
 
         private void FireBulletCircle()
