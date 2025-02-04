@@ -11,7 +11,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         public override void OnUpdate(GameTime gameTime)
         {
-            DeleteOnOutOfBounds(thisEntity);
+            DeleteOnOutOfBounds(this.Entity);
         }
 
         /// <summary>
@@ -27,11 +27,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             {
                 GameM.CurrentScene.World.DestroyEntity(entity);
             }
-        }
-
-        private static void FlickerBullet()
-        {
-
         }
     }
 }

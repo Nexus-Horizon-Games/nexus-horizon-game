@@ -37,7 +37,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         public override void OnUpdate(GameTime gameTime)
         {
-            var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(thisEntity);
+            var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(this.Entity);
 
             if ((ChefBossState)state.state == ChefBossState.Start)
             {
@@ -53,9 +53,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 {
                     timer += some.GetDeltaT(timer, 0.2f);
 
-                    var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
+                    var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity);
                     transform.position = some.GetPoint(timer) + new Vector2(40.0f, 40.0f);
-                    GameM.CurrentScene.World.SetComponentInEntity(thisEntity, transform);
+                    GameM.CurrentScene.World.SetComponentInEntity(this.Entity, transform);
                 }
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
@@ -67,31 +67,31 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private void StartState()
         {
             var timerComp = new TimersComponent([]);
-            timerComp.timers.Add("fire_bullets", new Timer(0.4f, OnFireBullets, thisEntity));
-            GameM.CurrentScene.World.AddComponent(thisEntity, timerComp);
+            timerComp.timers.Add("fire_bullets", new Timer(0.4f, OnFireBullets, this.Entity));
+            GameM.CurrentScene.World.AddComponent(this.Entity, timerComp);
 
-            GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
+            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
             // Start moving into the arena
-            var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(thisEntity);
+            var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
             body.Velocity = new Vector2(0.0f, EnteringSpeed);
-            GameM.CurrentScene.World.SetComponentInEntity(thisEntity, body);
+            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
 
-            GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.EnteringArena));
+            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(ChefBossState.EnteringArena));
         }
 
         private void EnteringArenaState()
         {
-            var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity);
+            var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity);
 
             if (transform.position.Y >= IdealY) // If reached the start y position
             {
-                var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(thisEntity);
+                var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
                 body.Velocity = Vector2.Zero;
-                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, body);
+                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
 
-                GameM.CurrentScene.World.SetComponentInEntity(thisEntity, new StateComponent(ChefBossState.Stage1));
-                var timers = GameM.CurrentScene.World.GetComponentFromEntity<TimersComponent>(thisEntity);
+                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(ChefBossState.Stage1));
+                var timers = GameM.CurrentScene.World.GetComponentFromEntity<TimersComponent>(this.Entity);
                 timers.timers["fire_bullets"].Start();
             }
         }
@@ -100,7 +100,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         {
             var bulletFactory = new BulletFactory("BulletSample");
 
-            var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(thisEntity).position;
+            var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
 
             int bullets = 16;
             float arcInterval = MathHelper.TwoPi / bullets;

@@ -23,8 +23,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             return GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             { new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),
-                new PhysicsBody2DComponent(),
-              new BulletComponent() });
+                new PhysicsBody2DComponent() });
         }
 
         /// <summary>
@@ -44,8 +43,7 @@ namespace Nexus_Horizon_Game.EntityFactory
               new PhysicsBody2DComponent()
               {
                   Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
-              },
-              new BulletComponent() });
+              },});
 
 
             GameM.CurrentScene.World.AddComponent(entity, new BehaviourComponent(new Bullet(entity)));
