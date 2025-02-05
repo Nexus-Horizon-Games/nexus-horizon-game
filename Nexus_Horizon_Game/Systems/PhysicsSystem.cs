@@ -27,13 +27,14 @@ namespace Nexus_Horizon_Game
                         // applies acceleration to velocity only if controlled by 
                         if (physicsBodyComponent.AccelerationEnabled)
                         {
-                            physicsBodyComponent.Velocity = physicsBodyComponent.Velocity + physicsBodyComponent.Acceleration;
+                            physicsBodyComponent.Velocity = physicsBodyComponent.Velocity + (physicsBodyComponent.Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds);
                         }
 
                         transformComponent.position = transformComponent.position +
                             new Vector2(physicsBodyComponent.Velocity.X * unit * (float)gameTime.ElapsedGameTime.TotalSeconds, physicsBodyComponent.Velocity.Y * unit * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
                         GameM.CurrentScene.World.SetComponentInEntity<TransformComponent>(entity, transformComponent);
+                        GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(entity, physicsBodyComponent);
                     }
                 }
             }

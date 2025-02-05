@@ -23,5 +23,10 @@ namespace Nexus_Horizon_Game
         {
             return random.Next(minValue, maxValue);
         }
+
+        public static float GetFloat(float minValue, float maxValue)
+        {
+            return ((float)random.NextDouble() * (maxValue - minValue)) + minValue;
+        }
     }
 }
