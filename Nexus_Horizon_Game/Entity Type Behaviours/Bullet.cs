@@ -31,6 +31,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <param name="gameTime"></param>
         public override void OnUpdate(GameTime gameTime)
         {
+            timeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             DeleteOnOutOfBounds(this.Entity);
 
             // calls bulletAction if it has been set from the constructor
