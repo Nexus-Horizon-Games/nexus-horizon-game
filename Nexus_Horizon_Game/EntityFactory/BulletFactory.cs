@@ -33,7 +33,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         /// <param name="direction"> the direction the bullet will move (Will be normalized). </param>
         /// <param name="velocity"> the speed the bullet will move in that direction. </param>
         /// <returns> entity id. </returns>
-        public int CreateEntity(Vector2 SpawnPoint, Vector2 direction, float velocity, float scale = 0.25f, uint spriteLayer = 0)
+        public int CreateEntity(Vector2 SpawnPoint, Vector2 direction, float velocity, Bullet.BulletAction bulletAction = null, float scale = 0.25f, uint spriteLayer = 0)
         {
             direction.Normalize();
 
@@ -46,7 +46,7 @@ namespace Nexus_Horizon_Game.EntityFactory
               },});
 
 
-            GameM.CurrentScene.World.AddComponent(entity, new BehaviourComponent(new Bullet(entity)));
+            GameM.CurrentScene.World.AddComponent(entity, new BehaviourComponent(new Bullet(entity, bulletAction)));
             return entity;
         }
 
