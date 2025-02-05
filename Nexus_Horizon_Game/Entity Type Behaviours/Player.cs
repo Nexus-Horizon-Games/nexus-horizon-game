@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
@@ -13,7 +13,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     {
         // For Disposing
         private bool _disposed = false; // whenever the player is disposed this will be true.
-        private List<(Keys ,Action<Keys>)> keyDownListeners = new List<(Keys, Action<Keys>)>();
+        private List<(Keys, Action<Keys>)> keyDownListeners = new List<(Keys, Action<Keys>)>();
         private List<(Keys, Action<Keys>)> keyUpListeners = new List<(Keys, Action<Keys>)>();
 
         // movement
@@ -41,7 +41,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             this.bulletTimerEndShots = new LoopTimer(bulletTimeInterval, this.ShotConstant, stopAfter: 0.2f);
             AddListeners();
         }
-        
+
         /// <summary>
         /// entity id of player collider.
         /// </summary>
@@ -92,10 +92,10 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <returns> result of movement physicsBodyComponent. </returns>
         private PhysicsBody2DComponent Movement(PhysicsBody2DComponent physicsBodyComponent)
         {
-            if (MathF.Abs(xSpeed) == MathF.Abs(ySpeed)) 
+            if (MathF.Abs(xSpeed) == MathF.Abs(ySpeed))
             {
                 // fixes diagional movement speed
-                physicsBodyComponent.Velocity = new Vector2(xSpeed * MathF.Cos(float.Pi/4) * activeMultiplier, ySpeed * MathF.Sin(float.Pi / 4) * activeMultiplier);
+                physicsBodyComponent.Velocity = new Vector2(xSpeed * MathF.Cos(float.Pi / 4) * activeMultiplier, ySpeed * MathF.Sin(float.Pi / 4) * activeMultiplier);
             }
             else
             {
@@ -117,11 +117,11 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            if(InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn)
+            if (InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn && !bulletTimerEndShots.IsOn)
             {
                 bulletTimerConstant.Start();
             }
-            else if(InputSystem.IsKeyUp(Keys.Z) && this.bulletTimerConstant.IsOn)
+            else if (InputSystem.IsKeyUp(Keys.Z) && this.bulletTimerConstant.IsOn)
             {
                 bulletTimerConstant.Stop();
                 bulletTimerEndShots.Start();
@@ -228,7 +228,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         protected virtual void Dispose(bool isDisposedManually)
         {
             // if instance has not been disposed already go ahead and dispose
-            if(!_disposed)
+            if (!_disposed)
             {
                 // if manually disposing go ahead and dispose managed resources
                 if (isDisposedManually)
