@@ -8,7 +8,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         public delegate Vector2 BulletAction(GameTime gametime, Bullet bullet, Vector2 previousVelocity);
 
         private BulletAction bulletAction;
-        private float timeAlive = 0.0f;
+        private double timeAlive = 0.0f;
 
         /// <summary>
         /// Initialies the bullet.
@@ -20,7 +20,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             this.bulletAction = bulletBehavior;
         }
 
-        public float TimeAlive
+        public double TimeAlive
         {
             get => timeAlive;
         }
