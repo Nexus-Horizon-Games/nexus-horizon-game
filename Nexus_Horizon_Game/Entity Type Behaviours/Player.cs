@@ -117,7 +117,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            if(InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn)
+            if (InputSystem.IsKeyDown(Keys.Z) && !this.bulletTimerConstant.IsOn && !bulletTimerEndShots.IsOn)
             {
                 bulletTimerConstant.Start();
             }
