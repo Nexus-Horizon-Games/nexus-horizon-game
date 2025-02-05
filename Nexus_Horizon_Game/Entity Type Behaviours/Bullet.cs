@@ -5,7 +5,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
     internal class Bullet : Behaviour
     {
-        public delegate Vector2 BulletAction(GameTime gametime, Bullet bullet, Vector2 previousVelocity);
+        public delegate Vector2 BulletAction(GameTime gametime, Bullet bullet, int bulletEntity, Vector2 previousVelocity);
 
         private BulletAction bulletAction;
         private double timeAlive = 0.0f;
@@ -40,7 +40,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             {
                 if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent bulletPhysics))
                 {
-                    bulletPhysics.Velocity = this.bulletAction(gameTime, this, bulletPhysics.Velocity);
+                    bulletPhysics.Velocity = this.bulletAction(gameTime, this, this.Entity, bulletPhysics.Velocity);
                     GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, bulletPhysics);
                 }
             }
