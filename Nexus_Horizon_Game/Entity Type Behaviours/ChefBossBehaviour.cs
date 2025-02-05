@@ -69,7 +69,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void StartState()
         {
-            timerContainer.AddTimer(new LoopTimer(5.0f, OnMoveAction), "move_action");
+            timerContainer.AddTimer(new LoopTimer(10.0f, OnMoveAction), "move_action");
 
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
@@ -166,6 +166,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             // Fire bullets:
             timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle(true)));
             timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletCircle(false)));
+            timerContainer.StartTemporaryTimer(new DelayTimer(2.2f, (gameTime, data) => FireBulletPattern1(gameTime)));
         }
 
         private void FireBulletCircle(bool counterClockwise)
@@ -207,6 +208,55 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                     return previousVelocity;
                 });
             }
+        }
+
+        private void FireBulletPattern1(GameTime gameTime)
+        {
+            // Get player position:
+            var entitesWithTag = GameM.CurrentScene.World.GetEntitiesWithComponent<TagComponent>();
+            var playerEntity = -1;
+            foreach (var entity in entitesWithTag)
+            {
+                var tag = GameM.CurrentScene.World.GetComponentFromEntity<TagComponent>(entity);
+                if (tag.Tag == Tag.PLAYER)
+                {
+                    playerEntity = entity;
+                    break;
+                }
+            }
+
+            Vector2 playerPosition = Vector2.Zero;
+            if (playerEntity != -1)
+            {
+                playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(playerEntity).position;
+            }
+
+            timerContainer.StartTemporaryTimer(new LoopTimer(0.02f, (gameTime, data) =>
+            {
+                double startTime = (double)data;
+                double time = gameTime.TotalGameTime.TotalSeconds - startTime;
+
+                float spawnRadius = 5.0f + (float)time * 5.0f;
+                float rotationSpeed = 8.0f + (float)time * 3.0f;
+
+                var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+
+                Vector2 spawner1 = new Vector2((float)Math.Cos(0.0f + time * rotationSpeed), (float)Math.Sin(0.0f + time * rotationSpeed)) * spawnRadius;
+                Vector2 spawner2 = new Vector2((float)Math.Cos(MathHelper.TwoPi / 3.0f + time * rotationSpeed), (float)Math.Sin(MathHelper.TwoPi / 3.0f + time * rotationSpeed)) * spawnRadius;
+                Vector2 spawner3 = new Vector2((float)Math.Cos(MathHelper.TwoPi * 2.0f / 3.0f + time * rotationSpeed), (float)Math.Sin(MathHelper.TwoPi * 2.0f / 3.0f + time * rotationSpeed)) * spawnRadius;
+
+                Vector2 spawner1Direction = playerPosition - (spawner1 + bossPosition);
+                spawner1Direction.Normalize();
+
+                double angle = Math.Acos((double)Vector2.Dot(spawner1Direction, new Vector2(1.0f, 0.0f)));
+                Vector2 spawner2Direction = new Vector2((float)Math.Cos(MathHelper.TwoPi / 3.0f + angle), (float)Math.Sin(MathHelper.TwoPi / 3.0f + angle));
+                Vector2 spawner3Direction = new Vector2((float)Math.Cos(MathHelper.TwoPi * 2.0f / 3.0f + angle), (float)Math.Sin(MathHelper.TwoPi * 2.0f / 3.0f + angle));
+
+                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, 6.0f);
+                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, 6.0f);
+                bulletFactory.CreateEntity(bossPosition + spawner3, spawner3Direction, 6.0f);
+
+            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: 2.0f));
         }
     }
 }
