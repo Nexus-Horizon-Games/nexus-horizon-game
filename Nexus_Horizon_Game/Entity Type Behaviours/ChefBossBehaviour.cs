@@ -3,6 +3,7 @@ using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Timers;
 using System;
+using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -58,7 +59,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void StartState()
         {
-            timerContainer.AddTimer(new LoopTimer(2.0f, OnMoveAction), "move_action");
+            timerContainer.AddTimer(new LoopTimer(5.0f, OnMoveAction), "move_action");
 
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
@@ -89,11 +90,11 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private void OnMoveAction(GameTime gameTime, object? data)
         {
             var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
-            body.Velocity = new Vector2(RandomGenerator.GetInteger(-1, 1), RandomGenerator.GetInteger(-1, 1)) * 0.5f;
+            body.Velocity = new Vector2(RandomGenerator.GetInteger(-1, 2), RandomGenerator.GetInteger(-1, 2)) * 0.5f;
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
 
             timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle()));
-            timerContainer.StartTemporaryTimer(new DelayTimer(0.9f, (gameTime, data) => FireBulletCircle()));
+            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletCircle()));
         }
 
         private void FireBulletCircle()
@@ -105,8 +106,50 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             for (int i = 0; i < CircleBulletsCount; i++)
             {
                 Vector2 unit = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
-                var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 6.0f);
+                var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 6.0f, bulletAction: (gametime, bullet, previousVelocity) =>
+                {
+                    if (bullet.TimeAlive > 0.3f && bullet.TimeAlive < 1.2f)
+                    {
+                        return previousVelocity - (unit * (float)gametime.ElapsedGameTime.TotalSeconds * 14.0f);
+                    }
+                    else if (bullet.TimeAlive < 2.5f)
+                    {
+                        return previousVelocity + (unit * (float)gametime.ElapsedGameTime.TotalSeconds * 10.0f);
+                    }
+
+                    return previousVelocity;
+                });
             }
+        }
+
+        private Vector2 CircleBulletVelocity(GameTime gametime, Bullet bullet, Vector2 previousVelocity)
+        {
+            if (bullet.TimeAlive > 0.5f && bullet.TimeAlive < 1.5f)
+            {
+                Vector2 direction = previousVelocity;
+                direction.Normalize();
+                return previousVelocity - (direction * (float)gametime.ElapsedGameTime.TotalSeconds * 10.0f);
+            }
+            else if (bullet.TimeAlive < 2.0f)
+            {
+                Vector2 direction = previousVelocity;
+                direction.Normalize();
+                return previousVelocity + (direction * (float)gametime.ElapsedGameTime.TotalSeconds * 6.0f);
+            }
+            else if (bullet.TimeAlive < 3.0f)
+            {
+                Vector2 direction = previousVelocity;
+                direction.Normalize();
+                return previousVelocity - (direction * (float)gametime.ElapsedGameTime.TotalSeconds * 6.0f);
+            }
+            else if (bullet.TimeAlive < 4.0f)
+            {
+                Vector2 direction = previousVelocity;
+                direction.Normalize();
+                return previousVelocity + (direction * (float)gametime.ElapsedGameTime.TotalSeconds * 6.0f);
+            }
+
+            return previousVelocity;
         }
     }
 }
