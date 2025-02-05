@@ -18,7 +18,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             int bossEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
-                new PhysicsBody2DComponent(),
+                new PhysicsBody2DComponent(accelerationEnabled: true),
             });
 
             if (type == "evil_guinea_pig_boss") // mid boss

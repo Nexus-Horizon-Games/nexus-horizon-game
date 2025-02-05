@@ -49,7 +49,10 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage1)
             {
-
+                // drag:
+                var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
+                body.Acceleration = body.Velocity * -3.0f;
+                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
             }
             else if ((ChefBossState)state.state == ChefBossState.Stage2)
             {
@@ -89,15 +92,48 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void OnMoveAction(GameTime gameTime, object? data)
         {
+            // Move:
+            var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity);
             var body = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
-            body.Velocity = new Vector2(RandomGenerator.GetInteger(-1, 2), RandomGenerator.GetInteger(-1, 2)) * 0.5f;
+
+            float left = 1.0f;
+            float right = 1.0f;
+            float down = 1.0f;
+            float up = 1.0f;
+
+            if (transform.position.X - GameM.CurrentScene.ArenaLeft < 20.0f)
+            {
+                left = 0.0f;
+            }
+            else if (GameM.CurrentScene.ArenaRight - transform.position.X < 20.0f)
+            {
+                right = 0.0f;
+            }
+
+            if (transform.position.Y - GameM.CurrentScene.ArenaTop < 20.0f)
+            {
+                up = 0.0f;
+            }
+            else if (GameM.CurrentScene.ArenaBottom - transform.position.Y < 50.0f)
+            {
+                down = 0.0f;
+            }
+
+            //Debug.WriteLine($"left {left} right {right} up: {up} down: {down}");
+
+            var moveDirection = new Vector2(RandomGenerator.GetFloat(-left, right), RandomGenerator.GetFloat(-up, down));
+            moveDirection.Normalize();
+
+            body.Velocity = moveDirection * 8.0f;
+
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
 
-            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle()));
-            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletCircle()));
+            // Fire bullets:
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle(true)));
+            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletCircle(false)));
         }
 
-        private void FireBulletCircle()
+        private void FireBulletCircle(bool counterClockwise)
         {
             var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
 
@@ -105,16 +141,29 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
             for (int i = 0; i < CircleBulletsCount; i++)
             {
-                Vector2 unit = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
-                var bullet = bulletFactory.CreateEntity(bossPosition + unit * 10.0f, unit, 6.0f, bulletAction: (gametime, bullet, previousVelocity) =>
+                Vector2 direction = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
+                Vector2 perpendicularDirection;
+
+                if (counterClockwise)
+                {
+                    perpendicularDirection = new Vector2(direction.Y, -direction.X);
+                }
+                else
+                {
+                    perpendicularDirection = new Vector2(-direction.Y, direction.X);
+                }
+
+                var bullet = bulletFactory.CreateEntity(bossPosition + direction * 10.0f, direction + perpendicularDirection, 6.0f, bulletAction: (gametime, bullet, previousVelocity) =>
                 {
                     if (bullet.TimeAlive > 0.3f && bullet.TimeAlive < 1.2f)
                     {
-                        return previousVelocity - (unit * (float)gametime.ElapsedGameTime.TotalSeconds * 14.0f);
+                        Vector2 acceleration = direction * 14.0f;
+                        return previousVelocity - (acceleration * (float)gametime.ElapsedGameTime.TotalSeconds);
                     }
                     else if (bullet.TimeAlive < 2.5f)
                     {
-                        return previousVelocity + (unit * (float)gametime.ElapsedGameTime.TotalSeconds * 10.0f);
+                        Vector2 acceleration = direction * 8.0f;
+                        return previousVelocity + (acceleration * (float)gametime.ElapsedGameTime.TotalSeconds);
                     }
 
                     return previousVelocity;
