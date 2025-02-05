@@ -16,6 +16,7 @@ namespace Nexus_Horizon_Game.Components
             this.isEmpty = false;
             this.velocity = Vector2.Zero;
             this.acceleration = Vector2.Zero;
+            this.accelerationEnabled = accelerationEnabled;
         }
 
         # region Properties
