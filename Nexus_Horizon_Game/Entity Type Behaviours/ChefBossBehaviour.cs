@@ -17,6 +17,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private const float MovementVelocity = 10.0f;
         private const float TimeBeforeFirstAttack = 2.0f;
 
+        private const float TimeBetweenAttacksStage1 = 5.0f;
+
         // The area that the boss can move in
         private readonly Vector2 MovementAreaPosition;
         private readonly Vector2 MovementAreaSize;
@@ -69,7 +71,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void StartState()
         {
-            timerContainer.AddTimer(new LoopTimer(10.0f, OnMoveAction), "move_action");
+            timerContainer.AddTimer(new LoopTimer(TimeBetweenAttacksStage1, OnMoveAction), "move_action");
 
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(Renderer.DrawAreaWidth / 2.0f, -20.0f)));
 
@@ -100,24 +102,18 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void OnMoveAction(GameTime gameTime, object? data)
         {
-            // Get player position:
-            var entitesWithTag = GameM.CurrentScene.World.GetEntitiesWithComponent<TagComponent>();
-            var playerEntity = -1;
-            foreach (var entity in entitesWithTag)
-            {
-                var tag = GameM.CurrentScene.World.GetComponentFromEntity<TagComponent>(entity);
-                if (tag.Tag == Tag.PLAYER)
-                {
-                    playerEntity = entity;
-                    break;
-                }
-            }
+            // Move:
+            Move();
 
-            Vector2 playerPosition = Vector2.Zero;
-            if (playerEntity != -1)
-            {
-                playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(playerEntity).position;
-            }
+            // Fire bullets:
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle(true)));
+            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletCircle(false)));
+            timerContainer.StartTemporaryTimer(new DelayTimer(2.2f, (gameTime, data) => FireBulletPattern1(gameTime)));
+        }
+
+        private void Move()
+        {
+            var playerPosition = GetPlayerPosition();
 
             // Move:
             var transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity);
@@ -162,11 +158,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             moveDirection.Normalize();
             body.Velocity = moveDirection * MovementVelocity;
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, body);
-
-            // Fire bullets:
-            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletCircle(true)));
-            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletCircle(false)));
-            timerContainer.StartTemporaryTimer(new DelayTimer(2.2f, (gameTime, data) => FireBulletPattern1(gameTime)));
         }
 
         private void FireBulletCircle(bool counterClockwise)
@@ -212,7 +203,58 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void FireBulletPattern1(GameTime gameTime)
         {
-            // Get player position:
+            const float SpawnTimeInterval = 0.01f;
+            const float SpawnTimeLength = 1.5f;
+
+            const float StartSpawnRadius = 5.0f;
+            const float SpawnRadiusAcceleration = 15.0f;
+
+            const float StartRotationSpeed = 10.0f;
+            const float RotationSpeedAcceleration = 1.0f;
+
+            const float Spawner1Angle = 0.0f;
+            const float Spawner2Angle = MathHelper.TwoPi / 3.0f;
+            const float Spawner3Angle = MathHelper.TwoPi * 2.0f / 3.0f;
+
+            const float BulletSpeed = 6.0f;
+
+
+            timerContainer.StartTemporaryTimer(new LoopTimer(SpawnTimeInterval, (gameTime, data) =>
+            {
+                double startTime = (double)data;
+                double time = gameTime.TotalGameTime.TotalSeconds - startTime;
+
+                float spawnRadius = StartSpawnRadius + (float)(time * time) * SpawnRadiusAcceleration;
+                float rotationSpeed = StartRotationSpeed + (float)(time * time) * RotationSpeedAcceleration;
+
+                var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+                var playerPosition = GetPlayerPosition();
+
+                // Spawner positions:
+                Vector2 spawner1 = new Vector2((float)Math.Cos(Spawner1Angle + time * rotationSpeed), (float)Math.Sin(Spawner1Angle + time * rotationSpeed)) * spawnRadius;
+                Vector2 spawner2 = new Vector2((float)Math.Cos(Spawner2Angle + time * rotationSpeed), (float)Math.Sin(Spawner2Angle + time * rotationSpeed)) * spawnRadius;
+                Vector2 spawner3 = new Vector2((float)Math.Cos(Spawner3Angle + time * rotationSpeed), (float)Math.Sin(Spawner3Angle + time * rotationSpeed)) * spawnRadius;
+
+                // Spawner shoot directions:
+                Vector2 spawner1Direction = playerPosition - (spawner1 + bossPosition); // Point towards the player
+                spawner1Direction.Normalize();
+
+                // Get the angle between spawner1Direction and <1, 0>
+                double angle = Math.Acos((double)Vector2.Dot(spawner1Direction, new Vector2(1.0f, 0.0f)));
+
+                Vector2 spawner2Direction = new Vector2((float)Math.Cos(Spawner2Angle + angle), (float)Math.Sin(Spawner2Angle + angle));
+                Vector2 spawner3Direction = new Vector2((float)Math.Cos(Spawner3Angle + angle), (float)Math.Sin(Spawner3Angle + angle));
+
+                // Spawn the bullets:
+                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed);
+                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed);
+                bulletFactory.CreateEntity(bossPosition + spawner3, spawner3Direction, BulletSpeed);
+
+            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: SpawnTimeLength));
+        }
+
+        private Vector2 GetPlayerPosition()
+        {
             var entitesWithTag = GameM.CurrentScene.World.GetEntitiesWithComponent<TagComponent>();
             var playerEntity = -1;
             foreach (var entity in entitesWithTag)
@@ -231,32 +273,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(playerEntity).position;
             }
 
-            timerContainer.StartTemporaryTimer(new LoopTimer(0.02f, (gameTime, data) =>
-            {
-                double startTime = (double)data;
-                double time = gameTime.TotalGameTime.TotalSeconds - startTime;
-
-                float spawnRadius = 5.0f + (float)time * 5.0f;
-                float rotationSpeed = 8.0f + (float)time * 3.0f;
-
-                var bossPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-
-                Vector2 spawner1 = new Vector2((float)Math.Cos(0.0f + time * rotationSpeed), (float)Math.Sin(0.0f + time * rotationSpeed)) * spawnRadius;
-                Vector2 spawner2 = new Vector2((float)Math.Cos(MathHelper.TwoPi / 3.0f + time * rotationSpeed), (float)Math.Sin(MathHelper.TwoPi / 3.0f + time * rotationSpeed)) * spawnRadius;
-                Vector2 spawner3 = new Vector2((float)Math.Cos(MathHelper.TwoPi * 2.0f / 3.0f + time * rotationSpeed), (float)Math.Sin(MathHelper.TwoPi * 2.0f / 3.0f + time * rotationSpeed)) * spawnRadius;
-
-                Vector2 spawner1Direction = playerPosition - (spawner1 + bossPosition);
-                spawner1Direction.Normalize();
-
-                double angle = Math.Acos((double)Vector2.Dot(spawner1Direction, new Vector2(1.0f, 0.0f)));
-                Vector2 spawner2Direction = new Vector2((float)Math.Cos(MathHelper.TwoPi / 3.0f + angle), (float)Math.Sin(MathHelper.TwoPi / 3.0f + angle));
-                Vector2 spawner3Direction = new Vector2((float)Math.Cos(MathHelper.TwoPi * 2.0f / 3.0f + angle), (float)Math.Sin(MathHelper.TwoPi * 2.0f / 3.0f + angle));
-
-                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, 6.0f);
-                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, 6.0f);
-                bulletFactory.CreateEntity(bossPosition + spawner3, spawner3Direction, 6.0f);
-
-            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: 2.0f));
+            return playerPosition;
         }
     }
 }
