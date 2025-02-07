@@ -7,26 +7,21 @@ namespace Nexus_Horizon_Game.EntityFactory
 {
     internal static class EnemyFactory
     {
-        public static int CreateEnemy(string type)
+        public static int CreateEnemy(string type, Vector2[] attackPoints, float waitTime)
         {
             int enemyEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
             });
+            
             if (type == "bird_enemy")
             {
-                GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("bird_enemy"));
-                //GameM.CurrentScene.World.AddComponent(bossEntity, new OnUpdateComponent(BirdEnemyBehaviour.OnUpdate));
-                //GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("guinea_pig", centered: true));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new BirdEnemyBehaviour(enemyEntity, attackPoints, waitTime)));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
             }
-            
-            if (type == "cat_enemy")
-            {
-                GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("cat_enemy"));
-                //GameM.CurrentScene.World.AddComponent(bossEntity, new OnUpdateComponent(CatEnemyBehaviour.OnUpdate));
-                //GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(CatEnemyBehaviourCatEnemyState.Start));
-            }
+           
 
             // create enemy
             return enemyEntity;
