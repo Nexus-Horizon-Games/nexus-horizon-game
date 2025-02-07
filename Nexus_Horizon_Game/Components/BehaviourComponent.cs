@@ -1,18 +1,23 @@
-﻿using Nexus_Horizon_Game.Timers;
-using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Entity_Type_Behaviours;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct TimersComponent : IComponent
+    internal struct BehaviourComponent : IComponent
     {
         private bool isEmpty;
 
-        public Dictionary<string, Timer> timers;
+        private Behaviour behaviour = null;
 
-        public TimersComponent(Dictionary<string, Timer> timers)
+        public BehaviourComponent(Behaviour behaviour)
         {
             this.isEmpty = false;
-            this.timers = timers;
+            this.behaviour = behaviour;
+        }
+
+        public Behaviour Behaviour
+        {
+            get => behaviour;   
         }
 
         bool IComponent.IsEmpty
@@ -24,9 +29,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is TimersComponent o)
+            if (other is BehaviourComponent o)
             {
-                if (timers == o.timers)
+                if (behaviour == o.behaviour)
                 {
                     return true;
                 }
@@ -44,7 +49,7 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            TimersComponent comp = new([]);
+            BehaviourComponent comp = new();
             comp.isEmpty = true;
             return comp;
         }

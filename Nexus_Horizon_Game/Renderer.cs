@@ -70,7 +70,8 @@ namespace Nexus_Horizon_Game
         /// </summary>
         public static void BeginRender()
         {
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            // SpriteSortMode.Deferred draws in order of drawing
+            spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp);
         }
 
         /// <summary>
@@ -101,6 +102,22 @@ namespace Nexus_Horizon_Game
             spriteBatch.Draw(textureManager.GetResource("square"),
                 new Rectangle((int)(position.X * Renderer.scale), (int)(position.Y * Renderer.scale), (int)(size.X * Renderer.scale), (int)(size.Y * Renderer.scale)),
                 null, color, rotation, Vector2.Zero, SpriteEffects.None, layerDepth);
+        }
+
+        public static Vector2 GetTextureBounds(string textureName)
+        {
+            var bounds = textureManager.GetResource(textureName).Bounds;
+            return new Vector2(bounds.Width, bounds.Height);
+        }
+
+        public static float GetTextureWidth(string textureName)
+        {
+            return textureManager.GetResource(textureName).Bounds.Width;
+        }
+
+        public static float GetTextureHeight(string textureName)
+        {
+            return textureManager.GetResource(textureName).Bounds.Height;
         }
     }
 }

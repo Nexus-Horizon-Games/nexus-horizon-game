@@ -9,12 +9,17 @@ namespace Nexus_Horizon_Game.Systems
     {
         public static void Draw(GameTime gameTime)
         {
-            var transformAndSpriteComponents = GameM.CurrentScene.World.GetComponentsIntersection<TransformComponent, SpriteComponent>().ToList();
+            var transformAndSpriteComponents = GameM.CurrentScene.World.GetComponentsIntersection<TransformComponent, SpriteComponent>().Where((data) => data.Item2.IsVisible).OrderBy((data) => data.Item2.SpriteLayer);
 
             foreach (var tuple in transformAndSpriteComponents)
             {
                 var transformComp = tuple.Item1;
                 var spriteComp = tuple.Item2;
+
+                if (spriteComp.centered)
+                {
+                    spriteComp.position -= (Renderer.GetTextureBounds(spriteComp.textureName) * spriteComp.scale) / 2.0f;
+                }
 
                 Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.Z);
             }

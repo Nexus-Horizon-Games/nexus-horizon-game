@@ -37,7 +37,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             int bossEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
-                new PhysicsBody2DComponent(),
+                new PhysicsBody2DComponent(accelerationEnabled: true),
             });
 
             if (type == "evil_guinea_pig_boss") // mid boss
@@ -46,8 +46,8 @@ namespace Nexus_Horizon_Game.EntityFactory
             }
             else if (type == "chef_boss") // final boss
             {
-                GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("chef_boss"));
-                GameM.CurrentScene.World.AddComponent(bossEntity, new OnUpdateComponent(ChefBossBehaviour.OnUpdate));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new BehaviourComponent(new ChefBossBehaviour(bossEntity)));
                 GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(ChefBossBehaviour.ChefBossState.Start));
             }
 

@@ -8,17 +8,15 @@ namespace Nexus_Horizon_Game.Components
 
         private Vector2 velocity;
         private Vector2 acceleration; // Not Supported Yet
+        private bool accelerationEnabled; // allows acceleration to be set but not tracked
+        private float mass;
 
-        // private float gravityScale; // Not Supported Yet
-        // private Vector2 gravityDirection; // Not Supported Yet
-
-        public PhysicsBody2DComponent()
+        public PhysicsBody2DComponent(float mass = 1f, bool accelerationEnabled = false)
         {
             this.isEmpty = false;
             this.velocity = Vector2.Zero;
             this.acceleration = Vector2.Zero;
-            // this.gravityScale = 0.0f;
-            // this.gravityDirection = Vector2.Zero;
+            this.accelerationEnabled = accelerationEnabled;
         }
 
         # region Properties
@@ -29,16 +27,54 @@ namespace Nexus_Horizon_Game.Components
             set => isEmpty = value;
         }
 
+        /// <summary>
+        /// Gets and sets the velocity of the component (in units per second).
+        /// </summary>
         public Vector2 Velocity
         {
             get => velocity;
-            set => velocity = value;
+            set
+            {
+                // sets the acceleration from change of velocity.
+                if (!this.accelerationEnabled)
+                {
+                    float accelerationX = velocity.X - value.X;
+                    float accelerationY = velocity.Y - value.Y;
+
+                    acceleration = new Vector2(accelerationX, accelerationY);
+                }
+
+                velocity = value;
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the current acceleration of the object dependant on AccelerationEnabled.
+        /// For more information <see cref="AccelerationEnabled"/>
+        /// </summary>
         public Vector2 Acceleration
         {
             get => acceleration;
-            set => acceleration = value;
+            set
+            {
+                // only sets acceleration if acceleration is enabled
+                if (accelerationEnabled)
+                {
+                    acceleration = value;
+                    return;
+                }
+
+                throw new System.AccessViolationException("Acceleration is not enabled.");
+            }
+        }
+
+        /// <summary>
+        /// Enabled: Allows Modification of acceleration but requires user to update and track the value indefinitely outside of the component.
+        /// Disabled: Acceleration is calculated from the difference between the current velocity and the new velocity.
+        /// </summary>
+        public bool AccelerationEnabled
+        {
+            get => accelerationEnabled;
         }
 
         #endregion

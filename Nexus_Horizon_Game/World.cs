@@ -148,7 +148,7 @@ namespace Nexus_Horizon_Game
         /// <returns> query of components of the type. </returns>
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
-            if (!componentLists.TryGetValue(typeof(T), out var componentList)) { return null; };
+            if (!componentLists.TryGetValue(typeof(T), out var componentList)) { return []; };
 
             return componentList.Cast<T>().Where<T>((component) => !component.IsEmptyComponent());
         }
@@ -236,6 +236,31 @@ namespace Nexus_Horizon_Game
             if (entity >= componentList.Count) { return false; } // does not have component since the component list is too small
 
             return !componentList[entity].IsEmptyComponent();
+        }
+
+        /// <summary>
+        /// check whether the entity has the component specified and
+        /// </summary>
+        /// <typeparam name="T"> component being checked on. </typeparam>
+        /// <param name="entity"> the id of the entity wanting to check. </param>
+        /// <param name="component"> outputs the component that the entity has if it has it. </param>
+        /// <returns> true when entity has component otherwise false. </returns>
+        public bool EntityHasComponent<T>(int entity, out T component) where T : IComponent
+        {
+            if (!this.IsEntityAlive(entity)) { component = default; return false; } // entity is either destroyed or has not been created yet
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { component = default; return false; } // does not have component since it does not exist in dictionary
+            if (entity >= componentList.Count) { component = default; return false; } // does not have component since the component list is too small
+
+            if (!componentList[entity].IsEmptyComponent())
+            {
+                component = (T)componentList[entity];
+                return true;
+            }
+            else
+            {
+                component = default;
+                return false;
+            }
         }
 
         /// <summary>
