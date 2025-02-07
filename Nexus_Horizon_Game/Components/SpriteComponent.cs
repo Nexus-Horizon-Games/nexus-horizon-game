@@ -6,18 +6,24 @@ namespace Nexus_Horizon_Game.Components
     {
         private bool isEmpty;
         public string textureName = "";
+        public bool isVisible = true;
         public Vector2 position = Vector2.Zero;
         public float rotation = 0.0f;
         public Color color = Color.White;
         public float scale = 1.0f;
         public Rectangle? sourceRectangle = null; // used to render only a section of an image (for tiles)
-        private uint spriteLayer; // layer order of sprite
+        public bool centered = false;
+        public uint spriteLayer = 0; // layer order of sprite  (Bring to Front >) (bring to back <)
 
-        public SpriteComponent(string textureName, uint spriteLayer = 0)
+        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true)
         {
-            this.isEmpty = false;
             this.textureName = textureName;
+            this.color = color ?? Color.White;
+            this.sourceRectangle = sourceRectangle;
+            this.scale = scale;
             this.spriteLayer = spriteLayer;
+            this.centered = centered;
+            this.isVisible = isVisible;
         }
 
         bool IComponent.IsEmpty
@@ -40,13 +46,10 @@ namespace Nexus_Horizon_Game.Components
             set => spriteLayer = value;
         }
 
-        public SpriteComponent(string textureName, Color color, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0)
+        public bool IsVisible
         {
-            this.textureName = textureName;
-            this.color = color;
-            this.sourceRectangle = sourceRectangle;
-            this.scale = scale;
-            this.spriteLayer = spriteLayer;
+            get => this.isVisible;
+            set => this.isVisible = value;
         }
 
         /// <inheritdoc/>

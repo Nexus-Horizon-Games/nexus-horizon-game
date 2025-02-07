@@ -3,30 +3,68 @@ using Nexus_Horizon_Game.Components;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
-    internal static class Bullet
+    internal class Bullet : Behaviour
     {
+        public delegate Vector2 BulletAction(GameTime gametime, Bullet bullet, int bulletEntity, Vector2 previousVelocity);
 
-        public static void OnUpdate(int thisEntity, GameTime gameTime)
+        private BulletAction bulletAction;
+        private double timeAlive = 0.0f;
+
+        /// <summary>
+        /// Initialies the bullet.
+        /// </summary>
+        /// <param name="thisEntity"> the entity this behavior is attached to. </param>
+        /// <param name="bulletBehavior"> possible bullet action that changes the bullet. </param>
+        public Bullet(int thisEntity, BulletAction bulletBehavior = null) : base(thisEntity)
         {
-            var entityWithPhysics = GameM.CurrentScene.World.GetEntitiesWithComponent<BulletComponent>();
-            if (entityWithPhysics is not null)
+            this.bulletAction = bulletBehavior;
+        }
+
+        public double TimeAlive
+        {
+            get => timeAlive;
+        }
+
+        /// <summary>
+        /// updates the bullet
+        /// </summary>
+        /// <param name="gameTime"></param>
+        public override void OnUpdate(GameTime gameTime)
+        {
+            timeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            DeleteOnOutOfBounds(this.Entity);
+
+            // calls bulletAction if it has been set from the constructor
+            if (this.bulletAction != null)
             {
-                foreach (var entity in entityWithPhysics)
+                if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent bulletPhysics))
                 {
-                    if (GameM.CurrentScene.World.EntityHasComponent<TransformComponent>(entity))
-                    {
-                        DeleteOnOutOfBounds(entity);
-                    }
+                    bulletPhysics.Velocity = this.bulletAction(gameTime, this, this.Entity, bulletPhysics.Velocity);
+                    GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, bulletPhysics);
                 }
             }
         }
 
-        private static void DeleteOnOutOfBounds(int entity)
+        /// <summary>
+        /// sets the bullet to move in the opposite direction
+        /// </summary>
+        public void ReverseBulletDirection()
+        {
+            Vector2 currentVelocity = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity).Velocity;
+            GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, new PhysicsBody2DComponent { Velocity = -currentVelocity });
+        }
+
+        /// <summary>
+        /// deletes the entity of a bullet when out of the radius of the play area
+        /// </summary>
+        /// <param name="entity"></param>
+        private void DeleteOnOutOfBounds(int entity)
         {
             TransformComponent transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(entity);
 
-            if ((transform.position.X > Renderer.ScreenWidth || transform.position.X < 0) ||
-                (transform.position.Y > Renderer.ScreenWidth || transform.position.Y < 0))
+            if ((transform.position.X > GameM.CurrentScene.ArenaRight || transform.position.X < GameM.CurrentScene.ArenaLeft) ||
+                (transform.position.Y > GameM.CurrentScene.ArenaBottom || transform.position.Y < GameM.CurrentScene.ArenaTop))
             {
                 GameM.CurrentScene.World.DestroyEntity(entity);
             }
