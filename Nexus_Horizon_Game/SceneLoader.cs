@@ -13,6 +13,7 @@ namespace Nexus_Horizon_Game
             var playerFactory = new PlayerFactory();
             int moveablePlayer2 = playerFactory.CreateEntity();
 
+            EnemyFactory.CreateBoss("evil_guinea_pig_boss");
             EnemyFactory.CreateBoss("chef_boss");
         }
     }
