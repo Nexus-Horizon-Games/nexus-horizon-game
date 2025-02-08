@@ -61,10 +61,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <param name="entity"></param>
         private void DeleteOnOutOfBounds(int entity)
         {
-            TransformComponent transform = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(entity);
+            Vector2 arenaDirection = GameM.CurrentScene.CheckEntityInArena(entity, 2f, 2f);
 
-            if ((transform.position.X > GameM.CurrentScene.ArenaRight || transform.position.X < GameM.CurrentScene.ArenaLeft) ||
-                (transform.position.Y > GameM.CurrentScene.ArenaBottom || transform.position.Y < GameM.CurrentScene.ArenaTop))
+            if (arenaDirection.X != 0 || arenaDirection.Y != 0)
             {
                 GameM.CurrentScene.World.DestroyEntity(entity);
             }
