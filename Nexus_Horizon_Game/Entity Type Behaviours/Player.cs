@@ -6,6 +6,7 @@ using System;
 using Nexus_Horizon_Game.Systems;
 using System.Collections.Generic;
 using Nexus_Horizon_Game.Timers;
+using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -31,6 +32,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private Timer bulletTimerConstant;
         private Timer bulletTimerEndShots;
         private const float bulletTimeInterval = 0.05f;
+
         // collision
         private int hitboxEntityID;
 
@@ -57,11 +59,14 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <param name="gameTime"> the gametime of the running program. </param>
         public override void OnUpdate(GameTime gameTime)
         {
-            if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity))
+            if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent physicsComponent) &&
+                GameM.CurrentScene.World.EntityHasComponent<TransformComponent>(this.Entity, out TransformComponent transformComponent))
             {
                 // movement
-                PhysicsBody2DComponent physicsBodyComponent = GameM.CurrentScene.World.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
-                GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, this.Movement(physicsBodyComponent));
+                physicsComponent = Movement(physicsComponent);
+                physicsComponent = this.ConstrainPlayerInArena(physicsComponent);
+
+                Debug.WriteLine(transformComponent.position);
 
                 // updates the position of the visual
                 UpdateCollisionVisualPosition();
@@ -71,6 +76,10 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
                 this.bulletTimerConstant.Update(gameTime);
                 this.bulletTimerEndShots.Update(gameTime);
+
+                // Setters.
+                GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, physicsComponent);
+                GameM.CurrentScene.World.SetComponentInEntity<TransformComponent>(this.Entity, transformComponent);
             }
         }
 
@@ -105,10 +114,44 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             return physicsBodyComponent;
         }
 
+
+        /// <summary>
+        /// Constrains player to the arena
+        /// </summary>
+        /// <param name="physicsBody2DComponent"> physics body of entity. </param>
+        /// <returns> possible new physics body set by constriant. </returns>
+        private PhysicsBody2DComponent ConstrainPlayerInArena(PhysicsBody2DComponent physics)
+        {
+            Vector2 arenaBoundaryDirection = GameM.CurrentScene.CheckEntityInArena(this.Entity, 0.91f, 0.96f);
+            float xNewVelocity = physics.Velocity.X;
+            float yNewVelocity = physics.Velocity.Y;
+
+            if (physics.Velocity.X > 0 && arenaBoundaryDirection.X == 1)
+            {
+                xNewVelocity = 0;
+            }
+            else if (physics.Velocity.X < 0 && arenaBoundaryDirection.X == -1)
+            {
+                xNewVelocity = 0;
+            }
+
+            if (physics.Velocity.Y > 0 && arenaBoundaryDirection.Y == -1)
+            {
+                yNewVelocity = 0;
+            }
+            else if (physics.Velocity.Y < 0 && arenaBoundaryDirection.Y == 1)
+            {
+                yNewVelocity = 0;
+            }
+
+            physics.Velocity = new Vector2(xNewVelocity, yNewVelocity);
+
+            return physics;
+        }
+
         /// <summary>
         /// shoots bullets using a timer and only shoots a bullet every time that timer reaches an end.
         /// </summary>
-        /// <param name="playerEntity">  </param>
         private void ContinuousProjectiles()
         {
             Vector2 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
@@ -259,29 +302,5 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 InputSystem.RemoveOnKeyUpListener(keyUpListener.Item1, keyUpListener.Item2);
             }
         }
-
-        /*
-         * 
-            private static int intervalShots = 250; // 1000 mil to 1 sec
-            private static int shotCounts = 8;
-        private static void EndingShot(int playerEntity)
-        {
-
-            for (int i = 0; i < shotCounts; i++)
-            {
-                Vector2 playerPosition = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(playerEntity).position;
-                Vector2 shotDirection = new Vector2(0, -1);
-                Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
-                Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
-
-                BulletFactory bulletFactory = GameM.CurrentScene.World.GetComponentFromEntity<PlayerComponent>(playerEntity).BulletFactory;
-
-                bulletFactory.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.3f);
-                bulletFactory.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.3f);
-
-                Thread.Sleep(intervalShots);
-            }
-        }
-        */
     }
 }
