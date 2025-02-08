@@ -7,7 +7,11 @@ namespace Nexus_Horizon_Game
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
+        private Scene currentScene;
+
+        // temp:
         private SpriteBatch spriteBatch;
+        private Texture2D spriteTexture;
 
         public Game1()
         {
@@ -18,7 +22,7 @@ namespace Nexus_Horizon_Game
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            currentScene = SceneLoader.LoadScene();
 
             base.Initialize();
         }
@@ -27,7 +31,8 @@ namespace Nexus_Horizon_Game
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // temp:
+            spriteTexture = Content.Load<Texture2D>("HowTo_DrawSprite_Character");
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,7 +40,7 @@ namespace Nexus_Horizon_Game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            currentScene.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -44,7 +49,11 @@ namespace Nexus_Horizon_Game
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            currentScene.Draw(gameTime, spriteBatch, spriteTexture);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
