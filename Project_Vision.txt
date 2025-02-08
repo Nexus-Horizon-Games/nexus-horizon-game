@@ -1,92 +1,259 @@
-#Main Idea
-- Our Vision Project for our game that mimicks "Touhou Fuujinroku ~ Mountain Of Faith" developed by Mediascape, is a guinea pig trying to escape
-the clutches of a chef. 
+_____Project Vision_____
 
-#Player
-- [Health : 6] [Lives: 3]
-- Player is awarded lives at point milestones
-- taking damage loses point, dealing damage increases points
-- Controls
-	* Arrow Keys to move around
-	* Shift slows movement
-	* esc pauses the game
-- Hitbox smaller than sprite 5 x 5 pixels, holding shift will show colored white dot of hitbox
-- bullets come out of self untill you get orbs
+----- Main Idea -----
+    Our Project will mimick many patterns of stage 1 and the UI of the game "Touhou Fuujinroku ~ Mountain Of Faith" (By Mediascape), 
+however the theme of our game will be different. The theme will be a guinea pig trying to escape the clutches of a chef
+trying to capture and prepare the guinea pig for a meal.
+[some may be subject to change]
+---------------------
 
-MOST ENEMIES WHEN SHOOTING DIRECTED BULLETS SHOOT FAST BUT THEN IMMEDIATELY SLOW DOWN TO STAY ON SCREEN LONGER
-#Enemies
-- The four enemies that will be in the game will be,
-	* first grunt enemy will be a bird with egg projecticles, [Health : 1.25]
-              - these one kind of float around at the top and just do whatever ill give pathing a go later.
-              BirdTriangle: (small bullet) directed shots at player with 1, then 2, then 3 in very close intervals but not the same time. the bullets seperate (Just a change in angle when spawned)  from the center if odd number the center bullet does not.  
-	* the second grunt enemy will be a cat with hairball projectiles, [Health : 0.65]
-             - Some spawn in towards you, some shoot their projectile, some spawn in on a path, some spawn in a row at the top, some spawn in and then drift down the screen just to annoy you
-             CatCircle: (small bullet) cirlce shot of 15 bullets 
-             CatBIGBULLET: (Big bullet) directed shot of a big bullet
-	* the mid boss will be an evil guinea pig working with the chef with hamster ball projectiles, [Health : 2.5]
-		phase 1:
-              - (Big Bullet) 3 burst 6 seperated bullets shots of big bullets spreading out (Just a change in angle when spawned) 
-              - (small bullet) 2 burst cirlce shots of 27 bullets
-		phase2:
-              - (medium bullet) directed single shot with one bullet going straight then 4 times there are going to be 2 more bullets at opposite angles but each itteration of the 2 bullets has a greater angle almost 
-                              making a triangle.
-	* and the final boss will be the chef throwing coal or another projecticle. [Health : 32] 
-              First Phase:
-                  - (small bullet) 2 circle shots of 17 circling the boss bullets they all push out of boss then come back in a little towards the direction of their spawn point and then push out at a slower speed 
-                  - have 2 bullets spawners symetric from each other and some distance away from the enemy push them outward from enemy while going in a cirlce and spawn targeted bullets at the player for how long who know maybe 3 seconds but make it spawn them fast and a good amount of them XD
-              Second Phase:
-                  - (small bullet) 2 circle shots of 17 bullets they all push out of boss then come back in a little towards the direction of their spawn point and then push out at a slower speed 
-                  - have 1 bullet spawner that starts from the center of boss then goes outward from enemy in a circle spawning 3 direction bullets in small intervals the first direction will be targeted at the player the other two directions are opposite of the targeted player but one at an angle of 45 degrees right and one at 45 degrees to the left.
-- enemies upon death drop PowerUps
+----- UserInput -----
+    Navigation Of Menu:
+	- Arrow Keys
+            Menu, Settings, Pause Menu, Scoreboard
+        - Enter Key:
+            Selecting option in menu
+        
+    During Gameplay(Run):
+         - Arrow Keys
+	    Move Player
+         - Z Key
+            Shoots bullets from player
+         - Shift Key 
+            Slows down the player and reveals hitbox on player
+         - Escape Key
+            Brings up the pause menu and removes the pause menu 
+            stops the game when pause menu is brought up and plays the game when un-paused
+---------------------
 
-# PowerUps
-- [Point Item: Square with a dot in the middle]
-	* Increases point counter in game
-- [Power Item: square with a C] 
-	* [Power Points Start: 0]
-    * increases power counter [Min: 0, Max: 5]
-	* the more power the higher the mutliplier damage output
-	* gain faith points when max power
-- [Faith Point Items: square with a F] 
-    * each grabbed gained depending on difficulty [Easy: 5_000], [Normal: 5_000], [Hard 8_000], [Lunatic 10_000], Extra [10,000]
-    * [Faith Points Start: 50_000] [Min: 50_000, Max: 999_990]
-	* increases the amount of points gained (every point item collected increases by this much)
-	* inverse of a cooldown timer 3 sec, when empty lose 600 no enemies, 10,800 when no enemies
-	* decreases on death us (Faith Score - 50,000) / 3
+----- Actors -----
+    # Player [Guinea Pig]
+        Lives/Health:
+            - Players has 3 lives
+            - Awarded lives after point milestone (To-Do Continuing Project After Course)
+        Death:
+	    - Dies Upon impact of enemy or enemy bullet
+            - On Player Death Lose (PowerPoint/2) and drop a random (min: 1, max: 2) worth of PowerPoints 
+            - Decreases Energy Points by ((Current Energy Score - 50,000) / 3)
+        Abilities: 
+	    - Gravitate Power-Ups toward player going passed line 
+	    - Can shoot 2 bullets continuously using Z letting go releases a few more bullets
+            - Shift to slow down player revealing circle hitbox
+        Bullet:
+            - Bullet Base Damage: 0.25
+            - Hitting an enemy gains points by floor(EnergyPoints/9)
+        Movement:
+            - Arrow Keys to control directional movement
 
-#Phases - Wave/Stage
-- The First Phase will last 40
-    * the FIRST wave lasts 10 seconds, 3 different groups of cats come into the scene from the right, left, and top
-	      and then shoot straight projectiles. 
-		  right group goes out of scene to the left together, 
-		  left group goes out of scene to the right together, 
-		  top leaves back to the top in random directions.
-    * the SECOND wave lasts 6 seconds, 1 group of cats come from the top will charge downwards and the others will stay shooting 2 angled projectiles 
-	      and leaving upwards in random directions
-	      and a bird will shoot 6 projecticles forming a diamond in bursts, 3 times entering from the 
-	* the THIRD wave lasts 14 seconds 
-		  3 birds will enter moving back and forth with the same attack pattern as previous
-		  groups of cats will come in doing 2 angle projectiles and straight ones 
-- The Second Phase (Mid-Boss "Evil Guinea Pig") will last 45 sec
-    * Stage One 15 sec 
-	     pulsates a ring of a circle three times and moves around.
-		 cats coming in from left and right every 3 seconds to shoot and then leave at the 10 second mark 3 groups of them stop and shoot once. 
-	* stage Two 30 sec
-	     while moving pulsates a ring of a circle three times outward followed by stopping becoming invinsible and shooting lasers out of eyes
-		 showing trajectory and then the hitbox being placed with visual
-- The Third Phase will last 35
-	* the FIRST wave lasts 15 seconds
-		2 birds show up seconds apart shooting same pattern as before but now has small lasers but its targeted and stays until wave ends.
-		a matrix of cats come from the top checkered shoot 2 angle projecticles and then leave after,
-		then cats come in at an angle towards player some going after player some shooting angled projectiles until wave is over
-    * the SECOND wave lasts 20 seconds
-		4 birds same as previous wave
-		some cats are constantly going down scene coming from the top
-		cats come in at an angle towards player some going after player some shooting angled projectiles twice one at 5 sec and again at 10 sec
-		cats come forming a forming a circle and some shoot straight projectiles and some 2 angled projectiles
-	
-- The Final Phase (Final-Boss "Chef") will last 60 seconds
-    * Stage One 25 seconds 
-	Chef will use the attack patterns in video [1:36-02:22]
-	* Stage Two 35 seconds
-	Chef will use the attack patterns in video [3:07-03:52]
+    # Grunt Enemy A [Cat]
+         Health:
+             - 0.25
+         Colors:
+             - [Green] drops green carrots
+             - [Blue] drops blue carrots
+             - [Red] drops red carrots
+         Bullet Pattern: 
+             - [Small Bullet] Circle shot of 15 bullets 
+             - [Big Bullet] Directed shot of a Big Bullet in intervals while in screen
+         Spawn:
+             - From the top and goes towards player
+             - Spawns moving in a path with other cats
+             - Spawn in a row (same or different time of other cats)
+             - From the top moves downward in a straight line
+
+    # Grunt Enemy B [Bird]
+         Health:
+             - 7
+         Movement: 
+             - Moves around top screen in any pattern leaving after certain amount of time
+             - Moves down from top and then stays static then leaves after certain amount of time
+         Bullet Pattern:
+             - Directed 3 shots in small interval, 1st shot is straight bullet, 
+               2nd shot is two slightly angled bullets,
+               3rd shot is one straight bullet with two slightly angled bullet.
+         Drops: 
+             - 5 blue carrots and a random (Green Carrot or Red Carrot) 
+
+    # Mid-Boss Enemy [Evil Guinea Pig]
+         Health:
+             - 101
+             - representation of health and name of enemy in the top left corner
+         Bullet Pattern:
+             - [Big Bullet] 4 shots in interval spread out in a flattened U shape pattern
+             - [Medium Bullet] there are 3 directional shots where they have the same pattern,
+                               one is directed at the player and then the other two or angled away
+                               such that they all have even spaces between. These shots have this pattern
+                               5 shots in interval that creates a outline triangle shape, 
+                               1st shot is 1 bullet straight, 
+                               2nd shot is 2 bullets angled outward opposite of each other,
+                               3rd, 4th, and 5th shot is the same as 2nd but angled further each iteration      
+             - [Small Bullet] 3 shots in interval creating a circle with 27 bullets
+         Boss State 1:
+             - Starts with this state
+             - Loops until end of state doing [Big Bullet] and then [Small Bullet] and boss move around
+               in the upper part of the stage.
+         Boss State 2: 
+             - Starts this state at 44 health or after an elapsed time
+             - Damage taken is lessened by 35%
+             - Loops until end of state doing [Medium Bullet] 1-3 times static in intervals and then moving to 
+               another position in the upper part of the stage.
+         Drops:
+             - 30 Green Carrots
+
+    # Final-Boss Enemy [Chef]
+         Health:
+             - 164
+             - Representation of health and name of enemy in the top left corner
+         Bullet Pattern:
+             - [Small Bullet] 2 circle shots of 16 circling the boss bullets they all push out of boss 
+                                  then come back in a little towards the direction of their spawn point and 
+                                  then push out at a slower speed
+             - [Spiral Bullets One] 2 bullets spawners symmetric from each other and some distance away from 
+                                    the boss go outward from the boss while going in a circle and spawn 
+                                    targeted bullets at the player 
+             - [Spiral Bullet Flower] Have 1 bullet spawner that starts from the center of boss then goes 
+                                    outward from enemy in a circle spawning 3 direction bullets in small 
+                                    intervals the first direction will be targeted at the player the other two 
+                                    directions are opposite of the targeted player in such a way that 
+                                    separates the shots in even angles.
+         Boss State 1:
+             - Starts with this state
+             - Loops until end of state doing [Spiral Bullets One] and then [Small bullet] and the boss moves 
+               around in the upper part of the stage
+         Boss State 2: 
+             - Starts this state at 54 health or after an elapsed time
+             - Damage taken is lessened by 75%
+             - Loops until end of state doing [Spiral Bullets Flower] and then [Small bullet] and the boss 
+               moves around in the upper part of the stage.
+         Drops:
+             - 55 Green Carrots
+------------------------
+
+----- Point System -----
+    # Points
+        - The total/current points that the player accumulated during a run.
+        - Starts at 0
+        - Current score displayed in the top right side out of the playable game border
+        - High score displayed in the top right side out of the playable game border
+    # Energy Points
+        - The worth of each Green Carrot point Pick-Up
+        - Starts at 50000 (Min: 0, Max: 999_990)
+        - Inverse of a cooldown timer 3 sec that resets when picking up blue carrots.
+          When cooldown timer is empty player loses 6000 energy points with enemies and 10,800 when no enemies 
+	  per sec.
+        - Displayed on the bottom left in the playable game border. 
+    # Power Points
+        - Starts at 0 (Min: 0, Max: 5)
+        - Multiplier to base player damage of bullet.
+        - At max power gains Energy Points instead.
+        - Displayed in the top right side out of the playable game border
+----------------------
+
+----- Power Up's -----
+    # Overall
+        - Falls down the screen wherever it spawns
+        - Destroyed when it hits a boundary.
+    # Green Carrot
+        - Increases overall player points by energy amount
+    # Blue Carrot
+        - Increases the amount of energy points contained by 5000
+    # Red Carrot
+        - Increases Power Points by 0.10
+----------------------
+
+----- Scene -----
+    # Menu
+        - Start Game
+        - Settings
+        - Quit (exit application)
+    # Settings
+        - Music Volume
+        - SFX Volume
+        - Quit (exit settings)
+    # Pause Menu
+        - Restart Game
+        - Exit To Menu
+        - Resume Game
+    # Stages
+        - Stage 1
+-----------------
+
+----- SFX/Music -----
+    SFX:
+        - Bullet sounds
+    MUSIC:
+        - Main Menu
+        - Soft Pause Menu
+        - Stage 1
+        - Stage 1 Final-Boss
+--------------------
+
+----- Sprite -----
+    - Guinea Pig
+    - Evil Guinea Pig
+    - Cat (Colors: Green, Blue, Red)
+    - Bird
+    - Bird bullet
+    - Cat bullet
+    - Player bullet
+    - Chef bullet(s)
+    - Evil guinea pig bullet(s) 
+    - Carrots: (Green, Blue, Red)
+------------------
+
+----- Stage 1 Phases ----- [Total Possible Phase Time: 3:05]
+# [Total Possible Time: 40] Start Phase:
+        - [Possible Time: 5 Sec.]     
+                                      24 Cats in total move in a path from right and left joining together in 
+                                  the middle going up the screen. 
+        - [Possible Time: 5 Sec.]    
+                                      1 bird spawns from the top doing Bullet Pattern, 15 Cats spawn in toward 
+                                  player stopping near the top in the same y position every other spawning 
+                                  does [Big Ball].
+        - [Possible Time: 5 Sec.]     
+                                      8, 7, 6 cats spawn from the top in rows doing [Big Ball] 1 bird leaves 
+                                  if still alive
+        - [Possible Time: 5 Sec.]     
+                                      2 cats come from right and the other the left doing [Small Ball], 15 
+                                  cats in a path going in a straight line from the left to the right doing 
+				  [Big Ball] every other cat.
+        - [Possible Time: 8 Sec.]     
+                                      2 birds spawn from the top doing bullet pattern, then 20 cats spawn from 
+                                  top in different x positions and timings drifting down the playable border 
+                                  going off screen at the bottom.
+        - [Possible Time: 6 Sec.]     
+                                      For both sides 2 paths next to each other with 4 cats go on screen doing 
+                                  [Big Ball]. 2 cats come from the sides close to the middle doing 
+                                  [Small Ball]. 2 birds leave the screen if they are still alive.
+        - [Possible Time: 6 Sec.]   
+                                      2 rows of 10 cats going straight right and left in opposite directions 
+                                  some doing [Small Ball] and others doing [Big Ball].
+
+# [Total Possible Time: 50] Mid-Boss Phase:
+	- [Possible Time: 25 Sec.]     State One of Mid-Boss.
+	- [Possible Time: 25 Sec.]     
+                                       State Two of Mid-Boss. On 20 seconds 2 birds spawn. On 15 sec 20 cats 
+                                   spawn from top in different x positions and timings drifting down the 
+                                   playable border going off screen at the bottom. 
+
+# [Total Possible Time: 30] Mid Phase:
+        - [Possible Time: 5 Sec.]
+                                     2 birds spawn in, with 2 cats on each side doing [Small Ball] and then a 
+                                 row of 8 cats come from the top doing [Big Ball].
+        - [Possible Time: 6 Sec.]    
+                                     Previous 2 birds and boss 2 birds leave if still alive. X created in 
+                                 middle with 10 cats coming from left and right corner. 4 cats come in a row 
+                                 above the X doing [Big Ball]. While 2 cats come from each side of the X doing 
+                                 [Small Ball]
+        - [Possible Time: 6 Sec.]    
+                                     4 birds enter the screen from sides and top. 2 cats using [Small Ball] 
+                                 come from both sides.
+        - [Possible Time: 8 Sec.]    
+                                     From the top and side of each corner making a curved X 10 cats in a path 
+                                 in a row go in screen and some do [Small Ball] or [Big Ball]. 4 birds leave 
+                                 screen if alive.
+
+# [Total Possible Time: 65 Sec.] Final-Boss Phase:
+        - [Possible Time: 35 Sec.] State One
+        - [Possible Time: 30 Sec.] State Two
+--------------------------
