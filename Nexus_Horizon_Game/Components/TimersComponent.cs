@@ -1,19 +1,18 @@
-using Microsoft.Xna.Framework;
+﻿using Nexus_Horizon_Game.Timers;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct TransformComponent : IComponent
+    internal struct TimersComponent : IComponent
     {
         private bool isEmpty;
 
-        public Vector2 position = new Vector2(0.0f, 0.0f);
-        public double rotation = double.PositiveInfinity;
+        public Dictionary<string, Timer> timers;
 
-        public TransformComponent(Vector2 position, double rotation = 0.0)
+        public TimersComponent(Dictionary<string, Timer> timers)
         {
             this.isEmpty = false;
-            this.position = position;
-            this.rotation = rotation;
+            this.timers = timers;
         }
 
         bool IComponent.IsEmpty
@@ -25,9 +24,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is TransformComponent o)
+            if (other is TimersComponent o)
             {
-                if (position == o.position && rotation == o.rotation)
+                if (timers == o.timers)
                 {
                     return true;
                 }
@@ -45,9 +44,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            TransformComponent transfrom = new TransformComponent(new Vector2(0.0f, 0.0f), double.NegativeInfinity);
-            transfrom.isEmpty = true;
-            return transfrom;
+            TimersComponent comp = new([]);
+            comp.isEmpty = true;
+            return comp;
         }
     }
 }

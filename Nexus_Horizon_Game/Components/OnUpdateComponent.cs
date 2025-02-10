@@ -1,19 +1,19 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct TransformComponent : IComponent
+    internal struct OnUpdateComponent : IComponent
     {
         private bool isEmpty;
 
-        public Vector2 position = new Vector2(0.0f, 0.0f);
-        public double rotation = double.PositiveInfinity;
+        public delegate void OnUpdate(int thisEntity, GameTime gameTime);
 
-        public TransformComponent(Vector2 position, double rotation = 0.0)
+        public OnUpdate onUpdate;
+
+        public OnUpdateComponent(OnUpdate onUpdate)
         {
             this.isEmpty = false;
-            this.position = position;
-            this.rotation = rotation;
+            this.onUpdate = onUpdate;
         }
 
         bool IComponent.IsEmpty
@@ -25,9 +25,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is TransformComponent o)
+            if (other is OnUpdateComponent o)
             {
-                if (position == o.position && rotation == o.rotation)
+                if (onUpdate == o.onUpdate)
                 {
                     return true;
                 }
@@ -45,9 +45,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            TransformComponent transfrom = new TransformComponent(new Vector2(0.0f, 0.0f), double.NegativeInfinity);
-            transfrom.isEmpty = true;
-            return transfrom;
+            OnUpdateComponent comp = new((int entity, GameTime gameTime) => { });
+            comp.isEmpty = true;
+            return comp;
         }
     }
 }
