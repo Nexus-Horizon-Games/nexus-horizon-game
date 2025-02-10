@@ -5,25 +5,26 @@ using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
 using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 using System;
+using System.Linq;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
-    internal class BirdEnemyBehaviour : Behaviour
+    internal class CatEnemyBehaviour : Behaviour
     {
-        private float FireRate = 0.2f;
+        private float FireRate = 0.5f;
         private float t;
         private float waitTime = 0;
-        private float speed = 0.4f;
+        private float speed = 0.3f;
         private BulletFactory bulletFactory = new BulletFactory("BulletSample");
         private TimerContainer timerContainer = new TimerContainer();
         private Vector2[] attackPoints;
         private MultiPath movementPath;
         private int[] attackPaths;
-        private float health = 0.5f;
+        private float health = 0.7f;
+        private bool isFiring = false;
 
-        public enum BirdEnemyState : int
+        public enum CatEnemyState : int
         {
             None,
             Start,
@@ -31,7 +32,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             End,
         }
 
-        public BirdEnemyBehaviour(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime) : base(thisEntity)
+        public CatEnemyBehaviour(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime) : base(thisEntity)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;
@@ -44,15 +45,15 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(this.Entity);
             timerContainer.Update(gameTime);
 
-            switch ((BirdEnemyState)state.state)
+            switch ((CatEnemyState)state.state)
             {
-                case BirdEnemyState.Start:
+                case CatEnemyState.Start:
                     StartState();
                     break;
-                case BirdEnemyState.Moving:
+                case CatEnemyState.Moving:
                     MovingState(gameTime);
                     break;
-                case BirdEnemyState.End:
+                case CatEnemyState.End:
                     EndState(gameTime);
                     break;
             }
@@ -68,13 +69,13 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             t = 0;
             timerContainer.AddTimer(new LoopTimer(FireRate, (gameTime, data) => OnFireBullets(gameTime)), "fire");
-            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.Moving));
+            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(CatEnemyState.Moving));
         }
         private void MovingState(GameTime gameTime)
         {
             if (t >= 1) 
             {
-                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.End));
+                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(CatEnemyState.End));
                 return;
             }
             if (attackPaths.Contains(movementPath.getIndex(t)))
@@ -99,17 +100,53 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private void EndState(GameTime gameTime)
         {
-               GameM.CurrentScene.World.DestroyEntity(this.Entity);
+            if(!isFiring)
+            {
+                GameM.CurrentScene.World.DestroyEntity(this.Entity);
+            }
         }
 
         private void OnFireBullets(GameTime gameTime)
         {
             var position = GameM.CurrentScene.World.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             var playerPosition = GetPlayerPosition();
-            double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
-            Vector2 bulletDirection = GetVectFromDirection(direction, 0);
-            bulletFactory.CreateEntity(position, bulletDirection, 7f);
+           
+            float bulletSpeed = 5f;
+            float timeInterval = 0.08f;
+            int bulletNum = 1;
+
+            timerContainer.StartTemporaryTimer(new LoopTimer(timeInterval, (gameTime, data) =>
+            {
+                isFiring = true;
+                double startTime = (double)data;
+                double time = gameTime.TotalGameTime.TotalSeconds - startTime;
+                double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
+                if (bulletNum == 1)
+                {
+                    Vector2 bulletDirection = GetVectFromDirection(direction, 0);
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                }
+                if (bulletNum == 2)
+                {
+                    Vector2 bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(1));
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-1));
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                }
+                if (bulletNum == 3)
+                {
+                    Vector2 bulletDirection = GetVectFromDirection(direction, 0);
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(2));
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-2));
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    isFiring = false;
+                }
+                bulletNum++;
+            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: timeInterval*4));
         }
+
         private Vector2 GetVectFromDirection(double direction, double variation)
         {
             direction += variation;
@@ -117,7 +154,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             float yComponent = (float)(Math.Sin(direction));
             return new Vector2(xComponent, yComponent);
         }
-
         private Vector2 GetPlayerPosition()
         {
             var entitesWithTag = GameM.CurrentScene.World.GetEntitiesWithComponent<TagComponent>();
@@ -141,5 +177,4 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             return playerPosition;
         }
     }
-
 }

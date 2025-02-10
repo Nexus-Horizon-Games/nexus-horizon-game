@@ -43,6 +43,38 @@ namespace Nexus_Horizon_Game.EntityFactory
             return movementPath;
         }
 
+        public static MultiPath sampleCatPath1(float startX)
+        {
+            Vector2 point1 = new Vector2(startX, 0);
+            Vector2 point2 = new Vector2(startX, 85);
+            Vector2 point3 = new Vector2(0, 150);
+            LinePath enteringPath = new LinePath(point1, point2);
+            WaitPath waitingPath = new WaitPath(point2, 90);
+            LinePath leavingPath = new LinePath(point2, point3);
+            List<IPath> pathList = new List<IPath>();
+            pathList.Add(enteringPath);
+            pathList.Add(waitingPath);
+            pathList.Add(leavingPath);
+            MultiPath movementPath = new MultiPath(pathList);
+            return movementPath;
+        }
+
+        public static MultiPath sampleCatPath2(float startX)
+        {
+            Vector2 point1 = new Vector2(startX, 0);
+            Vector2 point2 = new Vector2(startX, 85);
+            Vector2 point3 = new Vector2(176, 150);
+            LinePath enteringPath = new LinePath(point1, point2);
+            WaitPath waitingPath = new WaitPath(point2, 90);
+            LinePath leavingPath = new LinePath(point2, point3);
+            List<IPath> pathList = new List<IPath>();
+            pathList.Add(enteringPath);
+            pathList.Add(waitingPath);
+            pathList.Add(leavingPath);
+            MultiPath movementPath = new MultiPath(pathList);
+            return movementPath;
+        }
+
         public static int CreateEnemy(string type, MultiPath multiPath, int[] attackPaths, float waitTime)
         {
             int enemyEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
@@ -57,7 +89,12 @@ namespace Nexus_Horizon_Game.EntityFactory
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new BirdEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
             }
-           
+            if (type == "cat_enemy")
+            {
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("cat", centered: true));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new CatEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(CatEnemyBehaviour.CatEnemyState.Start));
+            }
 
             // create enemy
             return enemyEntity;
