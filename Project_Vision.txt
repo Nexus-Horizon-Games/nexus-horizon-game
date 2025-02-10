@@ -191,8 +191,8 @@ trying to capture and prepare the guinea pig for a meal.
 ----- Sprite -----
     - Guinea Pig
     - Evil Guinea Pig
-    - Cat (Colors: Green, Blue, Red)
-    - Bird
+    - Bird (Colors: Green, Blue, Red)
+    - Cat
     - Bird bullet
     - Cat bullet
     - Player bullet
