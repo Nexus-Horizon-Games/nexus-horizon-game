@@ -45,7 +45,7 @@ trying to capture and prepare the guinea pig for a meal.
         Movement:
             - Arrow Keys to control directional movement
 
-    # Grunt Enemy A [Cat]
+    # Grunt Enemy A [Bird]
          Health:
              - 0.25
          Colors:
@@ -57,11 +57,11 @@ trying to capture and prepare the guinea pig for a meal.
              - [Big Bullet] Directed shot of a Big Bullet in intervals while in screen
          Spawn:
              - From the top and goes towards player
-             - Spawns moving in a path with other cats
-             - Spawn in a row (same or different time of other cats)
+             - Spawns moving in a path with other birds
+             - Spawn in a row (same or different time of other birds)
              - From the top moves downward in a straight line
 
-    # Grunt Enemy B [Bird]
+    # Grunt Enemy B [Cat]
          Health:
              - 7
          Movement: 
@@ -204,53 +204,53 @@ trying to capture and prepare the guinea pig for a meal.
 ----- Stage 1 Phases ----- [Total Possible Phase Time: 3:05]
 # [Total Possible Time: 40] Start Phase:
         - [Possible Time: 5 Sec.]     
-                                      24 Cats in total move in a path from right and left joining together in 
+                                      24 Birds in total move in a path from right and left joining together in 
                                   the middle going up the screen. 
         - [Possible Time: 5 Sec.]    
-                                      1 bird spawns from the top doing Bullet Pattern, 15 Cats spawn in toward 
+                                      1 cat spawns from the top doing Bullet Pattern, 15 Birds spawn in toward 
                                   player stopping near the top in the same y position every other spawning 
                                   does [Big Ball].
         - [Possible Time: 5 Sec.]     
-                                      8, 7, 6 cats spawn from the top in rows doing [Big Ball] 1 bird leaves 
+                                      8, 7, 6 birds spawn from the top in rows doing [Big Ball] 1 cat leaves 
                                   if still alive
         - [Possible Time: 5 Sec.]     
-                                      2 cats come from right and the other the left doing [Small Ball], 15 
-                                  cats in a path going in a straight line from the left to the right doing 
-				  [Big Ball] every other cat.
+                                      2 birds come from right and the other the left doing [Small Ball], 15 
+                                  birds in a path going in a straight line from the left to the right doing 
+				  [Big Ball] every other bird.
         - [Possible Time: 8 Sec.]     
-                                      2 birds spawn from the top doing bullet pattern, then 20 cats spawn from 
+                                      2 cats spawn from the top doing bullet pattern, then 20 birds spawn from 
                                   top in different x positions and timings drifting down the playable border 
                                   going off screen at the bottom.
         - [Possible Time: 6 Sec.]     
-                                      For both sides 2 paths next to each other with 4 cats go on screen doing 
-                                  [Big Ball]. 2 cats come from the sides close to the middle doing 
-                                  [Small Ball]. 2 birds leave the screen if they are still alive.
+                                      For both sides 2 paths next to each other with 4 birds go on screen doing 
+                                  [Big Ball]. 2 birds come from the sides close to the middle doing 
+                                  [Small Ball]. 2 cats leave the screen if they are still alive.
         - [Possible Time: 6 Sec.]   
-                                      2 rows of 10 cats going straight right and left in opposite directions 
+                                      2 rows of 10 birds going straight right and left in opposite directions 
                                   some doing [Small Ball] and others doing [Big Ball].
 
 # [Total Possible Time: 50] Mid-Boss Phase:
 	- [Possible Time: 25 Sec.]     State One of Mid-Boss.
 	- [Possible Time: 25 Sec.]     
-                                       State Two of Mid-Boss. On 20 seconds 2 birds spawn. On 15 sec 20 cats 
+                                       State Two of Mid-Boss. On 20 seconds 2 cats spawn. On 15 sec 20 birds 
                                    spawn from top in different x positions and timings drifting down the 
                                    playable border going off screen at the bottom. 
 
 # [Total Possible Time: 30] Mid Phase:
         - [Possible Time: 5 Sec.]
-                                     2 birds spawn in, with 2 cats on each side doing [Small Ball] and then a 
-                                 row of 8 cats come from the top doing [Big Ball].
+                                     2 cats spawn in, with 2 birds on each side doing [Small Ball] and then a 
+                                 row of 8 birds come from the top doing [Big Ball].
         - [Possible Time: 6 Sec.]    
-                                     Previous 2 birds and boss 2 birds leave if still alive. X created in 
-                                 middle with 10 cats coming from left and right corner. 4 cats come in a row 
-                                 above the X doing [Big Ball]. While 2 cats come from each side of the X doing 
+                                     Previous 2 cats and 2 cats that spawned from boss leave if still alive. X created in 
+                                 middle with 10 birds coming from left and right corner. 4 birds come in a row 
+                                 above the X doing [Big Ball]. While 2 birds come from each side of the X doing 
                                  [Small Ball]
         - [Possible Time: 6 Sec.]    
-                                     4 birds enter the screen from sides and top. 2 cats using [Small Ball] 
+                                     4 cats enter the screen from sides and top. 2 birds using [Small Ball] 
                                  come from both sides.
         - [Possible Time: 8 Sec.]    
-                                     From the top and side of each corner making a curved X 10 cats in a path 
-                                 in a row go in screen and some do [Small Ball] or [Big Ball]. 4 birds leave 
+                                     From the top and side of each corner making a curved X 10 birds in a path 
+                                 in a row go in screen and some do [Small Ball] or [Big Ball]. 4 cats leave 
                                  screen if alive.
 
 # [Total Possible Time: 65 Sec.] Final-Boss Phase:
