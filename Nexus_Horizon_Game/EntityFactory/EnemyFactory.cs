@@ -53,7 +53,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             
             if (type == "bird_enemy")
             {
-                GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("guinea_pig", centered: true));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("bird", centered: true));
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new BirdEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
             }
