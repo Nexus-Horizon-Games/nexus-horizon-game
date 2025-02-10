@@ -63,8 +63,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 GameM.CurrentScene.World.EntityHasComponent<TransformComponent>(this.Entity, out TransformComponent transformComponent))
             {
                 // movement
-                physicsComponent = Movement(physicsComponent);
-                physicsComponent = this.ConstrainPlayerInArena(physicsComponent);
+                this.Movement(ref physicsComponent);
+                this.ConstrainPlayerInArena(ref physicsComponent, ref transformComponent);
 
                 Debug.WriteLine(transformComponent.position);
 
@@ -99,7 +99,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// </summary>
         /// <param name="physicsBodyComponent"> current physicsBody Component. </param>
         /// <returns> result of movement physicsBodyComponent. </returns>
-        private PhysicsBody2DComponent Movement(PhysicsBody2DComponent physicsBodyComponent)
+        private void Movement(ref PhysicsBody2DComponent physicsBodyComponent)
         {
             if (MathF.Abs(xSpeed) == MathF.Abs(ySpeed))
             {
@@ -110,8 +110,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             {
                 physicsBodyComponent.Velocity = new Vector2(xSpeed * activeMultiplier, ySpeed * activeMultiplier);
             }
-
-            return physicsBodyComponent;
         }
 
 
@@ -120,33 +118,35 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// </summary>
         /// <param name="physicsBody2DComponent"> physics body of entity. </param>
         /// <returns> possible new physics body set by constriant. </returns>
-        private PhysicsBody2DComponent ConstrainPlayerInArena(PhysicsBody2DComponent physics)
+        private void ConstrainPlayerInArena(ref PhysicsBody2DComponent physics, ref TransformComponent transform)
         {
-            Vector2 arenaBoundaryDirection = GameM.CurrentScene.CheckEntityInArena(this.Entity, 0.91f, 0.96f);
+            Vector2 arenaBoundaryDirection = GameM.CurrentScene.CheckEntityInArena(transform, out Vector2 boundaryIn, 0.92f, 0.95f);
             float xNewVelocity = physics.Velocity.X;
             float yNewVelocity = physics.Velocity.Y;
 
             if (physics.Velocity.X > 0 && arenaBoundaryDirection.X == 1)
             {
                 xNewVelocity = 0;
+                transform.position.X = boundaryIn.X;
             }
             else if (physics.Velocity.X < 0 && arenaBoundaryDirection.X == -1)
             {
                 xNewVelocity = 0;
+                transform.position.X = boundaryIn.X;
             }
 
             if (physics.Velocity.Y > 0 && arenaBoundaryDirection.Y == -1)
             {
                 yNewVelocity = 0;
+                transform.position.Y = boundaryIn.Y;
             }
             else if (physics.Velocity.Y < 0 && arenaBoundaryDirection.Y == 1)
             {
                 yNewVelocity = 0;
+                transform.position.Y = boundaryIn.Y;
             }
 
             physics.Velocity = new Vector2(xNewVelocity, yNewVelocity);
-
-            return physics;
         }
 
         /// <summary>
