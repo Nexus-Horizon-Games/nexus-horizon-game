@@ -12,6 +12,11 @@ namespace Nexus_Horizon_Game
             UpdatePhysics(gameTime);
         }
 
+        public static int Unit
+        {
+            get => unit;
+        }
+
         private static void UpdatePhysics(GameTime gameTime)
         {
             var entityWithPhysics = GameM.CurrentScene.World.GetEntitiesWithComponent<PhysicsBody2DComponent>();
@@ -30,8 +35,7 @@ namespace Nexus_Horizon_Game
                             physicsBodyComponent.Velocity = physicsBodyComponent.Velocity + (physicsBodyComponent.Acceleration * (float)gameTime.ElapsedGameTime.TotalSeconds);
                         }
 
-                        transformComponent.position = transformComponent.position +
-                            new Vector2(physicsBodyComponent.Velocity.X * unit * (float)gameTime.ElapsedGameTime.TotalSeconds, physicsBodyComponent.Velocity.Y * unit * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                        transformComponent.position = transformComponent.position + physicsBodyComponent.Velocity * unit * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                         GameM.CurrentScene.World.SetComponentInEntity<TransformComponent>(entity, transformComponent);
                         GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(entity, physicsBodyComponent);
