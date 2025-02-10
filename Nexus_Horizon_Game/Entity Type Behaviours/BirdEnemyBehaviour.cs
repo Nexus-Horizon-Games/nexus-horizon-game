@@ -20,6 +20,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private Vector2[] attackPoints;
         private MultiPath movementPath;
         private int[] attackPaths;
+        private float health = 0.5f;
 
         public enum BirdEnemyState : int
         {
