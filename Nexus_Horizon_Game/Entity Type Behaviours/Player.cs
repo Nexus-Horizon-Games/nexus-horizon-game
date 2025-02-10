@@ -66,8 +66,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 this.Movement(ref physicsComponent);
                 this.ConstrainPlayerInArena(ref physicsComponent, ref transformComponent);
 
-                Debug.WriteLine(transformComponent.position);
-
                 // updates the position of the visual
                 UpdateCollisionVisualPosition();
 
