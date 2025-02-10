@@ -27,6 +27,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             return enemyEntity;
         }
 
+
         public static int CreateBoss(string type)
         {
             int bossEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
@@ -37,7 +38,9 @@ namespace Nexus_Horizon_Game.EntityFactory
 
             if (type == "evil_guinea_pig_boss") // mid boss
             {
-
+                GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new BehaviourComponent(new GuineaPigMidBossBehaviour(bossEntity)));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(GuineaPigMidBossBehaviour.GuineaPigMidBossState.Start));
             }
             else if (type == "chef_boss") // final boss
             {
