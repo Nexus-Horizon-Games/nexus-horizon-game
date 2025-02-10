@@ -2,14 +2,13 @@ using Nexus_Horizon_Game.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Nexus_Horizon_Game
 {
     internal class World
     {
         private Dictionary<Type, List<IComponent>> componentLists = new();
-        private Queue<int> destroyedEntities = new();
+        private PriorityQueue<int, int> destroyedEntities = new();
         private int nextId = 0;
 
         /// <summary>
@@ -50,20 +49,20 @@ namespace Nexus_Horizon_Game
                 {
                     List<IComponent> newComponentList = new List<IComponent>();
 
-                    // add blank components in any gaps
-                    while (newEntity > newComponentList.Count)
+                    // add blank components all the way to entity.
+                    while (newEntity >= newComponentList.Count)
                     {
                         newComponentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
                     }
 
-                    newComponentList.Add(component);
+                    newComponentList[newEntity] = component;
 
                     this.componentLists.Add(component.GetType(), newComponentList);
                 }
                 else // component list does exist
                 {
                     // add blank components in any gaps
-                    while (newEntity > componentList.Count)
+                    while (newEntity >= componentList.Count)
                     {
                         componentList.Add(makeEmptyComponent?.Invoke(null, null) as IComponent);
                     }
@@ -81,6 +80,8 @@ namespace Nexus_Horizon_Game
         /// <param name="entity"> ID of entity wanting to be destroyed. </param>
         public void DestroyEntity(int entity)
         {
+            if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
+
             // may need to allow each component to do some cleanup before enitity being destroyed.
 
             foreach (List<IComponent> componentList in componentLists.Values)
@@ -91,11 +92,19 @@ namespace Nexus_Horizon_Game
                 componentList[entity] = makeEmptyComponent?.Invoke(null, null) as IComponent;
             }
 
-            destroyedEntities.Enqueue(entity);
+            destroyedEntities.Enqueue(entity, entity);
         }
 
+        /// <summary>
+        /// Adds a component to the entity specified.
+        /// </summary>
+        /// <typeparam name="T"> component adding to entity. </typeparam>
+        /// <param name="entity"> entity ID. </param>
+        /// <param name="component"> component instance. </param>
         public void AddComponent<T>(int entity, T component) where T : IComponent
         {
+            if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
+
             if (!componentLists.ContainsKey(typeof(T)))
             {
                 componentLists.Add(component.GetType(), new List<IComponent>());
@@ -125,6 +134,7 @@ namespace Nexus_Horizon_Game
         /// <param name="entity"> the Id of the entity. </param>
         public void RemoveComponent<T>(int entity) where T : IComponent
         {
+            if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return; }
             if (entity >= componentList.Count) { return; } // the component list is too small, so no need to remove anything
 
@@ -133,20 +143,74 @@ namespace Nexus_Horizon_Game
 
         /// <summary>
         /// creates a enumeration query of the type of components specified.
-        /// NOTE: empty components will be contained in this query.
         /// </summary>
         /// <typeparam name="T"> type of component. </typeparam>
         /// <returns> query of components of the type. </returns>
         public IEnumerable<T> GetComponents<T>() where T : IComponent
         {
-            componentLists.TryGetValue(typeof(T), out var componentList);
-            // NOTE: empty components will be returned in this list.
-            return componentList.Cast<T>();
+            if (!componentLists.TryGetValue(typeof(T), out var componentList)) { return []; };
+
+            return componentList.Cast<T>().Where<T>((component) => !component.IsEmptyComponent());
         }
 
+        /// <summary>
+        /// Creates a enumeration query of tuples of the two types of components specified. Only gets a tuple if the entity has both components (thus, the intersection).
+        /// </summary>
+        /// <typeparam name="T"> type of component. </typeparam>
+        /// <returns> query of components of the type. </returns>
+        public IEnumerable<(T1, T2)> GetComponentsIntersection<T1, T2>()
+            where T1 : IComponent
+            where T2 : IComponent
+        {
+            if (!componentLists.TryGetValue(typeof(T1), out var componentList1)) { return []; };
+            if (!componentLists.TryGetValue(typeof(T2), out var componentList2)) { return []; };
+
+            return componentList1.Cast<T1>().Zip(
+                   componentList2.Cast<T2>()
+                ).Where<(T1, T2)>((components) => !components.Item1.IsEmptyComponent() && !components.Item2.IsEmptyComponent());
+        }
+
+        /// <summary>
+        /// Gets the component from the entity specified.
+        /// </summary>
+        /// <typeparam name="T"> type of IComponent </typeparam>
+        /// <param name="entity"> entity ID. </param>
+        /// <returns> component of entity. </returns>
+        public T GetComponentFromEntity<T>(int entity) where T : IComponent
+        {
+            if (!this.IsEntityAlive(entity)) { return (T)T.MakeEmptyComponent(); } // entity is either destroyed or has not been created yet
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return (T)T.MakeEmptyComponent(); }
+            if (entity >= componentList.Count) { return (T)T.MakeEmptyComponent(); } // the component list is too small
+
+            return (T)componentList[entity];
+        }
+
+        /// <summary>
+        /// sets the component from the entity specified.
+        /// </summary>
+        /// <typeparam name="T"> type of IComponent </typeparam>
+        /// <param name="entity"> entity ID. </param>
+        /// <param name="component"> component that is overriding entity component. </param></param>
+        /// <returns> false if failed true when successfull. </returns>
+        public bool SetComponentInEntity<T>(int entity, T component) where T : IComponent
+        {
+            if (!this.IsEntityAlive(entity)) { return false; } // entity is either destroyed or has not been created yet
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return false; }
+            if (entity >= componentList.Count) { return false; } // the component list is too small
+
+            componentList[entity] = component;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets all the entities with the specified component.
+        /// </summary>
+        /// <typeparam name="T"> component type. </typeparam>
+        /// <returns> list of ID of entities. </returns>
         public List<int> GetEntitiesWithComponent<T>() where T : IComponent
         {
-            componentLists.TryGetValue(typeof(T), out List<IComponent> componentList);
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return []; };
+
             var entities = new List<int>();
             for (int i = 0; i < componentList.Count; i++)
             {
@@ -165,12 +229,49 @@ namespace Nexus_Horizon_Game
         /// <typeparam name="T"> component being checked on. </typeparam>
         /// <param name="entity"> the id of the entity wanting to check. </param>
         /// <returns> true when entity has component otherwise false. </returns>
-        public bool HasComponent<T>(int entity) where T : IComponent
+        public bool EntityHasComponent<T>(int entity) where T : IComponent
         {
+            if (!this.IsEntityAlive(entity)) { return false; } // entity is either destroyed or has not been created yet
             if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return false; } // does not have component since it does not exist in dictionary
             if (entity >= componentList.Count) { return false; } // does not have component since the component list is too small
 
             return !componentList[entity].IsEmptyComponent();
+        }
+
+        /// <summary>
+        /// check whether the entity has the component specified and
+        /// </summary>
+        /// <typeparam name="T"> component being checked on. </typeparam>
+        /// <param name="entity"> the id of the entity wanting to check. </param>
+        /// <param name="component"> outputs the component that the entity has if it has it. </param>
+        /// <returns> true when entity has component otherwise false. </returns>
+        public bool EntityHasComponent<T>(int entity, out T component) where T : IComponent
+        {
+            if (!this.IsEntityAlive(entity)) { component = default; return false; } // entity is either destroyed or has not been created yet
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { component = default; return false; } // does not have component since it does not exist in dictionary
+            if (entity >= componentList.Count) { component = default; return false; } // does not have component since the component list is too small
+
+            if (!componentList[entity].IsEmptyComponent())
+            {
+                component = (T)componentList[entity];
+                return true;
+            }
+            else
+            {
+                component = default;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// whether the entity is currently not destroyed and has been created.
+        /// </summary>
+        /// <param name="entity"> current entity under check. </param>
+        /// <returns> true when entity is not destroyed. </returns>
+        public bool IsEntityAlive(int entity)
+        {
+            return !destroyedEntities.UnorderedItems.Any((element) => element.ToTuple().Item1 == entity) && // not in destroyed
+                entity < nextId; // entity has been created in ECS before
         }
     }
 }

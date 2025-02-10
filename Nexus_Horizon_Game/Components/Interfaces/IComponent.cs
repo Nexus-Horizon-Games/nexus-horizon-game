@@ -4,6 +4,12 @@ namespace Nexus_Horizon_Game.Components
 {
     internal interface IComponent : IEquatable<IComponent>
     {
+        protected bool IsEmpty
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Whether this component is an empty component (ECVS uses this to test if an entity has a component).
         /// </summary>

@@ -1,19 +1,28 @@
-using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct TransformComponent : IComponent
+    internal enum Tag
+    {
+        PLAYER,
+        ENEMY,
+        PROJECTILE,
+    }
+
+    internal struct TagComponent : IComponent
     {
         private bool isEmpty;
 
-        public Vector2 position = new Vector2(0.0f, 0.0f);
-        public double rotation = double.PositiveInfinity;
+        private Tag tag;
 
-        public TransformComponent(Vector2 position, double rotation = 0.0)
+        public TagComponent(Tag tag)
         {
             this.isEmpty = false;
-            this.position = position;
-            this.rotation = rotation;
+            this.tag = tag;
         }
 
         bool IComponent.IsEmpty
@@ -22,12 +31,18 @@ namespace Nexus_Horizon_Game.Components
             set => isEmpty = value;
         }
 
+        public Tag Tag
+        {
+            get => tag;
+            set => tag = value;
+        }
+
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is TransformComponent o)
+            if (other is TagComponent o)
             {
-                if (position == o.position && rotation == o.rotation)
+                if (tag == o.tag)
                 {
                     return true;
                 }
@@ -45,9 +60,11 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            TransformComponent transfrom = new TransformComponent(new Vector2(0.0f, 0.0f), double.NegativeInfinity);
-            transfrom.isEmpty = true;
-            return transfrom;
+            TagComponent comp = new()
+            {
+                isEmpty = true
+            };
+            return comp;
         }
     }
 }
