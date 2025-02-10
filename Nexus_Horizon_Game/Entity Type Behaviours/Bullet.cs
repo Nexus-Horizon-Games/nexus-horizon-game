@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
+using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -33,17 +34,23 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         {
             timeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            DeleteOnOutOfBounds(this.Entity);
-
-            // calls bulletAction if it has been set from the constructor
-            if (this.bulletAction != null)
+            if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent physicsComponent) &&
+                GameM.CurrentScene.World.EntityHasComponent<TransformComponent>(this.Entity, out TransformComponent transformComponent))
             {
-                if (GameM.CurrentScene.World.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent bulletPhysics))
+                DeleteOnOutOfBounds(transformComponent);
+
+                // calls bulletAction if it has been set from the constructor
+                if (this.bulletAction != null)
                 {
-                    bulletPhysics.Velocity = this.bulletAction(gameTime, this, this.Entity, bulletPhysics.Velocity);
-                    GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, bulletPhysics);
+                    physicsComponent.Velocity = this.bulletAction(gameTime, this, this.Entity, physicsComponent.Velocity);
+                    GameM.CurrentScene.World.SetComponentInEntity<PhysicsBody2DComponent>(this.Entity, physicsComponent);
                 }
             }
+            else
+            {
+                Debug.WriteLine("~Could Not Retrieve A Component From Bullet~");
+            }
+        
         }
 
         /// <summary>
@@ -59,13 +66,13 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// deletes the entity of a bullet when out of the radius of the play area
         /// </summary>
         /// <param name="entity"></param>
-        private void DeleteOnOutOfBounds(int entity)
+        private void DeleteOnOutOfBounds(TransformComponent transform)
         {
-            Vector2 arenaDirection = GameM.CurrentScene.CheckEntityInArena(entity, 2f, 2f);
+            Vector2 arenaDirection = GameM.CurrentScene.CheckEntityInArena(transform, out Vector2 boundaryIn, 2f, 2f);
 
             if (arenaDirection.X != 0 || arenaDirection.Y != 0)
             {
-                GameM.CurrentScene.World.DestroyEntity(entity);
+                GameM.CurrentScene.World.DestroyEntity(this.Entity);
             }
         }
     }
