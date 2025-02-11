@@ -21,7 +21,7 @@ namespace Nexus_Horizon_Game.Paths
             }
 
             int pathIndex = (int)(t * paths.Count);
-            
+
             if (pathIndex >= paths.Count)
             {
                 return paths[paths.Count - 1].GetPoint(1.0f);
@@ -54,7 +54,10 @@ namespace Nexus_Horizon_Game.Paths
 
             return paths[pathIndex].GetDerivative((t * paths.Count) - pathIndex);
         }
-
+        public int getIndex(float t)
+        {
+            return (int)(t * paths.Count); 
+        }
         public float GetDeltaT(float t, float speed)
         {
             if (paths.Count == 0)
