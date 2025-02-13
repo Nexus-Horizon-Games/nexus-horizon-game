@@ -38,6 +38,8 @@ namespace Nexus_Horizon_Game
             OnUpdateSystem.Update(gameTime);
             TimerSystem.Update(gameTime);
             BehaviourSystem.Update(gameTime);
+            SceneLoader.Update(gameTime);
+
         }
 
         public void Draw(GameTime gameTime)
