@@ -11,6 +11,10 @@ namespace Nexus_Horizon_Game
         private PriorityQueue<int, int> destroyedEntities = new();
         private int nextId = 0;
 
+        public delegate void OnAddComponent(int entity, Type componentType);
+
+        public event OnAddComponent OnAddComponentEvent;
+
         /// <summary>
         /// creates a new entity with no components.
         /// </summary>
@@ -69,6 +73,8 @@ namespace Nexus_Horizon_Game
 
                     componentList[newEntity] = component;
                 }
+
+                OnAddComponentEvent?.Invoke(newEntity, component.GetType());
             }
 
             return newEntity;
@@ -125,6 +131,8 @@ namespace Nexus_Horizon_Game
 
                 componentList.Add(component);
             }
+
+            OnAddComponentEvent?.Invoke(entity, typeof(T));
         }
 
         /// <summary>

@@ -1,16 +1,14 @@
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
-using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
+using Nexus_Horizon_Game.Timers;
 using System;
+using System.Linq;
 
-namespace Nexus_Horizon_Game.Entity_Type_Behaviours
+namespace Nexus_Horizon_Game.States
 {
-    internal class BirdEnemyBehaviour : Behaviour
+    internal class BirdEnemyState : State
     {
         private float FireRate = 0.2f;
         private float t;
@@ -22,59 +20,47 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private MultiPath movementPath;
         private int[] attackPaths;
         private float health = 0.5f;
+        private bool isMoving = false;
 
-        public enum BirdEnemyState : int
-        {
-            None,
-            Start,
-            Moving,
-            End,
-        }
-
-        public BirdEnemyBehaviour(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime) : base(thisEntity)
+        public BirdEnemyState(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime) : base(thisEntity)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;
             this.waitTime = waitTime;
         }
 
-        
+        public override void OnStart()
+        {
+            isMoving = false;
+        }
+
         public override void OnUpdate(GameTime gameTime)
         {
-            var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(this.Entity);
             timerContainer.Update(gameTime);
 
-            switch ((BirdEnemyState)state.state)
+            if (!isMoving)
             {
-                case BirdEnemyState.Start:
-                    StartState();
-                    break;
-                case BirdEnemyState.Moving:
-                    MovingState(gameTime);
-                    break;
-                case BirdEnemyState.End:
-                    EndState(gameTime);
-                    break;
+                if (waitTime > 0)
+                {
+                    GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(-100, -100)));
+                    waitTime -= 0.01f;
+                    return;
+                }
+                t = 0;
+                timerContainer.AddTimer(new LoopTimer(FireRate, (gameTime, data) => OnFireBullets(gameTime)), "fire");
+                isMoving = true;
+            }
+            else
+            {
+                MovingState(gameTime);
             }
         }
 
-        private void StartState()
-        {
-            if (waitTime > 0)
-            {
-                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(new Vector2(-100, -100)));
-                waitTime -= 0.01f;
-                return;
-            }
-            t = 0;
-            timerContainer.AddTimer(new LoopTimer(FireRate, (gameTime, data) => OnFireBullets(gameTime)), "fire");
-            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.Moving));
-        }
         private void MovingState(GameTime gameTime)
         {
             if (t >= 1) 
             {
-                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.End));
+                EndState(gameTime);
                 return;
             }
             if (attackPaths.Contains(movementPath.getIndex(t)))
@@ -95,11 +81,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new TransformComponent(movementPath.GetPoint(t)));
         }
 
-
-
         private void EndState(GameTime gameTime)
         {
-               GameM.CurrentScene.World.DestroyEntity(this.Entity);
+            OnStop();
         }
 
         private void OnFireBullets(GameTime gameTime)
@@ -141,5 +125,4 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             return playerPosition;
         }
     }
-
 }
