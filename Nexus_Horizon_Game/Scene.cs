@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Nexus_Horizon_Game.Systems;
 using Nexus_Horizon_Game.Components;
+using System.Diagnostics;
 
 namespace Nexus_Horizon_Game
 {
@@ -22,6 +23,17 @@ namespace Nexus_Horizon_Game
         public float ArenaLeft { get { return arenaPosition.X; } }
         public float ArenaRight { get { return arenaPosition.X + arenaSize.X; } }
 
+        public Scene()
+        {
+            World.OnAddComponentEvent += (entity, componentType) =>
+            {
+                if (componentType == typeof(StateComponent))
+                {
+                    StateSystem.OnNewStateComponent(entity);
+                }
+            };
+        }
+
         public void Initialize()
         {
         }
@@ -39,7 +51,7 @@ namespace Nexus_Horizon_Game
             TimerSystem.Update(gameTime);
             BehaviourSystem.Update(gameTime);
             SceneLoader.Update(gameTime);
-
+            StateSystem.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime)
