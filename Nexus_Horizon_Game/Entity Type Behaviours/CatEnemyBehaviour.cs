@@ -45,7 +45,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(this.Entity);
             timerContainer.Update(gameTime);
 
-            switch ((CatEnemyState)state.state)
+            /*switch ((CatEnemyState)state.state)
             {
                 case CatEnemyState.Start:
                     StartState();
@@ -56,7 +56,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 case CatEnemyState.End:
                     EndState(gameTime);
                     break;
-            }
+            }*/
         }
 
         private void StartState()
@@ -69,13 +69,13 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             t = 0;
             timerContainer.AddTimer(new LoopTimer(FireRate, (gameTime, data) => OnFireBullets(gameTime)), "fire");
-            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(CatEnemyState.Moving));
+            //GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(CatEnemyState.Moving));
         }
         private void MovingState(GameTime gameTime)
         {
             if (t >= 1) 
             {
-                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(CatEnemyState.End));
+                //GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(CatEnemyState.End));
                 return;
             }
             if (attackPaths.Contains(movementPath.getIndex(t)))

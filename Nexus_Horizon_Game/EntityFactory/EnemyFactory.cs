@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Paths;
+using Nexus_Horizon_Game.States;
 
 namespace Nexus_Horizon_Game.EntityFactory
 {
@@ -87,13 +88,13 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("bird", centered: true));
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new BirdEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
-                GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
+                //GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
             }
             if (type == "cat_enemy")
             {
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("cat", centered: true));
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new CatEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
-                GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(CatEnemyBehaviour.CatEnemyState.Start));
+                //GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(CatEnemyBehaviour.CatEnemyState.Start));
             }
 
             // create enemy
@@ -101,11 +102,14 @@ namespace Nexus_Horizon_Game.EntityFactory
         }
 
 
+        private const float EnteringSpeed = 30.0f;
+        private const float Stage1Length = 35.0f;
+
         public static int CreateBoss(string type)
         {
             int bossEntity = GameM.CurrentScene.World.CreateEntity(new List<IComponent>
             {
-                new TransformComponent(new Vector2(0.0f, 0.0f)),
+                new TransformComponent(new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, -20.0f)),
                 new PhysicsBody2DComponent(accelerationEnabled: true),
             });
 
@@ -113,13 +117,17 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
                 GameM.CurrentScene.World.AddComponent(bossEntity, new BehaviourComponent(new GuineaPigMidBossBehaviour(bossEntity)));
-                GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(GuineaPigMidBossBehaviour.GuineaPigMidBossState.Start));
+                //GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(GuineaPigMidBossBehaviour.GuineaPigMidBossState.Start));
             }
             else if (type == "chef_boss") // final boss
             {
                 GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
                 GameM.CurrentScene.World.AddComponent(bossEntity, new BehaviourComponent(new ChefBossBehaviour(bossEntity)));
-                GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(ChefBossBehaviour.ChefBossState.Start));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(new List<State>
+                {
+                    new EnterArenaState(bossEntity, new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, 40.0f), EnteringSpeed),
+                    new ChefBossStage1State(bossEntity, Stage1Length)
+                }));
             }
 
             return bossEntity;
