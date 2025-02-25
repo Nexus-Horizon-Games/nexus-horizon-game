@@ -19,7 +19,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     internal class GuineaPigMidBossBehaviour : Behaviour
     {
         // Constants 
-        private const float EnteringSpeed = 4.0f;
+        /*private const float EnteringSpeed = 4.0f;
         private const float IdealY = 50.0f;  // Adjust as needed to match your chef boss IdealY.
         private const float MovementVelocity = 4.0f;  // Speed while on-screen.
         private const float TimeBeforeFirstAttack = 1.5f;
@@ -344,6 +344,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                     }
                 }));
             }
+        }*/
+        public GuineaPigMidBossBehaviour(int entity) : base(entity)
+        {
         }
     }
 }

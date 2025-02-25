@@ -44,7 +44,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             var state = GameM.CurrentScene.World.GetComponentFromEntity<StateComponent>(this.Entity);
             timerContainer.Update(gameTime);
 
-            switch ((BirdEnemyState)state.state)
+            /*switch ((BirdEnemyState)state.state)
             {
                 case BirdEnemyState.Start:
                     StartState();
@@ -55,7 +55,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                 case BirdEnemyState.End:
                     EndState(gameTime);
                     break;
-            }
+            }*/
         }
 
         private void StartState()
@@ -68,13 +68,13 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             t = 0;
             timerContainer.AddTimer(new LoopTimer(FireRate, (gameTime, data) => OnFireBullets(gameTime)), "fire");
-            GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.Moving));
+            //GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.Moving));
         }
         private void MovingState(GameTime gameTime)
         {
             if (t >= 1) 
             {
-                GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.End));
+                //GameM.CurrentScene.World.SetComponentInEntity(this.Entity, new StateComponent(BirdEnemyState.End));
                 return;
             }
             if (attackPaths.Contains(movementPath.getIndex(t)))

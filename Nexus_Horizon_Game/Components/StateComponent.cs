@@ -1,4 +1,5 @@
-using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.States;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.Components
 {
@@ -9,12 +10,13 @@ namespace Nexus_Horizon_Game.Components
     {
         private bool isEmpty;
 
-        public System.Enum state;
+        public int currentState = 0;
+        public List<State> states;
 
-        public StateComponent(System.Enum state)
+        public StateComponent(List<State> states)
         {
             this.isEmpty = false;
-            this.state = state;
+            this.states = states;
         }
 
         bool IComponent.IsEmpty
@@ -28,7 +30,7 @@ namespace Nexus_Horizon_Game.Components
         {
             if (other is StateComponent o)
             {
-                if (state == o.state)
+                if (states == o.states)
                 {
                     return true;
                 }

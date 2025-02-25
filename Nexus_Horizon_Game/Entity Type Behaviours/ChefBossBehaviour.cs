@@ -13,7 +13,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     /// </summary>
     internal class ChefBossBehaviour : Behaviour
     {
-        private const float EnteringSpeed = 5.0f;
         private const float IdealY = 40.0f;
         private const int CircleBulletsCount = 16;
         private const float MovementVelocity = 10.0f;
@@ -23,7 +22,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
         private readonly Vector2 ExitPoint = new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, -20.0f);
 
-        private const float Stage1Length = 35.0f;
         private const float Stage2Length = 30.0f;
 
         // The area that the boss can move in
@@ -59,7 +57,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 
             timerContainer.Update(gameTime);
 
-            if ((ChefBossState)state.state == ChefBossState.Start)
+            /*if ((ChefBossState)state.state == ChefBossState.Start)
             {
                 StartState();
             }
@@ -89,10 +87,10 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
                         OnExit();
                     }
                 }
-            }
+            }*/
         }
 
-        private void StartState()
+        /*private void StartState()
         {
             timerContainer.AddTimer(new LoopTimer(TimeBetweenAttacksStage1, OnMoveAction), "move_action");
 
@@ -435,6 +433,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
 
             return playerPosition;
-        }
+        }*/
     }
 }

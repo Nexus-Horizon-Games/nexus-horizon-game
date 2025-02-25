@@ -18,7 +18,7 @@ namespace Nexus_Horizon_Game
 
             var playerFactory = new PlayerFactory();
             int moveablePlayer2 = playerFactory.CreateEntity();
-            float waitTime = 1;
+            /*float waitTime = 1;
             int[] attack = { 1 };
             int[] catattack = { 1, 2 };
 
@@ -85,7 +85,10 @@ namespace Nexus_Horizon_Game
                 EnemyFactory.CreateBoss("chef_boss");
             });
             finalBossTimer.Start();
-            activeTimers.Add(finalBossTimer);
+
+            activeTimers.Add(finalBossTimer);*/
+
+            EnemyFactory.CreateBoss("chef_boss");
         }
 
         public static void Update(GameTime gameTime)
