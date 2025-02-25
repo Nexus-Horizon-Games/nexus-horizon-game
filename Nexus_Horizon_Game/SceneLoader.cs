@@ -88,7 +88,7 @@ namespace Nexus_Horizon_Game
 
             activeTimers.Add(finalBossTimer);*/
 
-            EnemyFactory.CreateBoss("chef_boss");
+            EnemyFactory.CreateBoss("evil_guinea_pig_boss");
         }
 
         public static void Update(GameTime gameTime)

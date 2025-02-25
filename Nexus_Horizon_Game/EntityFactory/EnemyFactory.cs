@@ -117,8 +117,12 @@ namespace Nexus_Horizon_Game.EntityFactory
             if (type == "evil_guinea_pig_boss") // mid boss
             {
                 GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
-                GameM.CurrentScene.World.AddComponent(bossEntity, new BehaviourComponent(new GuineaPigMidBossBehaviour(bossEntity)));
-                //GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(GuineaPigMidBossBehaviour.GuineaPigMidBossState.Start));
+                GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(new List<State>
+                {
+                    new MoveToPointState(bossEntity, new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, 40.0f), EnteringSpeed),
+                    new GuineaPigBossState(bossEntity, 15.0f),
+                    new MoveToPointState(bossEntity, new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, -20.0f), EnteringSpeed),
+                }));
             }
             else if (type == "chef_boss") // final boss
             {
