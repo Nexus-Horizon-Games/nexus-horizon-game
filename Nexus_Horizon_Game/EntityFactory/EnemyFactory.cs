@@ -87,14 +87,18 @@ namespace Nexus_Horizon_Game.EntityFactory
             if (type == "bird_enemy")
             {
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("bird", centered: true));
-                GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new BirdEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
-                //GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(BirdEnemyBehaviour.BirdEnemyState.Start));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(new List<State>
+                {
+                    new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
+                }));
             }
             if (type == "cat_enemy")
             {
                 GameM.CurrentScene.World.AddComponent(enemyEntity, new SpriteComponent("cat", centered: true));
-                GameM.CurrentScene.World.AddComponent(enemyEntity, new BehaviourComponent(new CatEnemyBehaviour(enemyEntity, multiPath, attackPaths, waitTime)));
-                //GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(CatEnemyBehaviour.CatEnemyState.Start));
+                GameM.CurrentScene.World.AddComponent(enemyEntity, new StateComponent(new List<State>
+                {
+                    new CatEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
+                }));
             }
 
             // create enemy
