@@ -20,6 +20,7 @@ namespace Nexus_Horizon_Game.Systems
             stateComponent.currentState++;
             if (stateComponent.currentState < 0 || stateComponent.currentState >= stateComponent.states.Count)
             {
+                GameM.CurrentScene.World.DestroyEntity(entity);
                 return;
             }
 

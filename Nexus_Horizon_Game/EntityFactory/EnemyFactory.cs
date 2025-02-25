@@ -104,6 +104,7 @@ namespace Nexus_Horizon_Game.EntityFactory
 
         private const float EnteringSpeed = 30.0f;
         private const float Stage1Length = 35.0f;
+        private const float Stage2Length = 30.0f;
 
         public static int CreateBoss(string type)
         {
@@ -122,11 +123,12 @@ namespace Nexus_Horizon_Game.EntityFactory
             else if (type == "chef_boss") // final boss
             {
                 GameM.CurrentScene.World.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
-                GameM.CurrentScene.World.AddComponent(bossEntity, new BehaviourComponent(new ChefBossBehaviour(bossEntity)));
                 GameM.CurrentScene.World.AddComponent(bossEntity, new StateComponent(new List<State>
                 {
-                    new EnterArenaState(bossEntity, new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, 40.0f), EnteringSpeed),
-                    new ChefBossStage1State(bossEntity, Stage1Length)
+                    new MoveToPointState(bossEntity, new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, 40.0f), EnteringSpeed),
+                    new ChefBossStage1State(bossEntity, Stage1Length),
+                    new ChefBossStage2State(bossEntity, Stage2Length),
+                    new MoveToPointState(bossEntity, new Vector2(GameM.CurrentScene.ArenaSize.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
             }
 

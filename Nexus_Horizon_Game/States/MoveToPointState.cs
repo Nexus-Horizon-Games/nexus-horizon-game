@@ -5,17 +5,17 @@ using Nexus_Horizon_Game.Paths;
 
 namespace Nexus_Horizon_Game.States
 {
-    internal class EnterArenaState : State
+    internal class MoveToPointState : State
     {
         private readonly Vector2 stopPoint;
-        private readonly float enteringSpeed;
+        private readonly float speed;
         private IPath path;
         private float time;
 
-        public EnterArenaState(int entity, Vector2 stopPoint, float enteringSpeed) : base(entity)
+        public MoveToPointState(int entity, Vector2 stopPoint, float speed) : base(entity)
         {
             this.stopPoint = stopPoint;
-            this.enteringSpeed = enteringSpeed;
+            this.speed = speed;
         }
 
         public override void OnStart()
@@ -26,7 +26,7 @@ namespace Nexus_Horizon_Game.States
 
         public override void OnUpdate(GameTime gameTime)
         {
-            time += path.GetDeltaT(time, (float)(enteringSpeed * gameTime.ElapsedGameTime.TotalSeconds));
+            time += path.GetDeltaT(time, (float)(speed * gameTime.ElapsedGameTime.TotalSeconds));
             if (time >= 1.0f)
             {
                 OnStop();
