@@ -22,6 +22,7 @@ namespace Nexus_Horizon_Game.Controller
             this.SystemUpdate += StateSystem.Update;
             this.SystemUpdate += TimerSystem.Update;
             this.SystemUpdate += InputSystem.Update;
+            this.SystemUpdate += CollisionSystem.Update;
         }
 
         public void Update(GameTime gameTime)
