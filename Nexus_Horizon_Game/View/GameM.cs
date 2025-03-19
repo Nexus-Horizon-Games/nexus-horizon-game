@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nexus_Horizon_Game.Controller;
 using Nexus_Horizon_Game.Model.Scenes;
+using Nexus_Horizon_Game.View.InputSystem;
 
 namespace Nexus_Horizon_Game
 {
@@ -25,6 +26,7 @@ namespace Nexus_Horizon_Game
         protected override void Initialize()
         {
             // set up systems controller
+            InputSystem.SetInputSystem(new GamePlayInput());
             systemsController = new SystemsController();
 
             base.Initialize();
@@ -47,6 +49,7 @@ namespace Nexus_Horizon_Game
                 Exit();
 
             // update by sending current scene and game time
+            InputSystem.Update(gameTime);
             systemsController.Update(gameTime);
 
             base.Update(gameTime);
@@ -59,7 +62,7 @@ namespace Nexus_Horizon_Game
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            
+
             Renderer.BeginRender();
 
             systemsController.Draw(gameTime);
