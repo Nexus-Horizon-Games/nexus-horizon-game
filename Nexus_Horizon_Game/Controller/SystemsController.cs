@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Controller.Systems;
 using Nexus_Horizon_Game.Systems;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Nexus_Horizon_Game.GameM;
 
 namespace Nexus_Horizon_Game.Controller
 {
@@ -15,13 +10,13 @@ namespace Nexus_Horizon_Game.Controller
     {
         public event SystemUpdate SystemUpdate = (gametime) => { };
 
-        public SystemsController() 
+        public SystemsController()
         {
+            this.SystemUpdate += MovementSystem.Update;
             this.SystemUpdate += PhysicsSystem.Update;
             this.SystemUpdate += BehaviourSystem.Update;
             this.SystemUpdate += StateSystem.Update;
             this.SystemUpdate += TimerSystem.Update;
-            this.SystemUpdate += InputSystem.Update;
             this.SystemUpdate += CollisionSystem.Update;
         }
 
