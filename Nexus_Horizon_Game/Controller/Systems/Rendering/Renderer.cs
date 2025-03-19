@@ -85,6 +85,16 @@ namespace Nexus_Horizon_Game
             spriteBatch.End();
         }
 
+        public static void DrawUI(Texture2D texture, Vector2 position)
+        {
+            spriteBatch.Draw(texture, position, Color.White);
+        }
+
+        public static void DrawUI(string textureName, Vector2 position)
+        {
+            spriteBatch.Draw(textureManager.GetResource(textureName), position, Color.White);
+        }
+
         public static void Draw(Texture2D texture, Vector2 position, Color color)
         {
             spriteBatch.Draw(texture, position * Renderer.scale, color);

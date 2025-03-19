@@ -15,12 +15,18 @@ namespace Nexus_Horizon_Game
         // Controller 
         private SystemsController systemsController;
 
-
+        private static bool isGamePaused = false;
         public GameM()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+        }
+
+        public static bool IsGamePaused
+        {
+            get => isGamePaused;
+            set => isGamePaused = value;
         }
 
         protected override void Initialize()
@@ -34,7 +40,7 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            Renderer.Init(graphics, 600, 680, 200.0f, new SpriteBatch(GraphicsDevice), Content);
+            Renderer.Init(graphics, 640, 480, 200.0f, new SpriteBatch(GraphicsDevice), Content);
 
             Scene.Loaded = new GameplayScene();
         }
@@ -45,13 +51,15 @@ namespace Nexus_Horizon_Game
         /// <param name="gameTime"></param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.LeftControl) && Keyboard.GetState().IsKeyDown(Keys.C))
                 Exit();
 
             // update by sending current scene and game time
             InputSystem.Update(gameTime);
-            systemsController.Update(gameTime);
-
+            if (!isGamePaused)
+            {
+                systemsController.Update(gameTime);
+            }
             base.Update(gameTime);
         }
 

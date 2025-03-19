@@ -18,12 +18,12 @@ namespace Nexus_Horizon_Game.Model
 
             if (isSlowed) { this.movement.CurrentSpeed *= 0.4f; }
             PhysicsBody2DComponent physicsBody = Scene.Loaded.ECS.GetComponentFromEntity<PhysicsBody2DComponent>(entityID);
-
+            TransformComponent transform = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(entityID);
 
             // Set New Velocity
             physicsBody.Velocity = this.movement.Move(direction);
+            ConstrainPlayerInArena(ref physicsBody, ref transform);
             Scene.Loaded.ECS.SetComponentInEntity<PhysicsBody2DComponent>(entityID, physicsBody);
-
 
 
             // Reset the direction and speed.
@@ -38,7 +38,7 @@ namespace Nexus_Horizon_Game.Model
         /// <returns> possible new physics body set by constriant. </returns>
         private void ConstrainPlayerInArena(ref PhysicsBody2DComponent physics, ref TransformComponent transform)
         {
-            Vector2 arenaBoundaryDirection = Arena.CheckEntityInArena(transform, out Vector2 boundaryIn, 0.92f, 0.95f);
+            Vector2 arenaBoundaryDirection = Arena.CheckEntityInArena(transform, out Vector2 boundaryIn, 0.90f, 0.93f); // 0.92f, 0.95f
             float xNewVelocity = physics.Velocity.X;
             float yNewVelocity = physics.Velocity.Y;
 
