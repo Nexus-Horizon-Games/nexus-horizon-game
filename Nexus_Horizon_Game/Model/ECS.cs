@@ -281,5 +281,14 @@ namespace Nexus_Horizon_Game
             return !destroyedEntities.UnorderedItems.Any((element) => element.ToTuple().Item1 == entity) && // not in destroyed
                 entity < nextId; // entity has been created in ECS before
         }
+
+        public void CheckActiveDependency<T>(Type dependentComponent, int entityID) where T : IComponent
+        {
+            if (!this.EntityHasComponent<T>(entityID))
+            {
+                throw new Exception($"Component {nameof(T)} does not exist in entity {entityID} but is required by {dependentComponent.Name}.");
+            }
+        }
+
     }
 }
