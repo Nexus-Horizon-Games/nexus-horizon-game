@@ -13,6 +13,8 @@ namespace Nexus_Horizon_Game.View.InputSystem
             InputSystem.AddOnKeyDownListener(Keys.LeftShift, AddCollisionVisibility);
             InputSystem.AddOnKeyUpListener(Keys.LeftShift, RemoveCollisionVisibility);
 
+            InputSystem.AddOnKeyDownListener(Keys.Escape, Pause_UnPauseGame);
+
             // Movement
             InputSystem.OnUpdate += MovementCheck;
         }
@@ -70,6 +72,18 @@ namespace Nexus_Horizon_Game.View.InputSystem
                 {
                     player.TurnOffSlowAbility();
                 }
+            }
+        }
+
+        private static void Pause_UnPauseGame()
+        {
+            if (GameM.IsGamePaused == true)
+            {
+                GameM.IsGamePaused = false;
+            }
+            else
+            {
+                GameM.IsGamePaused = true;
             }
         }
     }

@@ -5,6 +5,7 @@ namespace Nexus_Horizon_Game.Components
     internal struct SpriteComponent : IComponent
     {
         private bool isEmpty;
+        private bool isUI = false;
         public string textureName = "";
         public bool isVisible = true;
         public Vector2 position = Vector2.Zero;
@@ -15,7 +16,7 @@ namespace Nexus_Horizon_Game.Components
         public bool centered = false;
         public uint spriteLayer = 0; // layer order of sprite  (Bring to Front >) (bring to back <)
 
-        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true)
+        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true, bool isUI = false)
         {
             this.textureName = textureName;
             this.color = color ?? Color.White;
@@ -24,6 +25,7 @@ namespace Nexus_Horizon_Game.Components
             this.spriteLayer = spriteLayer;
             this.centered = centered;
             this.isVisible = isVisible;
+            this.isUI = isUI;
         }
 
         bool IComponent.IsEmpty
@@ -50,6 +52,11 @@ namespace Nexus_Horizon_Game.Components
         {
             get => this.isVisible;
             set => this.isVisible = value;
+        }
+
+        public bool IsUI
+        {
+            get => this.isUI;
         }
 
         /// <inheritdoc/>
