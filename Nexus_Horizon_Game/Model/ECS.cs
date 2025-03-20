@@ -232,6 +232,31 @@ namespace Nexus_Horizon_Game
         }
 
         /// <summary>
+        /// Gets all the entities with the specified component.
+        /// </summary>
+        /// <typeparam name="T"> component type. </typeparam>
+        /// <returns> list of ID of entities. </returns>
+        public List<int> GetEntitiesWithComponent<T>(out Dictionary<int, T> entityWithComponent) where T : IComponent
+        {
+            entityWithComponent = null;
+
+            if (!componentLists.TryGetValue(typeof(T), out List<IComponent> componentList)) { return []; };
+
+            var entities = new List<int>();
+            entityWithComponent = new Dictionary<int, T>();
+            for (int i = 0; i < componentList.Count; i++)
+            {
+                if (!componentList[i].IsEmptyComponent())
+                {
+                    entities.Add(i);
+                    entityWithComponent.Add(i, (T)componentList[i]);
+                }
+            }
+
+            return entities;
+        }
+
+        /// <summary>
         /// check whether the entity has the component specified.
         /// </summary>
         /// <typeparam name="T"> component being checked on. </typeparam>

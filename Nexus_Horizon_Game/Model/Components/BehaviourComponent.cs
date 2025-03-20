@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Nexus_Horizon_Game.Entity_Type_Behaviours;
+﻿using Nexus_Horizon_Game.Entity_Type_Behaviours;
 
 namespace Nexus_Horizon_Game.Components
 {
@@ -17,7 +16,7 @@ namespace Nexus_Horizon_Game.Components
 
         public Behaviour Behaviour
         {
-            get => behaviour;   
+            get => behaviour;
         }
 
         bool IComponent.IsEmpty

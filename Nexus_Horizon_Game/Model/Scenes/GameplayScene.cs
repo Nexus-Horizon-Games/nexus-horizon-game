@@ -3,12 +3,26 @@ using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Timers;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Model.EntityFactory;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
     internal class GameplayScene : Scene
     {
+        private int pauseMenuUI;
+        private static int deathMenuUI;
+
         public GameplayScene() : base() { }
+
+        public int PauseMenuUIID
+        {
+            get => pauseMenuUI;
+        }
+
+        public int DeathMenuUIID
+        {
+            get => deathMenuUI;
+        }
 
         protected override void Initialize()
         {
@@ -104,7 +118,11 @@ namespace Nexus_Horizon_Game.Model.Scenes
 
             int GameplayUI = this.ECS.CreateEntity();
             this.ECS.AddComponent(GameplayUI, new TransformComponent(new Vector2(0, 0)));
-            this.ECS.AddComponent(GameplayUI, new SpriteComponent("GamePlayUI", spriteLayer: int.MaxValue, isUI: true));
+            this.ECS.AddComponent(GameplayUI, new SpriteComponent("GamePlayUI", spriteLayer: int.MaxValue - 2, isUI: true));
+
+            pauseMenuUI = MenuPrefab.CreatePauseMenu(int.MaxValue - 1);
+
+            deathMenuUI = MenuPrefab.CreateDeathMenu(int.MaxValue - 1);
         }
     }
 }
