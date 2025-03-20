@@ -1,10 +1,5 @@
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Nexus_Horizon_Game.Systems;
 using Nexus_Horizon_Game.Components;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Runtime.CompilerServices;
 
 namespace Nexus_Horizon_Game
 {
@@ -39,13 +34,13 @@ namespace Nexus_Horizon_Game
         /// </summary>
         public static Scene Loaded
         {
-            get => loaded; 
+            get => loaded;
             set
             {
                 loaded = value;
                 loaded.LoadContent();
-                loaded.LoadScene();
                 loaded.Initialize();
+                loaded.LoadScene();
             }
         }
 

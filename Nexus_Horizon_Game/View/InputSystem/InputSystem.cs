@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nexus_Horizon_Game.View.InputSystem
 {
@@ -26,25 +27,53 @@ namespace Nexus_Horizon_Game.View.InputSystem
 
         static protected event Action OnUpdate;
 
+        static private bool currentlyLoadingNewInput = false;
+
         private static void KeysPressedUpdate()
         {
-            foreach (Keys key in keyActions.Keys)
+            if (currentlyLoadingNewInput == true)
             {
+                return;
+            }
+
+            Keys[] keys = keyActions.Keys.ToArray();
+
+            foreach (Keys key in keys)
+            {
+                if (currentlyLoadingNewInput == true)
+                {
+                    return;
+                }
+
                 if (Keyboard.GetState().IsKeyDown(key))
                 {
                     InputAction inputAction = keyActions[key];
                     if (!inputAction.isDown)
                     {
-
                         inputAction.isDown = true;
                         keyActions[key] = inputAction;
                         inputAction.actionDown.Invoke();
+                        // keep the action down if loading new input on press.
+                        if (currentlyLoadingNewInput == true)
+                        {
+                            if (keyActions.TryGetValue(key, out InputAction newInputAction))
+                            {
+                                newInputAction.isDown = true;
+                                keyActions[key] = newInputAction;
+                            }
+
+                        }
                     }
                 }
             }
 
-            foreach (Keys key in keyActions.Keys)
+            foreach (Keys key in keys)
             {
+                if (currentlyLoadingNewInput == true)
+                {
+                    return;
+                }
+
                 if (Keyboard.GetState().IsKeyUp(key))
                 {
                     InputAction inputAction = keyActions[key];
@@ -118,6 +147,7 @@ namespace Nexus_Horizon_Game.View.InputSystem
 
         public static void SetInputSystem(InputSystem inputSystem)
         {
+            InputSystem.currentlyLoadingNewInput = true;
             InputSystem.keyActions.Clear();
             InputSystem.OnUpdate = null;
             inputSystem.LoadInput();
@@ -125,6 +155,7 @@ namespace Nexus_Horizon_Game.View.InputSystem
 
         public static void Update(GameTime gameTime)
         {
+            currentlyLoadingNewInput = false;
             KeysPressedUpdate();
             OnUpdate?.Invoke();
         }

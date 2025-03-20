@@ -16,6 +16,7 @@ namespace Nexus_Horizon_Game
         private SystemsController systemsController;
 
         private static bool isGamePaused = false;
+        private static bool exitGame = false;
         public GameM()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -29,10 +30,16 @@ namespace Nexus_Horizon_Game
             set => isGamePaused = value;
         }
 
+        public static bool ExitGame
+        {
+            get => exitGame;
+            set => exitGame = value;
+        }
+
         protected override void Initialize()
         {
             // set up systems controller
-            InputSystem.SetInputSystem(new GamePlayInput());
+            InputSystem.SetInputSystem(new MenuInput());
             systemsController = new SystemsController();
 
             base.Initialize();
@@ -41,8 +48,7 @@ namespace Nexus_Horizon_Game
         protected override void LoadContent()
         {
             Renderer.Init(graphics, 640, 480, 200.0f, new SpriteBatch(GraphicsDevice), Content);
-
-            Scene.Loaded = new GameplayScene();
+            Scene.Loaded = new MenuScene();
         }
 
         /// <summary>
@@ -51,7 +57,7 @@ namespace Nexus_Horizon_Game
         /// <param name="gameTime"></param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.LeftControl) && Keyboard.GetState().IsKeyDown(Keys.C))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.LeftControl) && Keyboard.GetState().IsKeyDown(Keys.C) || exitGame)
                 Exit();
 
             // update by sending current scene and game time
