@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nexus_Horizon_Game.Controller;
+using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Scenes;
 
 namespace Nexus_Horizon_Game
@@ -35,6 +36,12 @@ namespace Nexus_Horizon_Game
             Renderer.Init(graphics, 600, 680, 200.0f, new SpriteBatch(GraphicsDevice), Content);
 
             Scene.Loaded = new GameplayScene();
+
+            // Instantiate your bullet pool
+            BulletFactory playerBulletFactory = new BulletFactory("BulletSample");
+            // Create the pool with an appropriate starting size (e.g., 200)
+            new Nexus_Horizon_Game.Pooling.BulletPool(playerBulletFactory, startingPoolSize: 200);
+
         }
 
         /// <summary>
@@ -48,6 +55,8 @@ namespace Nexus_Horizon_Game
 
             // update by sending current scene and game time
             systemsController.Update(gameTime);
+
+            CollisionSystem.Update(gameTime);
 
             base.Update(gameTime);
         }

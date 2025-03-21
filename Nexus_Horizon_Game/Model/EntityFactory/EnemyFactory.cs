@@ -82,6 +82,8 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
+                new ColliderComponent(new Rectangle(0, 0, type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)),
+                new TagComponent(Tag.ENEMY)
             });
             
             if (type == "bird_enemy")
@@ -116,12 +118,16 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 new TransformComponent(new Vector2(Arena.Size.X / 2.0f, -20.0f)),
                 new PhysicsBody2DComponent(accelerationEnabled: true),
+
+                new TagComponent(Tag.ENEMY)
             });
 
             if (type == "evil_guinea_pig_boss") // mid boss
             {
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
-                Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>
+                // added hitbox cetering on sprite
+                Scene.Loaded.ECS.AddComponent(bossEntity, new ColliderComponent(new Rectangle(-8, -8, 17, 17)));
+                Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>              
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
                     new GuineaPigBossState(bossEntity, 15.0f),
@@ -131,6 +137,8 @@ namespace Nexus_Horizon_Game.EntityFactory
             else if (type == "chef_boss") // final boss
             {
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
+                // added hitbox cetering on sprite
+                Scene.Loaded.ECS.AddComponent(bossEntity, new ColliderComponent(new Rectangle(-6, -9, 12, 18)));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
