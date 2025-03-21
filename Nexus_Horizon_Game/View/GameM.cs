@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Nexus_Horizon_Game.Controller;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Scenes;
+using Nexus_Horizon_Game.View.InputSystem;
 
 namespace Nexus_Horizon_Game
 {
@@ -15,7 +16,8 @@ namespace Nexus_Horizon_Game
         // Controller 
         private SystemsController systemsController;
 
-
+        private static bool isGamePaused = false;
+        private static bool exitGame = false;
         public GameM()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -23,9 +25,22 @@ namespace Nexus_Horizon_Game
             IsMouseVisible = true;
         }
 
+        public static bool IsGamePaused
+        {
+            get => isGamePaused;
+            set => isGamePaused = value;
+        }
+
+        public static bool ExitGame
+        {
+            get => exitGame;
+            set => exitGame = value;
+        }
+
         protected override void Initialize()
         {
             // set up systems controller
+            InputSystem.SetInputSystem(new MenuInput());
             systemsController = new SystemsController();
 
             base.Initialize();
@@ -33,15 +48,8 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            Renderer.Init(graphics, 600, 680, 200.0f, new SpriteBatch(GraphicsDevice), Content);
-
-            Scene.Loaded = new GameplayScene();
-
-            // Instantiate your bullet pool
-            BulletFactory playerBulletFactory = new BulletFactory("BulletSample");
-            // Create the pool with an appropriate starting size (e.g., 200)
-            new Nexus_Horizon_Game.Pooling.BulletPool(playerBulletFactory, startingPoolSize: 200);
-
+            Renderer.Init(graphics, 640, 480, 200.0f, new SpriteBatch(GraphicsDevice), Content);
+            Scene.Loaded = new MenuScene();
         }
 
         /// <summary>
@@ -50,14 +58,15 @@ namespace Nexus_Horizon_Game
         /// <param name="gameTime"></param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.LeftControl) && Keyboard.GetState().IsKeyDown(Keys.C) || exitGame)
                 Exit();
 
             // update by sending current scene and game time
-            systemsController.Update(gameTime);
-
-            CollisionSystem.Update(gameTime);
-
+            InputSystem.Update(gameTime);
+            if (!isGamePaused)
+            {
+                systemsController.Update(gameTime);
+            }
             base.Update(gameTime);
         }
 
@@ -68,7 +77,7 @@ namespace Nexus_Horizon_Game
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            
+
             Renderer.BeginRender();
 
             systemsController.Draw(gameTime);

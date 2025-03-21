@@ -1,22 +1,32 @@
-﻿using Microsoft.Xna.Framework;
-using Nexus_Horizon_Game.Components;
+﻿using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Timers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Model.EntityFactory;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
     internal class GameplayScene : Scene
     {
+        private int pauseMenuUI;
+        private static int deathMenuUI;
+
         public GameplayScene() : base() { }
+
+        public int PauseMenuUIID
+        {
+            get => pauseMenuUI;
+        }
+
+        public int DeathMenuUIID
+        {
+            get => deathMenuUI;
+        }
 
         protected override void Initialize()
         {
-            
+
         }
 
         protected override void LoadContent()
@@ -30,7 +40,7 @@ namespace Nexus_Horizon_Game.Model.Scenes
         protected override void LoadScene()
         {
             // BOSS TIMERS
-            int mbt_entity = this.ECS.CreateEntity(new List<IComponent> { new TimersComponent(new Dictionary<string, Timer>()) } );
+            int mbt_entity = this.ECS.CreateEntity(new List<IComponent> { new TimersComponent(new Dictionary<string, Timer>()) });
 
             var playerFactory = new PlayerFactory();
             int moveablePlayer2 = playerFactory.CreateEntity();
@@ -105,6 +115,14 @@ namespace Nexus_Horizon_Game.Model.Scenes
             this.ECS.SetComponentInEntity(mbt_entity, bossTimersComponent);
 
             //EnemyFactory.CreateBoss("evil_guinea_pig_boss");
+
+            int GameplayUI = this.ECS.CreateEntity();
+            this.ECS.AddComponent(GameplayUI, new TransformComponent(new Vector2(0, 0)));
+            this.ECS.AddComponent(GameplayUI, new SpriteComponent("GamePlayUI", spriteLayer: int.MaxValue - 2, isUI: true));
+
+            pauseMenuUI = MenuPrefab.CreatePauseMenu(int.MaxValue - 1);
+
+            deathMenuUI = MenuPrefab.CreateDeathMenu(int.MaxValue - 1);
         }
     }
 }
