@@ -13,6 +13,7 @@ namespace Nexus_Horizon_Game
         private static GraphicsDeviceManager graphics;
         private static SpriteBatch spriteBatch;
         private static ResourceManager<Texture2D> textureManager;
+        private static ResourceManager<SpriteFont> fontManager;
 
         private static int width;
         private static int height;
@@ -57,6 +58,7 @@ namespace Nexus_Horizon_Game
             Renderer.spriteBatch = spriteBatch;
 
             textureManager = new ResourceManager<Texture2D>(contentManager);
+            fontManager = new ResourceManager<SpriteFont>(contentManager);
         }
 
         public static void LoadContent(List<string> names)
@@ -85,6 +87,21 @@ namespace Nexus_Horizon_Game
             spriteBatch.End();
         }
 
+        public static void DrawFont(string spriteFontPath, string text, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
+        {
+            spriteBatch.DrawString(fontManager.GetResource(spriteFontPath), text, position, color, rotation, origin, scale, effects, layerDepth);
+        }
+
+        public static void DrawUI(Texture2D texture, Vector2 position)
+        {
+            spriteBatch.Draw(texture, position, Color.White);
+        }
+
+        public static void DrawUI(string textureName, Vector2 position)
+        {
+            spriteBatch.Draw(textureManager.GetResource(textureName), position, Color.White);
+        }
+
         public static void Draw(Texture2D texture, Vector2 position, Color color)
         {
             spriteBatch.Draw(texture, position * Renderer.scale, color);
@@ -105,6 +122,11 @@ namespace Nexus_Horizon_Game
             spriteBatch.Draw(textureManager.GetResource("square"),
                 new Rectangle((int)(position.X * Renderer.scale), (int)(position.Y * Renderer.scale), (int)(size.X * Renderer.scale), (int)(size.Y * Renderer.scale)),
                 null, color, rotation, Vector2.Zero, SpriteEffects.None, layerDepth);
+        }
+
+        public static Vector2 GetStringBounds(string spriteFontPath, string text)
+        {
+            return fontManager.GetResource(spriteFontPath).MeasureString(text);
         }
 
         public static Vector2 GetTextureBounds(string textureName)

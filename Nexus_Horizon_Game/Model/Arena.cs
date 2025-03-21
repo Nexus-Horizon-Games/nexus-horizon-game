@@ -5,11 +5,13 @@ namespace Nexus_Horizon_Game
 {
     internal static class Arena
     {
-        private static readonly Vector2 position = new Vector2(0.0f, 0.0f);
-        private static readonly Vector2 size = new Vector2(176f, 200f);
+        private static readonly Vector2 position = new Vector2(35f / Renderer.Scale, 20f / Renderer.Scale);
+        private static readonly Vector2 size = new Vector2(380f / Renderer.Scale, 440f / Renderer.Scale);
 
         public static Vector2 Position { get { return position; } }
         public static Vector2 Size { get { return size; } }
+
+        public static Vector2 Origin { get => new Vector2(((size.X) / 2) + position.X, (size.Y / 2) + position.Y); }
 
         public static float Top { get { return position.Y; } }
         public static float Bottom { get { return position.Y + size.Y; } }
@@ -25,14 +27,13 @@ namespace Nexus_Horizon_Game
         /// (0, -1) = top-Y
         /// Any Combination of these will be the direction the entity is going off the arena.
         /// </summary>
-        /// <param name="entity"> entity checking. </param>
         /// <param name="xBoundaryScale"> Scale x from origin of arena. </param>
         /// <param name="yBoundaryScale"> Scale y from origin of arena. </param>
         /// 
         /// <returns> The direction the entity went off screen. </returns>
         public static Vector2 CheckEntityInArena(TransformComponent entityTransform, out Vector2 boundaryIn, float xBoundaryScale = 1f, float yBoundaryScale = 1f)
         {
-            Vector2 ArenaOrigin = size / 2;
+            Vector2 ArenaOrigin = Origin;
             float width = size.X;
             float height = size.Y;
 
