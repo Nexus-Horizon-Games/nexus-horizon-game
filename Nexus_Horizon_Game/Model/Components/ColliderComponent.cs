@@ -69,12 +69,9 @@ namespace Nexus_Horizon_Game.Components
             return collider;
         }
 
-        public void SendOnCollisionInfo(List<int> entityIDList)
+        public void SendOnCollisionInfo(int entityIDCollided)
         {
-            foreach (int entity in entityIDList)
-            {
-                onCollision?.Invoke(entity); // invoke for every entityID that is currently colliding with another collider, ? so no risk of null exception
-            }
+            onCollision?.Invoke(entityIDCollided); // invoke for every entityID that is currently colliding with another collider, ? so no risk of null exception
         }
     }
 }
