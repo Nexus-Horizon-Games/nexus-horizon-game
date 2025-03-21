@@ -19,18 +19,12 @@ namespace Nexus_Horizon_Game.Controller
             // get entities with colliders
             List<int> colliderEntityIDList = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
 
-            foreach (int bulletID in colliderEntityIDList) 
+            for (int i = 0; i < colliderEntityIDList.Count; i++) 
             {
-                // gets TagComponent to check if this is a bullet
-                TagComponent bulletTagComponent = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(bulletID);
+                int entityID1 = colliderEntityIDList[i];
 
-                // checks bullet on bullet collisions
-                if (bulletTagComponent.Tag != Tag.PLAYER_PROJECTILE && bulletTagComponent.Tag != Tag.ENEMY_PROJECTILE)
-                    continue;
-              
-                // gets collider and transform components for the bullet
-                ColliderComponent collider1 = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(bulletID);
-                TransformComponent transform1 = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(bulletID);              
+                ColliderComponent collider1 = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(entityID1);
+                TransformComponent transform1 = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(entityID1);              
 
                 Rectangle worldBounds1 = new Rectangle(
                     collider1.Bounds.X + (int)transform1.position.X,
@@ -38,23 +32,12 @@ namespace Nexus_Horizon_Game.Controller
                     collider1.Bounds.Width,
                     collider1.Bounds.Height);
 
-                // determines the tag target
-                // if player bullet, target an enemy; if enemy bullet, target a player
-                Tag allowedTarget = (bulletTagComponent.Tag == Tag.PLAYER_PROJECTILE) ? Tag.ENEMY : Tag.PLAYER;
 
-                // iterate over all other colliders
-                foreach (int otherID in colliderEntityIDList)
+                for (int j = i + 1; j < colliderEntityIDList.Count; j++)
                 {
-                    // skip
-                    if (otherID == bulletID)
-                        continue;
-
-                    TagComponent tag2 = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(otherID);
-                    if (tag2.Tag != allowedTarget)
-                        continue;
-                    // gets collider and transform for target             
-                    ColliderComponent collider2 = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(otherID);
-                    TransformComponent transform2 = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(otherID);
+                    int entityID2 = colliderEntityIDList[j];
+                    ColliderComponent collider2 = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(entityID2);
+                    TransformComponent transform2 = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(entityID2);
 
                     Rectangle worldBounds2 = new Rectangle(
                         collider2.Bounds.X + (int)transform2.position.X,
@@ -62,9 +45,12 @@ namespace Nexus_Horizon_Game.Controller
                         collider2.Bounds.Width,
                         collider2.Bounds.Height);
 
+
                     if (worldBounds1.Intersects(worldBounds2))
                     {
-                        collider1.SendOnCollisionInfo(otherID);
+                        //Debug.WriteLine($"Collision detected: Entity {entityID1} intersects with Entity {entityID2}");
+                        collider1.SendOnCollisionInfo(entityID2);
+                        collider2.SendOnCollisionInfo(entityID1);
                     }
                 }
             }
