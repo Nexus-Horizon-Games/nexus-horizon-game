@@ -22,7 +22,7 @@ namespace Nexus_Horizon_Game.States
 
         public virtual void OnUpdate(GameTime gameTime) { }
         public virtual void OnStart() { }
-        protected virtual void OnStop()
+        public virtual void OnStop()
         {
             OnStopEvent?.Invoke();
         }

@@ -18,6 +18,7 @@ namespace Nexus_Horizon_Game.Controller
             this.SystemUpdate += StateSystem.Update;
             this.SystemUpdate += TimerSystem.Update;
             this.SystemUpdate += CollisionSystem.Update;
+            this.SystemUpdate += HealthSystem.Update;
         }
 
         public void Update(GameTime gameTime)
