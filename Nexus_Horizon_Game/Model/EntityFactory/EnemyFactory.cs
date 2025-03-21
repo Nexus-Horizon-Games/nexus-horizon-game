@@ -99,6 +99,23 @@ namespace Nexus_Horizon_Game.EntityFactory
                 {
                     new CatEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
                 }));
+
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(3, () =>
+                {
+                    var stateComp = Scene.Loaded.ECS.GetComponentFromEntity<StateComponent>(enemyEntity);
+
+                    // Remove states after the current state
+                    if (stateComp.currentState + 1 != stateComp.states.Count)
+                    {
+                        stateComp.states.RemoveRange(stateComp.currentState + 1, stateComp.states.Count - stateComp.currentState + 1);
+                    }
+
+                    // Set to death state:
+                    stateComp.states.Add(new DeathState(enemyEntity));
+                    stateComp.states[stateComp.currentState].OnStop();
+
+                    //Scene.Loaded.ECS.SetComponentInEntity<StateComponent>(enemyEntity, stateComp);
+                }));
             }
 
             // create enemy

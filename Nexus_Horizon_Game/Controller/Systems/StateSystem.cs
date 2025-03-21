@@ -25,8 +25,9 @@ namespace Nexus_Horizon_Game.Systems
             }
 
             stateComponent.states[stateComponent.currentState].OnStopEvent += () => { OnStateStopped(entity); };
-            stateComponent.states[stateComponent.currentState].OnStart();
+
             Scene.Loaded.ECS.SetComponentInEntity(entity, stateComponent);
+            stateComponent.states[stateComponent.currentState].OnStart();
         }
 
         public static void Update(GameTime gameTime)

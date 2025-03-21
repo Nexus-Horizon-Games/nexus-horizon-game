@@ -5,6 +5,7 @@ using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
 using System;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.States
 {
@@ -94,6 +95,10 @@ namespace Nexus_Horizon_Game.States
 
         private void OnFireBullets(GameTime gameTime)
         {
+            var healthComp = Scene.Loaded.ECS.GetComponentFromEntity<HealthComponent>(this.Entity);
+            healthComp.health--;
+            Scene.Loaded.ECS.SetComponentInEntity(this.Entity, healthComp);
+
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             var playerPosition = GetPlayerPosition();
            
