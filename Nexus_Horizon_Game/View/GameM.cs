@@ -37,10 +37,10 @@ namespace Nexus_Horizon_Game
 
             Scene.Loaded = new GameplayScene();
 
-            // Instantiate your bullet pool
+            // instantiate the bullet pool
             BulletFactory playerBulletFactory = new BulletFactory("BulletSample");
-            // Create the pool with an appropriate starting size (e.g., 200)
-            new Nexus_Horizon_Game.Pooling.BulletPool(playerBulletFactory, startingPoolSize: 200);
+            // create the pool with a valid starting size 
+            new Nexus_Horizon_Game.Pooling.BulletPool(playerBulletFactory, startingPoolSize: 150);
 
         }
 
