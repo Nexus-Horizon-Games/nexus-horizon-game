@@ -7,6 +7,7 @@ using Nexus_Horizon_Game.Systems;
 using System.Collections.Generic;
 using Nexus_Horizon_Game.Timers;
 using System.Diagnostics;
+using Nexus_Horizon_Game.Pooling;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
@@ -177,8 +178,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
-            hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, scale: 0.25f, spriteLayer: 99);
+            int leftBulletEntity = BulletPool.Instance.GetBullet(leftBulletPosition, shotDirection, bulletSpeed, isPlayerBullet: true);
+            int rightBulletEntity = BulletPool.Instance.GetBullet(rightBulletPosition, shotDirection, bulletSpeed, isPlayerBullet: true);
         }
 
         /// <summary>
