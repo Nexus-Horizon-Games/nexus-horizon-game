@@ -10,6 +10,27 @@ namespace Nexus_Horizon_Game.EntityFactory
 {
     internal static class EnemyFactory
     {
+        /// <summary>
+        /// Called when an enemy dies.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        public static void SetToDeathState(int entity)
+        {
+            var stateComp = Scene.Loaded.ECS.GetComponentFromEntity<StateComponent>(entity);
+
+            // Add death state
+            stateComp.states.Add(new DeathState(entity));
+
+            // Set transtion from current state to death state
+            stateComp.transitionFunction = stateComp.UseDictionaryTransitionFunction;
+            stateComp.transitions[stateComp.currentState] = stateComp.states.Count - 1;
+
+            // Stop current state to transition to death state
+            stateComp.states[stateComp.currentState].OnStop();
+
+            Scene.Loaded.ECS.SetComponentInEntity(entity, stateComp);
+        }
+
         public static MultiPath sampleBirdPath1()
         {
             Vector2 point1 = new Vector2(0, 0);
@@ -91,6 +112,11 @@ namespace Nexus_Horizon_Game.EntityFactory
                 {
                     new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
                 }));
+
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(1, () =>
+                {
+                    SetToDeathState(enemyEntity);
+                }));
             }
             if (type == "cat_enemy")
             {
@@ -100,21 +126,9 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new CatEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
                 }));
 
-                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(3, () =>
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(7, () =>
                 {
-                    var stateComp = Scene.Loaded.ECS.GetComponentFromEntity<StateComponent>(enemyEntity);
-
-                    // Remove states after the current state
-                    if (stateComp.currentState + 1 != stateComp.states.Count)
-                    {
-                        stateComp.states.RemoveRange(stateComp.currentState + 1, stateComp.states.Count - stateComp.currentState + 1);
-                    }
-
-                    // Set to death state:
-                    stateComp.states.Add(new DeathState(enemyEntity));
-                    stateComp.states[stateComp.currentState].OnStop();
-
-                    //Scene.Loaded.ECS.SetComponentInEntity<StateComponent>(enemyEntity, stateComp);
+                    SetToDeathState(enemyEntity);
                 }));
             }
 
@@ -144,6 +158,11 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new GuineaPigBossState(bossEntity, 15.0f),
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
+
+                Scene.Loaded.ECS.AddComponent(bossEntity, new HealthComponent(101, () =>
+                {
+                    SetToDeathState(bossEntity);
+                }));
             }
             else if (type == "chef_boss") // final boss
             {
@@ -154,6 +173,11 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new ChefBossStage1State(bossEntity, Stage1Length),
                     new ChefBossStage2State(bossEntity, Stage2Length),
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
+                }));
+
+                Scene.Loaded.ECS.AddComponent(bossEntity, new HealthComponent(164, () =>
+                {
+                    SetToDeathState(bossEntity);
                 }));
             }
 
