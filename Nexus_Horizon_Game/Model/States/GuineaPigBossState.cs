@@ -190,7 +190,7 @@ namespace Nexus_Horizon_Game.States
                     {
                         float angle = baseAngle + (i * angleStep);
                         Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                        int bulletEntity = BulletPool.Instance.GetBullet(bossPosition, direction, 7.0f, isPlayerBullet: false);
+                        int bulletEntity = bulletFactoryBig.CreateEntity(bossPosition, direction, 7.0f, null, BigBulletScale, 99, false);
                     }
                 }));
             }
@@ -211,7 +211,7 @@ namespace Nexus_Horizon_Game.States
                     for (int j = 0; j < 27; j++)
                     {
                         Vector2 direction = new Vector2((float)Math.Cos(j * arcInterval), (float)Math.Sin(j * arcInterval));
-                        int bulletEntity = BulletPool.Instance.GetBullet(bossPosition, direction, 5.0f, isPlayerBullet: false);
+                        int bulletEntity = bulletFactorySmall.CreateEntity(bossPosition, direction, 5.0f, null, 0.25f, 99, false);
                     }
                 }));
             }

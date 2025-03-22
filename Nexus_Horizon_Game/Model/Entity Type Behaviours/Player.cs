@@ -33,6 +33,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private Timer bulletTimerConstant;
         private Timer bulletTimerEndShots;
         private const float bulletTimeInterval = 0.05f;
+        
 
         // collision
         private int hitboxEntityID;
@@ -178,8 +179,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            int leftBulletEntity = BulletPool.Instance.GetBullet(leftBulletPosition, shotDirection, bulletSpeed, isPlayerBullet: true);
-            int rightBulletEntity = BulletPool.Instance.GetBullet(rightBulletPosition, shotDirection, bulletSpeed, isPlayerBullet: true);
+            int leftBulletEntity = hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, null, 0.25f, 99, true);
+            int rightBulletEntity = hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, null, 0.25f, 99, true);
         }
 
         /// <summary>

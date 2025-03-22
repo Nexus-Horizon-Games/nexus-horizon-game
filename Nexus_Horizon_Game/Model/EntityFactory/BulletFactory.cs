@@ -2,7 +2,7 @@
 using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
 using Nexus_Horizon_Game.Entity_Type_Behaviours;
-using Nexus_Horizon_Game.Behaviours;
+//using Nexus_Horizon_Game.Behaviours;
 
 namespace Nexus_Horizon_Game.EntityFactory
 {
@@ -68,7 +68,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             // bullet logic behavior attached to ECS
             Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new Bullet(entity, bulletAction)));
             // Attach collision behavior to handle collisions (destroy bullet on enemy impact).
-            Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new CollisionBehavior(entity)));
+            //Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new CollisionBehavior(entity)));
             return entity;
         }
 
