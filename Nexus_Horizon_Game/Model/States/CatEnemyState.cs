@@ -5,6 +5,7 @@ using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
 using System;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.States
 {

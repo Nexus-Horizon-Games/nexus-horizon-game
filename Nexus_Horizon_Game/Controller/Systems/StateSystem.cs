@@ -17,7 +17,7 @@ namespace Nexus_Horizon_Game.Systems
         private static void OnStateStopped(int entity)
         {
             var stateComponent = Scene.Loaded.ECS.GetComponentFromEntity<StateComponent>(entity);
-            stateComponent.currentState++;
+            stateComponent.Transition();
             if (stateComponent.currentState < 0 || stateComponent.currentState >= stateComponent.states.Count)
             {
                 Scene.Loaded.ECS.DestroyEntity(entity);
@@ -25,8 +25,10 @@ namespace Nexus_Horizon_Game.Systems
             }
 
             stateComponent.states[stateComponent.currentState].OnStopEvent += () => { OnStateStopped(entity); };
-            stateComponent.states[stateComponent.currentState].OnStart();
+
             Scene.Loaded.ECS.SetComponentInEntity(entity, stateComponent);
+
+            stateComponent.states[stateComponent.currentState].OnStart();
         }
 
         public static void Update(GameTime gameTime)
