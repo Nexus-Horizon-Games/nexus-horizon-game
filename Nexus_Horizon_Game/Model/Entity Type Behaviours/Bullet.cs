@@ -37,7 +37,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             if (Scene.Loaded.ECS.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent physicsComponent) &&
                 Scene.Loaded.ECS.EntityHasComponent<TransformComponent>(this.Entity, out TransformComponent transformComponent))
             {
-                DeleteOnOutOfBounds(transformComponent);
+                DeleteOnOutOfBounds(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity));
 
                 // calls bulletAction if it has been set from the constructor
                 if (this.bulletAction != null)

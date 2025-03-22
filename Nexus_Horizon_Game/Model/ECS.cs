@@ -1,6 +1,7 @@
 using Nexus_Horizon_Game.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Nexus_Horizon_Game
@@ -21,6 +22,8 @@ namespace Nexus_Horizon_Game
         /// <returns> new Entities ID. </returns>
         public int CreateEntity()
         {
+            Debug.WriteLine($"new entity. nextId {nextId}. entites {nextId - destroyedEntities.Count}");
+
             int newEntity;
 
             // use a destroyed entity if one is available
@@ -31,7 +34,6 @@ namespace Nexus_Horizon_Game
                 newEntity = nextId;
                 nextId++;
             }
-
 
             return newEntity;
         }
@@ -86,6 +88,8 @@ namespace Nexus_Horizon_Game
         /// <param name="entity"> ID of entity wanting to be destroyed. </param>
         public void DestroyEntity(int entity)
         {
+            //Debug.WriteLine($"destoried entity. destroyed entities {destroyedEntities.Count}");
+            
             if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
 
             // may need to allow each component to do some cleanup before enitity being destroyed.

@@ -68,7 +68,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             // bullet logic behavior attached to ECS
             Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new Bullet(entity, bulletAction)));
             // Attach collision behavior to handle collisions (destroy bullet on enemy impact).
-            Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new CollisionBehavior(entity)));
+            //Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new CollisionBehavior(entity)));
             return entity;
         }
 
