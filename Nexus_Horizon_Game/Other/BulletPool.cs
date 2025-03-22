@@ -38,7 +38,7 @@ namespace Nexus_Horizon_Game.Pooling
         public int GetBullet(Vector2 position, Vector2 direction, float velocity, bool isPlayerBullet = true)
         {
             int bullet;
-            if (availableBullets.Count > 0)
+            /*if (availableBullets.Count > 0)
             {
                 bullet = availableBullets[0];
                 availableBullets.RemoveAt(0);
@@ -57,8 +57,9 @@ namespace Nexus_Horizon_Game.Pooling
             else
             {
                 // creates a new bullet if the pool is empty
-                bullet = bulletFactory.CreateEntity(position, direction, velocity, null, 0.25f, 0, isPlayerBullet);
-            }
+            }*/
+
+            bullet = bulletFactory.CreateEntity(position, direction, velocity, null, 0.25f, 0, isPlayerBullet);
             return bullet;
         }
         
@@ -66,8 +67,9 @@ namespace Nexus_Horizon_Game.Pooling
         public void BulletReturn(int bullet)
         {
             // resets bullet so it can be returned to the pool
-            Scene.Loaded.ECS.SetComponentInEntity(bullet, new TransformComponent(new Vector2(-100, -100)));
-            availableBullets.Add(bullet);
+            //Scene.Loaded.ECS.SetComponentInEntity(bullet, new TransformComponent(new Vector2(-100, -100)));
+            Scene.Loaded.ECS.DestroyEntity(bullet);
+            //availableBullets.Add(bullet);
         }
     }
 }

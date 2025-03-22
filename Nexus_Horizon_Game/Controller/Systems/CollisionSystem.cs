@@ -20,6 +20,8 @@ namespace Nexus_Horizon_Game.Controller
             // get entities with colliders
             List<int> colliderEntityIDList = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
 
+            int collisions = 0;
+
             for (int i = 0; i < colliderEntityIDList.Count; i++) 
             {
                 int entityID1 = colliderEntityIDList[i];
@@ -49,12 +51,14 @@ namespace Nexus_Horizon_Game.Controller
 
                     if (worldBounds1.Intersects(worldBounds2))
                     {
-                        //Debug.WriteLine($"Collision detected: Entity {entityID1} intersects with Entity {entityID2}");
+                        collisions++;
                         collider1.SendOnCollisionInfo(entityID2);
                         collider2.SendOnCollisionInfo(entityID1);
                     }
                 }
             }
+
+            Debug.WriteLine($"{collisions}");
         }
     }
 }
