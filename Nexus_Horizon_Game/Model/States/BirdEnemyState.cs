@@ -95,7 +95,7 @@ namespace Nexus_Horizon_Game.States
             double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
             Vector2 bulletDirection = GetVectFromDirection(direction, 0);
             // Change made here null: bullet action, 0.25f size, 0 sprite layer, false means enemy bullet
-            int bulletEntity = BulletPool.Instance.GetBullet(position, bulletDirection, 7f, isPlayerBullet: false);
+            int bulletEntity = bulletFactory.CreateEntity(position, bulletDirection, 7f, null, 0.25f, 0, false);
         }
         private Vector2 GetVectFromDirection(double direction, double variation)
         {

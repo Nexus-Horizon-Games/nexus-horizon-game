@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Nexus_Horizon_Game.Controller;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Scenes;
+using System;
 
 namespace Nexus_Horizon_Game
 {
@@ -36,11 +37,8 @@ namespace Nexus_Horizon_Game
             Renderer.Init(graphics, 600, 680, 200.0f, new SpriteBatch(GraphicsDevice), Content);
 
             Scene.Loaded = new GameplayScene();
-
-            // instantiate the bullet pool
-            BulletFactory playerBulletFactory = new BulletFactory("BulletSample");
-            // create the pool with a valid starting size 
-            new Nexus_Horizon_Game.Pooling.BulletPool(playerBulletFactory, startingPoolSize: 150);
+            // calls collision system
+            CollisionSystem.Init();
 
         }
 
