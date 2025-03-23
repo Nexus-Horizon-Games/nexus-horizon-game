@@ -165,7 +165,10 @@ namespace Nexus_Horizon_Game.States
                     }
 
                     return previousVelocity;
-                });
+                },
+                    scale: 0.25f,        // Set the bullet scale 
+                    spriteLayer: 99,     // Set the sprite layer
+                    isPlayerBullet: false); // false means enemy bullet);
             }
         }
 
@@ -214,9 +217,9 @@ namespace Nexus_Horizon_Game.States
                 Vector2 spawner3Direction = new Vector2((float)Math.Cos(Spawner3Angle + angle), (float)Math.Sin(Spawner3Angle + angle));
 
                 // Spawn the bullets:
-                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed);
-                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed);
-                bulletFactory.CreateEntity(bossPosition + spawner3, spawner3Direction, BulletSpeed);
+                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed, null, 0.25f, 99, false);
+                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed, null, 0.25f, 99, false);
+                bulletFactory.CreateEntity(bossPosition + spawner3, spawner3Direction, BulletSpeed, null, 0.25f, 99, false);
 
             }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: SpawnTimeLength));
         }

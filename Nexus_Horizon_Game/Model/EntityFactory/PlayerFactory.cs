@@ -23,8 +23,8 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                new TransformComponent(new Vector2(100.0f, 100.0f)),
                new SpriteComponent("PlayerDot", centered: true, scale: 0.01f, spriteLayer: 101, isVisible: false),
-               // hitbox changes 
-               new ColliderComponent(new Rectangle(-8, -5, 16, 10)),
+               // hitbox for player (decides where to center it, decides size)
+               new ColliderComponent(new Rectangle(-1, -1, 2, 1)),
                // tags hitbox to player again just incase
                new TagComponent(Tag.PLAYER)
             });
