@@ -102,7 +102,7 @@ namespace Nexus_Horizon_Game.Controller
 
                     if (bulletWorldBounds.Intersects(enemyWorldBounds))
                     {
-                        Debug.WriteLine($"[CollisionSystem] Player bullet {bulletID} hit enemy {enemyID}");
+                        //Debug.WriteLine($"[CollisionSystem] Player bullet {bulletID} hit enemy {enemyID}");
                         bulletCollider.SendOnCollisionInfo(enemyID);
                     }
                 }
