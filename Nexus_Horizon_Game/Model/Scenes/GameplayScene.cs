@@ -4,6 +4,7 @@ using Nexus_Horizon_Game.Timers;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Model.EntityFactory;
+using Nexus_Horizon_Game.Model.Components;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -11,6 +12,8 @@ namespace Nexus_Horizon_Game.Model.Scenes
     {
         private int pauseMenuUI;
         private static int deathMenuUI;
+        private static int winMenuUI;
+        private static int livesFontID;
 
         public GameplayScene() : base() { }
 
@@ -24,9 +27,20 @@ namespace Nexus_Horizon_Game.Model.Scenes
             get => deathMenuUI;
         }
 
+        public int WinMenuUIID
+        {
+            get => winMenuUI;
+        }
+
+        public static void UpdateLiveFont(int livesLeft)
+        {
+            SpriteFontComponent spriteFontComponent = Scene.Loaded.ECS.GetComponentFromEntity<SpriteFontComponent>(livesFontID);
+            spriteFontComponent.Text = $"Lives: {livesLeft}";
+            Scene.Loaded.ECS.SetComponentInEntity(livesFontID, spriteFontComponent);
+        }
+
         protected override void Initialize()
         {
-
         }
 
         protected override void LoadContent()
@@ -120,9 +134,16 @@ namespace Nexus_Horizon_Game.Model.Scenes
             this.ECS.AddComponent(GameplayUI, new TransformComponent(new Vector2(0, 0)));
             this.ECS.AddComponent(GameplayUI, new SpriteComponent("GamePlayUI", spriteLayer: int.MaxValue - 2, isUI: true));
 
+            livesFontID = Scene.Loaded.ECS.CreateEntity();
+            Scene.Loaded.ECS.AddComponent(livesFontID, new TransformComponent(new Vector2(500, 100)));
+            Scene.Loaded.ECS.AddComponent(livesFontID, new SpriteFontComponent("NineteenNinetySeven", $"Lives: 3", spriteLayer: int.MaxValue - 1, scale: 1.5f, centered: true));
+
+
             pauseMenuUI = MenuPrefab.CreatePauseMenu(int.MaxValue - 1);
 
             deathMenuUI = MenuPrefab.CreateDeathMenu(int.MaxValue - 1);
+
+            winMenuUI = MenuPrefab.CreateWinMenu(int.MaxValue - 1);
         }
     }
 }
