@@ -1,0 +1,41 @@
+{
+  "movementTypes": [
+    {
+      "typeNameId": "SomeName",
+      "movementType": "path",
+      "pathType": "quadratic",
+      "points": [
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0],
+        [0.0, 0.0]
+      ]
+    }
+  ],
+  "entityTypes": [
+    {
+      "typeNameId": "SomeEntity",
+      "components": {
+        "SpriteComponent": {
+          "textureName": "ATextureName"
+        }
+      }
+    }
+  ],
+  "stages": [
+    {
+      "duration": 100,
+      "spawners": [
+        {
+          "spawnerType": "multiple",
+          "time": [0],
+          "interval": 200,
+          "entityCount": 5,
+          "entity": {
+            "entityType": "SomeEntity"
+          }
+        }
+      ]
+    }
+  ]
+}
