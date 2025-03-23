@@ -13,7 +13,8 @@ namespace Nexus_Horizon_Game.View.InputSystem
         {
             UnPaused,
             Paused,
-            DiedMenu
+            DiedMenu,
+            WinMenu
         }
 
         public static GamePlayInputState state = GamePlayInputState.UnPaused;
@@ -29,6 +30,14 @@ namespace Nexus_Horizon_Game.View.InputSystem
             GameM.IsGamePaused = true;
         }
 
+        public static void SetToWinMenu()
+        {
+            currentMenuBehavior = Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>((Scene.Loaded as GameplayScene).WinMenuUIID).Behaviour as MenuBehavior;
+            (currentMenuBehavior as MenuBehavior).ShowMenu();
+            state = GamePlayInputState.WinMenu;
+            GameM.IsGamePaused = true;
+        }
+
         public static void SetToUnPaused()
         {
             currentMenuBehavior = null;
@@ -38,6 +47,7 @@ namespace Nexus_Horizon_Game.View.InputSystem
 
         protected override void LoadInput()
         {
+            // Initial State
             state = GamePlayInputState.UnPaused;
 
             // Visibility For Collision Box
@@ -54,6 +64,7 @@ namespace Nexus_Horizon_Game.View.InputSystem
             InputSystem.OnUpdate += MovementCheck;
         }
 
+        /* Player Conroller Movement Input */
         private static void MovementCheck()
         {
             if (state == GamePlayInputState.UnPaused)
@@ -114,8 +125,10 @@ namespace Nexus_Horizon_Game.View.InputSystem
                 }
             }
         }
+        /* Player Conroller Movement Input End */
 
-        // For PauseMenu
+
+        /* PauseMenu Input */
         private static void Pause_UnPauseGame()
         {
             if (state != GamePlayInputState.UnPaused && state != GamePlayInputState.Paused) { return; }
@@ -134,10 +147,13 @@ namespace Nexus_Horizon_Game.View.InputSystem
             }
 
         }
+        /* PauseMenu Input End*/
 
+
+        /* General Menu Input */
         private static void MoveSelectionUp()
         {
-            if (state == GamePlayInputState.Paused || state == GamePlayInputState.DiedMenu)
+            if (state != GamePlayInputState.UnPaused)
             {
                 (currentMenuBehavior as MenuBehavior).GoUpState();
             }
@@ -145,7 +161,7 @@ namespace Nexus_Horizon_Game.View.InputSystem
 
         private static void MoveSelectionDown()
         {
-            if (state == GamePlayInputState.Paused || state == GamePlayInputState.DiedMenu)
+            if (state != GamePlayInputState.UnPaused)
             {
                 (currentMenuBehavior as MenuBehavior).GoDownState();
             }
@@ -153,10 +169,11 @@ namespace Nexus_Horizon_Game.View.InputSystem
 
         private static void SelectionOption()
         {
-            if (state == GamePlayInputState.Paused || state == GamePlayInputState.DiedMenu)
+            if (state != GamePlayInputState.UnPaused)
             {
                 (currentMenuBehavior as MenuBehavior).SelectStateOption();
             }
         }
+        /* General Menu Input End*/
     }
 }
