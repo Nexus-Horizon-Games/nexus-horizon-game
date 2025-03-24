@@ -49,9 +49,6 @@ namespace Nexus_Horizon_Game
 
         protected override void LoadContent()
         {
-            // calls collision system
-            CollisionSystem.Init();
-            
             Renderer.Init(graphics, 640, 480, 200.0f, new SpriteBatch(GraphicsDevice), Content);
             Scene.Loaded = new MenuScene();
         }
