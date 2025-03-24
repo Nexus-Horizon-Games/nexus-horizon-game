@@ -1,31 +1,30 @@
+﻿using Nexus_Horizon_Game.Components;
 using Microsoft.Xna.Framework;
 
-namespace Nexus_Horizon_Game.Components
+namespace Nexus_Horizon_Game.Model.Components
 {
-    internal struct SpriteComponent : IComponent
+    internal struct SpriteFontComponent : IComponent
     {
-        private bool isEmpty;
-        private bool isUI = false;
-        public string textureName = "";
+        private bool isEmpty = false;
+        public string fontPath = "Fonts/";
+        public string text = "";
         public bool isVisible = true;
         public Vector2 position = Vector2.Zero;
         public float rotation = 0.0f;
         public Color color = Color.White;
         public float scale = 1.0f;
-        public Rectangle? sourceRectangle = null; // used to render only a section of an image (for tiles)
         public bool centered = false;
         public uint spriteLayer = 0; // layer order of sprite  (Bring to Front >) (bring to back <)
 
-        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true, bool isUI = false)
+        public SpriteFontComponent(string fontName = "", string text = "", Color? color = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true)
         {
-            this.textureName = textureName;
+            fontPath += fontName;
+            this.text = text;
             this.color = color ?? Color.White;
-            this.sourceRectangle = sourceRectangle;
             this.scale = scale;
             this.spriteLayer = spriteLayer;
             this.centered = centered;
             this.isVisible = isVisible;
-            this.isUI = isUI;
         }
 
         bool IComponent.IsEmpty
@@ -54,23 +53,30 @@ namespace Nexus_Horizon_Game.Components
             set => this.isVisible = value;
         }
 
-        public bool IsUI
+        public string Text
         {
-            get => this.isUI;
+            get => this.text;
+            set => this.text = value;
+        }
+
+        public Color Color
+        {
+            get => this.color;
+            set => this.color = value;
         }
 
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is SpriteComponent o)
+            if (other is SpriteFontComponent o)
             {
-                if (textureName == o.textureName &&
+                if (fontPath == o.fontPath &&
                     position == o.position &&
                     rotation == o.rotation &&
                     color == o.color &&
                     scale == o.scale &&
                     spriteLayer == o.spriteLayer &&
-                    sourceRectangle == o.sourceRectangle)
+                    text == o.text)
                 {
                     return true;
                 }
@@ -88,7 +94,7 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            SpriteComponent sprite = new SpriteComponent("")
+            SpriteFontComponent sprite = new SpriteFontComponent()
             {
                 isEmpty = true,
             };

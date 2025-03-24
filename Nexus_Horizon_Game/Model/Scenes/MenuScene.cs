@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Nexus_Horizon_Game.Model.EntityFactory;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -11,21 +8,28 @@ namespace Nexus_Horizon_Game.Model.Scenes
     /// </summary>
     internal class MenuScene : Scene
     {
+        private static int menuID;
+
         public MenuScene() : base() { }
+
+        public static int MenuID
+        {
+            get => menuID;
+        }
 
         protected override void Initialize()
         {
-            throw new NotImplementedException();
+            return;
         }
 
         protected override void LoadContent()
         {
-            throw new NotImplementedException();
+            Renderer.LoadContent(new List<string> { });
         }
 
         protected override void LoadScene()
         {
-            throw new NotImplementedException();
+            menuID = MenuPrefab.CreateMainMenu();
         }
     }
 }

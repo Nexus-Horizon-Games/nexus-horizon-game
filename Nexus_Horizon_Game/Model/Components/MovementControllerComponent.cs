@@ -1,22 +1,21 @@
-﻿using Nexus_Horizon_Game.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.Model;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct BehaviourComponent : IComponent
+    internal struct MovementControllerComponent : IComponent
     {
         private bool isEmpty;
 
-        private Behaviour behaviour = null;
+        private MovementController controller;
 
-        public BehaviourComponent(Behaviour behaviour)
+        public MovementControllerComponent(MovementController controller, int entityID)
         {
-            this.isEmpty = false;
-            this.behaviour = behaviour;
+            this.controller = controller;
         }
 
-        public Behaviour Behaviour
+        public MovementController Controller
         {
-            get => behaviour;
+            get => controller;
         }
 
         bool IComponent.IsEmpty
@@ -28,9 +27,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public bool Equals(IComponent other)
         {
-            if (other is BehaviourComponent o)
+            if (other is MovementControllerComponent o)
             {
-                if (behaviour == o.behaviour)
+                if (this.controller == o.controller)
                 {
                     return true;
                 }
@@ -48,9 +47,9 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            BehaviourComponent comp = new();
-            comp.isEmpty = true;
-            return comp;
+            MovementControllerComponent transfrom = new MovementControllerComponent(null, -1);
+            transfrom.isEmpty = true;
+            return transfrom;
         }
     }
 }
