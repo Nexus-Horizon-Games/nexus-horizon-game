@@ -139,11 +139,11 @@ namespace Nexus_Horizon_Game.States
             EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
             if (counterClockwise)
             {
-                entitySpawner.SpawnEntitiesWithPattern(new CounterClockwiseRingFiringPattern(), gameTime, timerContainer);
+                entitySpawner.SpawnEntitiesWithPattern(new CounterClockwiseRingFiringPattern1(), gameTime, timerContainer);
             }
             else
             {
-                entitySpawner.SpawnEntitiesWithPattern(new ClockwiseRingFiringPattern(), gameTime, timerContainer);
+                entitySpawner.SpawnEntitiesWithPattern(new ClockwiseRingFiringPattern1(), gameTime, timerContainer);
             }
         }
         private void FireBulletPattern1(GameTime gameTime)
