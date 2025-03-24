@@ -10,7 +10,8 @@ namespace Nexus_Horizon_Game.Components
     {
         PLAYER,
         ENEMY,
-        PROJECTILE,
+        PLAYER_PROJECTILE,
+        ENEMY_PROJECTILE
     }
 
     internal struct TagComponent : IComponent

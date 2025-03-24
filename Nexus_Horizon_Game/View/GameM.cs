@@ -2,7 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nexus_Horizon_Game.Controller;
+using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Scenes;
+using System;
 using Nexus_Horizon_Game.View.InputSystem;
 
 namespace Nexus_Horizon_Game
@@ -60,12 +62,12 @@ namespace Nexus_Horizon_Game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.LeftControl) && Keyboard.GetState().IsKeyDown(Keys.C) || exitGame)
                 Exit();
 
-            // update by sending current scene and game time
             InputSystem.Update(gameTime);
             if (!isGamePaused)
             {
                 systemsController.Update(gameTime);
             }
+            
             base.Update(gameTime);
         }
 
