@@ -87,5 +87,33 @@ namespace Nexus_Horizon_Game.Model.EntityFactory
 
             return backgroundID;
         }
+
+        ///
+        /// returns the entityID of the main menu.
+        ///
+        public static int CreateWinMenu(uint spriteLayer)
+        {
+            int backgroundID = Scene.Loaded.ECS.CreateEntity();
+            Scene.Loaded.ECS.AddComponent(backgroundID, new TransformComponent(new Vector2(0, 0)));
+            Scene.Loaded.ECS.AddComponent(backgroundID, new SpriteComponent("InGameMenu", spriteLayer: spriteLayer, isUI: true));
+            Scene.Loaded.ECS.AddComponent(backgroundID, new ChildrenComponent());
+
+            int fontTitleID = Scene.Loaded.ECS.CreateEntity();
+            Scene.Loaded.ECS.AddComponent(fontTitleID, new TransformComponent(new Vector2(Renderer.ScreenWidth / 2, Renderer.ScreenHeight / 2 - 100)));
+            Scene.Loaded.ECS.EntityHasComponent<SpriteComponent>(backgroundID, out SpriteComponent component);
+            Scene.Loaded.ECS.AddComponent(fontTitleID, new SpriteFontComponent("NineteenNinetySeven", "YOU WIN!", spriteLayer: component.spriteLayer + 1, scale: 2f, centered: true));
+            Scene.Loaded.ECS.GetComponentFromEntity<ChildrenComponent>(backgroundID).AddChild("YOU WIN!", fontTitleID);
+
+            List<SpriteFontSelectionState> spriteFontStates = new()
+            {
+                new PlayGameState("Play Again"),
+                new MainMenuState("Main Menu")
+            };
+
+            Scene.Loaded.ECS.AddComponent<BehaviourComponent>(backgroundID, new BehaviourComponent(new MenuBehavior(backgroundID, new Vector2(Renderer.ScreenWidth / 2, Renderer.ScreenHeight / 2), new Vector2(0, 50), spriteFontStates)));
+            (Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(backgroundID).Behaviour as MenuBehavior)?.HideMenu();
+
+            return backgroundID;
+        }
     }
 }

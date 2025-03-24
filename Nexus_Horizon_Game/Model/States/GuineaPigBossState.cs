@@ -4,6 +4,7 @@ using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
+using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.Timers;
 using System;
 
@@ -177,6 +178,7 @@ namespace Nexus_Horizon_Game.States
         private void FireBigBullets(GameTime gameTime)
         {
             var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+            
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(bigSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(bigSpawnerEntity).Behaviour);
@@ -189,6 +191,7 @@ namespace Nexus_Horizon_Game.States
         private void FireSmallBullets(GameTime gameTime)
         {
             var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+            
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(smallSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(smallSpawnerEntity).Behaviour);

@@ -5,6 +5,7 @@ using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
 using System;
 using System.Linq;
+using Nexus_Horizon_Game.Pooling;
 using System.Diagnostics;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityPatterns;
@@ -98,10 +99,10 @@ namespace Nexus_Horizon_Game.States
         private void OnFireBullets(GameTime gameTime)
         {
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+            
             Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new TriangleFiringPattern(), gameTime, timerContainer);
-
         }
     }
 }
