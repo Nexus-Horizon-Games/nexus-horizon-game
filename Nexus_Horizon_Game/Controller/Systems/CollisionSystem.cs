@@ -54,6 +54,13 @@ namespace Nexus_Horizon_Game.Controller
             // if player bullet hits enemy, bullet gets destoryed.
             if (bulletTag.Tag == Tag.PLAYER_PROJECTILE && otherTag.Tag == Tag.ENEMY)
             {
+                // health / collision component implemented for enemies 
+                if (Scene.Loaded.ECS.EntityHasComponent<HealthComponent>(otherEntityID, out HealthComponent enemyHealth))
+                {
+                    // sets how much health is subtracted per bullet collision
+                    enemyHealth.health -= 0.5f; // subtracts 1 health point
+                    Scene.Loaded.ECS.SetComponentInEntity(otherEntityID, enemyHealth);
+                }
                 Scene.Loaded.ECS.DestroyEntity(bulletEntity);
             }
             // if enemy bullet hits player, destroy the bullet
@@ -132,7 +139,7 @@ namespace Nexus_Horizon_Game.Controller
 
                     if (bulletWorldBounds.Intersects(playerWorldBounds))
                     {
-                        Debug.WriteLine($"[CollisionSystem] Enemy bullet {bulletID} hit player {playerID}");
+                        //Debug.WriteLine($"[CollisionSystem] Enemy bullet {bulletID} hit player {playerID}");
                         bulletCollider.SendOnCollisionInfo(playerID);
                     }
                 }

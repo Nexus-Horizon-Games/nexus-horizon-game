@@ -9,7 +9,7 @@ namespace Nexus_Horizon_Game.Components
         /// <summary>
         /// The health of the entity (can also represent lives, as with the player)
         /// </summary>
-        public int health;
+        public float health;
 
         public delegate void OnDeath();
 
@@ -18,12 +18,12 @@ namespace Nexus_Horizon_Game.Components
         /// </summary>
         public event OnDeath onDeathEvent;
 
-        public HealthComponent(int health)
+        public HealthComponent(float health)
         {
             this.health = health;
         }
 
-        public HealthComponent(int health, OnDeath deathHandler)
+        public HealthComponent(float health, OnDeath deathHandler)
         {
             this.health = health;
             this.onDeathEvent += deathHandler;
