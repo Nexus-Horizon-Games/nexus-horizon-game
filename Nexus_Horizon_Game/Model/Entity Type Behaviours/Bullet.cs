@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
+using System;
 using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
@@ -33,7 +34,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         public override void OnUpdate(GameTime gameTime)
         {
             timeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             if (Scene.Loaded.ECS.EntityHasComponent<PhysicsBody2DComponent>(this.Entity, out PhysicsBody2DComponent physicsComponent) &&
                 Scene.Loaded.ECS.EntityHasComponent<TransformComponent>(this.Entity, out TransformComponent transformComponent))
             {
