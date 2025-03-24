@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.Model.EntityFactory;
+using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Timers;
 using System;
 
@@ -23,6 +26,8 @@ namespace Nexus_Horizon_Game.States
         private BulletFactory bulletFactory = new BulletFactory("BulletSample");
 
         private TimerContainer timerContainer = new TimerContainer();
+        private int defaultSpawnerEntity;
+        private int ringSpawnerEntity;
 
         public ChefBossStage2State(int entity, float timeLength) : base(entity, timeLength)
         {
@@ -42,6 +47,8 @@ namespace Nexus_Horizon_Game.States
                 OnMoveAction(gameTime, null); // start first move
                 timerContainer.GetTimer("move_action").Start();
             }));
+            this.defaultSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
+            this.ringSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
         }
 
         public override void OnStop()
@@ -74,8 +81,8 @@ namespace Nexus_Horizon_Game.States
             // Move:
             Move();
 
-            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletRing2(true)));
-            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletRing2(false)));
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.6f, (gameTime, data) => FireBulletRing2(gameTime, true)));
+            timerContainer.StartTemporaryTimer(new DelayTimer(1.6f, (gameTime, data) => FireBulletRing2(gameTime, false)));
             timerContainer.StartTemporaryTimer(new DelayTimer(2.2f, (gameTime, data) => FireBulletPattern2(gameTime)));
         }
 
@@ -128,100 +135,26 @@ namespace Nexus_Horizon_Game.States
             Scene.Loaded.ECS.SetComponentInEntity(this.Entity, body);
         }
 
-        private void FireBulletRing2(bool counterClockwise)
+        private void FireBulletRing2(GameTime gameTime, bool counterClockwise)
         {
-            const float SpawnRadius = 10.0f;
-            const float StartSpeed = 6.0f;
-
-            var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-
-            float arcInterval = MathHelper.TwoPi / CircleBulletsCount;
-
-            for (int i = 0; i < CircleBulletsCount; i++)
+            var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+            Scene.Loaded.ECS.SetComponentInEntity(defaultSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
+            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
+            if (counterClockwise)
             {
-                Vector2 direction = new Vector2((float)Math.Cos(arcInterval * i), (float)Math.Sin(arcInterval * i));
-                Vector2 perpendicularDirection;
-
-                if (counterClockwise)
-                {
-                    perpendicularDirection = new Vector2(direction.Y, -direction.X);
-                }
-                else
-                {
-                    perpendicularDirection = new Vector2(-direction.Y, direction.X);
-                }
-
-                var bulletEntity = bulletFactory.CreateEntity(bossPosition + direction * SpawnRadius, direction + (perpendicularDirection * 0.25f), StartSpeed, bulletAction: (gametime, bullet, bulletEntity, previousVelocity) =>
-                {
-                    if (bullet.TimeAlive > 0.3f && bullet.TimeAlive < 1.2f)
-                    {
-                        Vector2 acceleration = direction * 15.0f;
-                        return (previousVelocity - (acceleration * (float)gametime.ElapsedGameTime.TotalSeconds));
-                    }
-                    else if (bullet.TimeAlive < 2.5f)
-                    {
-                        Vector2 acceleration = direction * 10.0f;
-                        return (previousVelocity + (acceleration * (float)gametime.ElapsedGameTime.TotalSeconds));
-                    }
-
-                    return previousVelocity;
-                },
-                    scale: 0.25f,        // Set the bullet scale 
-                    spriteLayer: 99,     // Set the sprite layer
-                    isPlayerBullet: false); // false means enemy bullet);
+                entitySpawner.SpawnEntitiesWithPattern(new CounterClockwiseRingFiringPattern2(), gameTime, timerContainer);
+            }
+            else
+            {
+                entitySpawner.SpawnEntitiesWithPattern(new ClockwiseRingFiringPattern2(), gameTime, timerContainer);
             }
         }
 
         private void FireBulletPattern2(GameTime gameTime)
         {
-            const float SpawnTimeInterval = 0.01f;
-            const float SpawnTimeLength = 1.5f;
-
-            const float StartSpawnRadius = 5.0f;
-            const float SpawnRadiusAcceleration = 15.0f;
-
-            const float StartRotationSpeed = 10.0f;
-            const float RotationSpeedAcceleration = 1.0f;
-
-            const float Spawner1Angle = 0.0f;
-            const float Spawner2Angle = MathHelper.TwoPi / 3.0f;
-            const float Spawner3Angle = MathHelper.TwoPi * 2.0f / 3.0f;
-
-            const float BulletSpeed = 6.0f;
-
-
-            timerContainer.StartTemporaryTimer(new LoopTimer(SpawnTimeInterval, (gameTime, data) =>
-            {
-                double startTime = (double)data;
-                double time = gameTime.TotalGameTime.TotalSeconds - startTime;
-
-                float spawnRadius = StartSpawnRadius + (float)(time * time) * SpawnRadiusAcceleration;
-                float rotationSpeed = StartRotationSpeed + (float)(time * time) * RotationSpeedAcceleration;
-
-                var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-                var playerPosition = GetPlayerPosition();
-
-                // Spawner positions:
-                Vector2 spawner1 = new Vector2((float)Math.Cos(Spawner1Angle + time * rotationSpeed), (float)Math.Sin(Spawner1Angle + time * rotationSpeed)) * spawnRadius;
-                Vector2 spawner2 = new Vector2((float)Math.Cos(Spawner2Angle + time * rotationSpeed), (float)Math.Sin(Spawner2Angle + time * rotationSpeed)) * spawnRadius;
-                Vector2 spawner3 = new Vector2((float)Math.Cos(Spawner3Angle + time * rotationSpeed), (float)Math.Sin(Spawner3Angle + time * rotationSpeed)) * spawnRadius;
-
-                // Spawner shoot directions:
-                Vector2 spawner1Direction = playerPosition - (spawner1 + bossPosition); // Point towards the player
-                spawner1Direction.Normalize();
-
-                // Get the angle between spawner1Direction and <1, 0>
-                double angle = Math.Acos((double)Vector2.Dot(spawner1Direction, new Vector2(1.0f, 0.0f)));
-
-                Vector2 spawner2Direction = new Vector2((float)Math.Cos(Spawner2Angle + angle), (float)Math.Sin(Spawner2Angle + angle));
-                Vector2 spawner3Direction = new Vector2((float)Math.Cos(Spawner3Angle + angle), (float)Math.Sin(Spawner3Angle + angle));
-
-                // Spawn the bullets:
-                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed, null, 0.25f, 99, false);
-                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed, null, 0.25f, 99, false);
-                bulletFactory.CreateEntity(bossPosition + spawner3, spawner3Direction, BulletSpeed, null, 0.25f, 99, false);
-
-            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: SpawnTimeLength));
+            Scene.Loaded.ECS.SetComponentInEntity(defaultSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
+            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
+            entitySpawner.SpawnEntitiesWithPattern(new ChefBossPattern2(), gameTime, timerContainer);
         }
 
         private Vector2 GetPlayerPosition()

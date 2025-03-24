@@ -21,6 +21,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             get => entity;
         }
 
+
         public virtual void OnUpdate(GameTime gameTime) { }
     }
 }

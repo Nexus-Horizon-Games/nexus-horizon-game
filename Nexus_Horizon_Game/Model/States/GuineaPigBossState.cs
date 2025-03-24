@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.Model.EntityFactory;
+using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.Timers;
 using System;
@@ -37,7 +40,8 @@ namespace Nexus_Horizon_Game.States
 
         // Timers
         private TimerContainer timerContainer = new TimerContainer();
-
+        private int smallSpawnerEntity;
+        private int bigSpawnerEntity;
         public GuineaPigBossState(int entity, float timeLength) : base(entity, timeLength)
         {
         }
@@ -64,6 +68,8 @@ namespace Nexus_Horizon_Game.States
 
             // Start the movement timer now that we're on-screen.
             timerContainer.GetTimer("move_action").Start();
+            this.smallSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", SmallBulletScale, 99);
+            this.bigSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", BigBulletScale, 99);
         }
 
         public override void OnStop()
@@ -145,8 +151,8 @@ namespace Nexus_Horizon_Game.States
         private void OnPhase1Attack(GameTime gameTime, object? data)
         {
             // Example attack: fire big bullets followed by small bullets after a short delay.
-            FireBigBullets();
-            timerContainer.StartTemporaryTimer(new DelayTimer(0.7f, (gt, d) => FireSmallBullets()));
+            FireBigBullets(gameTime);
+            timerContainer.StartTemporaryTimer(new DelayTimer(0.7f, (gt, d) => FireSmallBullets(gameTime)));
         }
 
         /// <summary>
@@ -169,52 +175,27 @@ namespace Nexus_Horizon_Game.States
         /// <summary>
         /// Fires a burst of big bullets aimed at the player.
         /// </summary>
-        private void FireBigBullets()
+        private void FireBigBullets(GameTime gameTime)
         {
             var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-            var playerPosition = GetPlayerPosition();
-
-            // Calculate direction from boss to player.
-            Vector2 baseDirection = playerPosition - bossPosition;
-            baseDirection.Normalize();
-
-            // Base angle toward player.
-            float baseAngle = (float)Math.Atan2(baseDirection.Y, baseDirection.X);
-            float angleStep = MathHelper.ToRadians(15); // Angle between bullets.
-
-            for (int burst = 0; burst < 3; burst++)
-            {
-                timerContainer.StartTemporaryTimer(new DelayTimer(0.3f * burst, (gameTime, data) =>
-                {
-                    for (int i = -3; i <= 3; i++) // Create a spread pattern.
-                    {
-                        float angle = baseAngle + (i * angleStep);
-                        Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                        int bulletEntity = bulletFactoryBig.CreateEntity(bossPosition, direction, 7.0f, null, BigBulletScale, 99, false);
-                    }
-                }));
-            }
+            
+            var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+            Scene.Loaded.ECS.SetComponentInEntity(bigSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
+            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(bigSpawnerEntity).Behaviour);
+            entitySpawner.SpawnEntitiesWithPattern(new ArcFiringPattern(), gameTime, timerContainer);
         }
 
         /// <summary>
         /// Fires a burst of small bullets in a circular pattern.
         /// </summary>
-        private void FireSmallBullets()
+        private void FireSmallBullets(GameTime gameTime)
         {
             var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-            float arcInterval = MathHelper.TwoPi / 27;
-
-            for (int burst = 0; burst < 2; burst++)
-            {
-                timerContainer.StartTemporaryTimer(new DelayTimer(0.5f * burst, (gameTime, data) =>
-                {
-                    for (int j = 0; j < 27; j++)
-                    {
-                        Vector2 direction = new Vector2((float)Math.Cos(j * arcInterval), (float)Math.Sin(j * arcInterval));
-                        int bulletEntity = bulletFactorySmall.CreateEntity(bossPosition, direction, 5.0f, null, 0.25f, 99, false);
-                    }
-                }));
-            }
+            
+            var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
+            Scene.Loaded.ECS.SetComponentInEntity(smallSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
+            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(smallSpawnerEntity).Behaviour);
+            entitySpawner.SpawnEntitiesWithPattern(new CicleFiringPattern1(), gameTime, timerContainer);
         }
     }
 }
