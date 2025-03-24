@@ -66,7 +66,7 @@ namespace Nexus_Horizon_Game.States
             timerContainer.GetTimer("move_action").Start();
         }
 
-        protected override void OnStop()
+        public override void OnStop()
         {
             // Stop movements
             timerContainer.GetTimer("move_action").Stop();
