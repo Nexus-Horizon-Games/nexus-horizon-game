@@ -6,6 +6,7 @@ using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Paths;
+using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.Timers;
 using System;
 using System.Collections.Generic;
@@ -86,6 +87,7 @@ namespace Nexus_Horizon_Game.States
                     timerContainer.GetTimer("fire").Stop();
                 }
             }
+
             t += movementPath.GetDeltaT(t,speed);
             Scene.Loaded.ECS.SetComponentInEntity(this.Entity, new TransformComponent(movementPath.GetPoint(t)));
         }

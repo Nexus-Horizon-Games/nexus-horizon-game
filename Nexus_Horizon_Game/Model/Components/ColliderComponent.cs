@@ -12,6 +12,13 @@ namespace Nexus_Horizon_Game.Components
         private Rectangle bounds; 
         private TransformComponent transform; // needs to follow this transform where the sprite/original entity is.
 
+        // Allows to publically accec 
+        public event OnCollision OnCollisionEvent
+        {
+            add { onCollision += value; }
+            remove { onCollision -= value; }
+        }
+
         private event OnCollision onCollision; // This is where we can add listeners for actions to happen when a collision happens to a collider.
                                                // EXAMPLE: Lets say the player when touching another entityID,
                                                // it contains a specific tag by looking it up in its own function that is a listener to this event it can they do any logic it wants to itself
@@ -21,9 +28,12 @@ namespace Nexus_Horizon_Game.Components
         public ColliderComponent(Rectangle bounds)
         {
             this.bounds = bounds;
+            this.transform = default;
+            this.isEmpty = false;
+            onCollision = null;
         }
 
-        public Rectangle Bounds { get; }
+        public Rectangle Bounds { get { return bounds; } }
 
         bool IComponent.IsEmpty
         {
@@ -38,7 +48,7 @@ namespace Nexus_Horizon_Game.Components
             {
                 if (bounds == o.bounds)
                 {
-                    return true;
+                    return bounds == o.bounds; ;
                 }
             }
 
@@ -59,12 +69,9 @@ namespace Nexus_Horizon_Game.Components
             return collider;
         }
 
-        public void SendOnCollisionInfo(List<int> entityIDList)
+        public void SendOnCollisionInfo(int entityIDCollided)
         {
-            foreach (int entity in entityIDList)
-            {
-                onCollision.Invoke(entity); // invoke for every entityID that is currently colliding with another collider
-            }
+            onCollision?.Invoke(entityIDCollided); // invoke for every entityID that is currently colliding with another collider, ? so no risk of null exception
         }
     }
 }
