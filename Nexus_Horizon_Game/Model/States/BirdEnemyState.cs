@@ -2,6 +2,7 @@
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Paths;
+using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.Timers;
 using System;
 using System.Linq;
@@ -77,6 +78,7 @@ namespace Nexus_Horizon_Game.States
                     timerContainer.GetTimer("fire").Stop();
                 }
             }
+
             t += movementPath.GetDeltaT(t,speed);
             Scene.Loaded.ECS.SetComponentInEntity(this.Entity, new TransformComponent(movementPath.GetPoint(t)));
         }
@@ -92,7 +94,8 @@ namespace Nexus_Horizon_Game.States
             var playerPosition = GetPlayerPosition();
             double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
             Vector2 bulletDirection = GetVectFromDirection(direction, 0);
-            bulletFactory.CreateEntity(position, bulletDirection, 7f);
+            // Change made here null: bullet action, 0.25f size, 0 sprite layer, false means enemy bullet
+            int bulletEntity = bulletFactory.CreateEntity(position, bulletDirection, 7f, null, 0.25f, 0, false);
         }
         private Vector2 GetVectFromDirection(double direction, double variation)
         {
