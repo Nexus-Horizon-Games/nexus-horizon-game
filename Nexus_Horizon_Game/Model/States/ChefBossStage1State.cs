@@ -151,7 +151,7 @@ namespace Nexus_Horizon_Game.States
                     perpendicularDirection = new Vector2(-direction.Y, direction.X);
                 }
 
-                var bulletEntity = bulletFactory.CreateEntity(bossPosition + direction * SpawnRadius, direction + (perpendicularDirection * 0.25f), StartSpeed);
+                var bulletEntity = bulletFactory.CreateEntity(bossPosition + direction * SpawnRadius, direction + (perpendicularDirection * 0.25f), StartSpeed, null, 0.25f, 99, false);
             }
         }
 
@@ -195,8 +195,8 @@ namespace Nexus_Horizon_Game.States
                 spawner2Direction.Normalize();
 
                 // Spawn the bullets:
-                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed);
-                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed);
+                bulletFactory.CreateEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed, null, 0.25f, 99, false);
+                bulletFactory.CreateEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed, null, 0.25f, 99, false);
 
             }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: SpawnTimeLength));
         }

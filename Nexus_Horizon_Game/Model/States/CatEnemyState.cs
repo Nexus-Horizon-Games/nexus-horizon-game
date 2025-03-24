@@ -5,6 +5,7 @@ using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
 using System;
 using System.Linq;
+using Nexus_Horizon_Game.Pooling;
 using System.Diagnostics;
 
 namespace Nexus_Horizon_Game.States
@@ -111,23 +112,23 @@ namespace Nexus_Horizon_Game.States
                 if (bulletNum == 1)
                 {
                     Vector2 bulletDirection = GetVectFromDirection(direction, 0);
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    int bulletEntity = bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed, null, 0.25f, 0, false);
                 }
                 if (bulletNum == 2)
                 {
                     Vector2 bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(1));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    int bulletEntity = bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed, null, 0.25f, 0, false);
                     bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-1));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed, null, 0.25f, 0, false);
                 }
                 if (bulletNum == 3)
                 {
                     Vector2 bulletDirection = GetVectFromDirection(direction, 0);
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    int bulletEntity = bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed, null, 0.25f, 0, false);
                     bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(2));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed, null, 0.25f, 0, false);
                     bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-2));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
+                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed, null, 0.25f, 0, false);
                     isFiring = false;
                 }
                 bulletNum++;
