@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Model.EntityPatterns
 {
-    internal class CounterClockwiseRingFiringPattern : IFiringPattern
+    internal class CounterClockwiseRingFiringPattern1 : IFiringPattern
     {
         public void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer)
         {
