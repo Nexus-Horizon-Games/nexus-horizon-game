@@ -6,6 +6,9 @@ using Nexus_Horizon_Game.Paths;
 using System;
 using System.Linq;
 using System.Diagnostics;
+using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.Model.EntityPatterns;
+using Nexus_Horizon_Game.Model.EntityFactory;
 
 namespace Nexus_Horizon_Game.States
 {
@@ -23,6 +26,7 @@ namespace Nexus_Horizon_Game.States
         private float health = 0.7f;
         private bool isFiring = false;
         private bool isMoving = false;
+        private int spawnerEntity;
 
         public CatEnemyState(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime) : base(thisEntity)
         {
@@ -34,6 +38,7 @@ namespace Nexus_Horizon_Game.States
         public override void OnStart()
         {
             isMoving = false;
+            this.spawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
         }
         
         public override void OnUpdate(GameTime gameTime)
@@ -87,81 +92,16 @@ namespace Nexus_Horizon_Game.States
 
         private void EndState(GameTime gameTime)
         {
-            if(!isFiring)
-            {
-                OnStop();
-            }
+            OnStop();
         }
 
         private void OnFireBullets(GameTime gameTime)
         {
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-            var playerPosition = GetPlayerPosition();
-           
-            float bulletSpeed = 5f;
-            float timeInterval = 0.08f;
-            int bulletNum = 1;
+            Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
+            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
+            entitySpawner.SpawnEntitiesWithPattern(new TriangleFiringPattern(), gameTime, timerContainer);
 
-            timerContainer.StartTemporaryTimer(new LoopTimer(timeInterval, (gameTime, data) =>
-            {
-                isFiring = true;
-                double startTime = (double)data;
-                double time = gameTime.TotalGameTime.TotalSeconds - startTime;
-                double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
-                if (bulletNum == 1)
-                {
-                    Vector2 bulletDirection = GetVectFromDirection(direction, 0);
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
-                }
-                if (bulletNum == 2)
-                {
-                    Vector2 bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(1));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
-                    bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-1));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
-                }
-                if (bulletNum == 3)
-                {
-                    Vector2 bulletDirection = GetVectFromDirection(direction, 0);
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
-                    bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(2));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
-                    bulletDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-2));
-                    bulletFactory.CreateEntity(position, bulletDirection, bulletSpeed);
-                    isFiring = false;
-                }
-                bulletNum++;
-            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: timeInterval*4));
-        }
-
-        private Vector2 GetVectFromDirection(double direction, double variation)
-        {
-            direction += variation;
-            float xComponent = (float)(Math.Cos(direction));
-            float yComponent = (float)(Math.Sin(direction));
-            return new Vector2(xComponent, yComponent);
-        }
-        private Vector2 GetPlayerPosition()
-        {
-            var entitesWithTag = Scene.Loaded.ECS.GetEntitiesWithComponent<TagComponent>();
-            var playerEntity = -1;
-            foreach (var entity in entitesWithTag)
-            {
-                var tag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(entity);
-                if (tag.Tag == Tag.PLAYER)
-                {
-                    playerEntity = entity;
-                    break;
-                }
-            }
-
-            Vector2 playerPosition = Vector2.Zero;
-            if (playerEntity != -1)
-            {
-                playerPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(playerEntity).position;
-            }
-
-            return playerPosition;
         }
     }
 }
