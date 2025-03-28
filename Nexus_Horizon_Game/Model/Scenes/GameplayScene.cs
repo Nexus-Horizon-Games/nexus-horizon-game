@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.Components;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -53,6 +56,158 @@ namespace Nexus_Horizon_Game.Model.Scenes
         /// </summary>
         protected override void LoadScene()
         {
+            dynamic json = JsonConvert.DeserializeObject("""
+{
+  "movementTypes": [
+    {
+      "typeNameId": "BirdMovement",
+      "movementType": "path",
+      "pathType": "quadratic",
+      "points": [
+        [0.0, 0.0],
+        [50.0, 0.0],
+        [50.0, 100.0]
+      ]
+    }
+  ],
+  "entityTypes": [
+    {
+      "typeNameId": "CoalBullet",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "BulletSample"
+        }
+      }
+    },
+    {
+      "typeNameId": "Bird",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "bird"
+        }
+      }
+    },
+    {
+      "typeNameId": "MidBoss",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "evil_guinea_pig"
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateClassName": "MidBossState1",
+              "constructor": ["BulletA"]
+            },
+            {
+              "stateClassName": "MidBossState2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "typeNameId": "FinalBoss",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "evil_guinea_pig"
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateClassName": "FinalBossState1",
+              "constructor": ["BulletA"]
+            },
+            {
+              "stateClassName": "FinalBossState2"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "stages": [
+    {
+      "duration": 40,
+      "spawners": [
+        {
+          "spawnerType": "multiple",
+          "time": 0,
+          "interval": 1,
+          "entityCount": 12,
+          "entity": {
+            "entityType": "Bird",
+            "setComponents": {
+              "MovementComponent": {
+                "movementType": "BirdMovement",
+                "direction": [-1, 0]
+              }
+            }
+          },
+          "position": [-10, 30]
+        },
+        {
+          "spawnerType": "multiple",
+          "time": 0,
+          "interval": 1,
+          "entityCount": 12,
+          "entity": {
+            "entityType": "Bird",
+            "setComponents": {
+              "MovementComponent": {
+                "movementType": "BirdMovement",
+                "direction": [-1, 0]
+              }
+            }
+          },
+          "position": [110, 30]
+        }
+      ]
+    },
+    {
+      "duration": 50,
+      "spawners": [
+        {
+          "spawnerType": "single",
+          "time": 0,
+          "entity": {
+            "entityType": "MidBoss"
+          },
+          "position": [50, -10]
+        }
+      ]
+    },
+    {
+      "duration": 65,
+      "spawners": [
+        {
+          "spawnerType": "single",
+          "time": 0,
+          "entity": {
+            "entityType": "FinalBoss"
+          },
+          "position": [50, -10]
+        }
+      ]
+    }
+  ]
+}
+""");
+
+            dynamic movementTypes = json.movementTypes;
+            dynamic entityTypes = json.entityTypes;
+            JArray stages = json.stages;
+            Debug.WriteLine($"stages: {stages.Count}");
+
+
             // BOSS TIMERS
             int mbt_entity = this.ECS.CreateEntity(new List<IComponent> { new TimersComponent(new Dictionary<string, Timer>()) });
 
