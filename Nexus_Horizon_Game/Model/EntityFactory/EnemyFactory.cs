@@ -102,7 +102,7 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             PrefabEntity prefabEntity = new PrefabEntity(new List<IComponent>
             {
-                new TransformComponent(new Vector2(50.0f, 50.0f)),
+                new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
                 new ColliderComponent(new Rectangle(0, 0, type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)),
                 new TagComponent(Tag.ENEMY)
@@ -111,15 +111,29 @@ namespace Nexus_Horizon_Game.EntityFactory
             if (type == "bird_enemy")
             {
                 prefabEntity.Components.Add(new SpriteComponent("bird", centered: true));
-                /*prefabEntity.Components.Add(new StateComponent(new List<State>
+                prefabEntity.Components.Add(new StateComponent(new List<State>
                 {
-                    new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
-                }));*/
+                    new BirdEnemyState(multiPath, attackPaths, waitTime)
+                }));
 
-                /*Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(1, () =>
+                prefabEntity.Components.Add(new HealthComponent(1, (entity) =>
                 {
-                    SetToDeathState(enemyEntity);
-                }));*/
+                    SetToDeathState(entity);
+                }));
+            }
+
+            if (type == "cat_enemy")
+            {
+                prefabEntity.Components.Add(new SpriteComponent("cat", centered: true));
+                prefabEntity.Components.Add(new StateComponent(new List<State>
+                {
+                    new CatEnemyState(multiPath, attackPaths, waitTime)
+                }));
+
+                prefabEntity.Components.Add(new HealthComponent(7, (entity) =>
+                {
+                    SetToDeathState(entity);
+                }));
             }
 
             return prefabEntity;
@@ -143,7 +157,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
                 }));
 
-                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(1, () =>
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(1, (_) =>
                 {
                     SetToDeathState(enemyEntity);
                 }));
@@ -156,7 +170,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new CatEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
                 }));
 
-                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(7, () =>
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(7, (_) =>
                 {
                     SetToDeathState(enemyEntity);
                 }));
@@ -193,7 +207,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
 
-                Scene.Loaded.ECS.AddComponent(bossEntity, new HealthComponent(101, () =>
+                Scene.Loaded.ECS.AddComponent(bossEntity, new HealthComponent(101, (_) =>
                 {
                     SetToDeathState(bossEntity);
                 }));
@@ -211,7 +225,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
 
-                Scene.Loaded.ECS.AddComponent(bossEntity, new HealthComponent(164, () =>
+                Scene.Loaded.ECS.AddComponent(bossEntity, new HealthComponent(164, (_) =>
                 {
                     SetToDeathState(bossEntity);
                 }));

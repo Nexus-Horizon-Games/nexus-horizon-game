@@ -22,7 +22,10 @@ namespace Nexus_Horizon_Game.Model.Prefab
 
         public PrefabEntity Clone()
         {
-            var clonedComponents = new List<IComponent>(this.components);
+
+            var clonedComponents = new List<IComponent>();
+
+            components.ForEach(c => clonedComponents.Add(c.Clone()));
 
             return new PrefabEntity(clonedComponents);
         }

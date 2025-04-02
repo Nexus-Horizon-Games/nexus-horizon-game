@@ -89,6 +89,24 @@ namespace Nexus_Horizon_Game.Components
         }
 
         /// <inheritdoc/>
+        public IComponent Clone()
+        {
+            var clone = new StateComponent(new List<State>());
+            this.states.ForEach(state =>
+            {
+                clone.states.Add(state.Clone());
+            });
+
+
+            clone.isEmpty = this.isEmpty;
+            clone.currentState = this.currentState;
+            clone.transitionFunction = this.transitionFunction;
+            clone.transitions = this.transitions; // TODO: this needs to be cloned
+
+            return clone; 
+        }
+
+        /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
             StateComponent comp = new()
