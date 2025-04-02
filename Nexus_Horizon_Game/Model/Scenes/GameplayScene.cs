@@ -8,6 +8,7 @@ using Nexus_Horizon_Game.Model.Components;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Nexus_Horizon_Game.Controller;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -17,6 +18,8 @@ namespace Nexus_Horizon_Game.Model.Scenes
         private static int deathMenuUI;
         private static int winMenuUI;
         private static int livesFontID;
+
+        private static WaveHandler waveHandler;
 
         public GameplayScene() : base() { }
 
@@ -49,6 +52,16 @@ namespace Nexus_Horizon_Game.Model.Scenes
         protected override void LoadContent()
         {
             Renderer.LoadContent(new List<string> { "guinea_pig" });
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (!waveHandler.Started)
+            {
+                waveHandler.Start(gameTime);
+            }
+
+            waveHandler.Update(gameTime);
         }
 
         /// <summary>
@@ -202,6 +215,8 @@ namespace Nexus_Horizon_Game.Model.Scenes
 }
 """);
 
+            waveHandler = new WaveHandler();
+
             dynamic movementTypes = json.movementTypes;
             dynamic entityTypes = json.entityTypes;
             JArray stages = json.stages;
@@ -216,6 +231,17 @@ namespace Nexus_Horizon_Game.Model.Scenes
             float waitTime = 1;
             int[] attack = { 1 };
             int[] catattack = { 1, 2 };
+
+            Wave birdWave = new Wave();
+            birdWave.startTime = 2.0f;
+            birdWave.duration = 4.0f;
+
+            for (int i = 0; i < 8; i++)
+            {
+                birdWave.entitiesToSpawn.Enqueue(EnemyFactory.CreateEnemyPrefab("bird_enemy", EnemyFactory.sampleBirdPath2(i * 25), attack, i / 7.0f), 0.0f);
+            }
+
+            waveHandler.AddWave(birdWave);
 
 
             waitTime += 2;

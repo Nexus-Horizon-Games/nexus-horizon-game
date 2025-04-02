@@ -8,23 +8,30 @@ namespace Nexus_Horizon_Game.Model.Prefab
 {
     internal class PrefabEntity : IPrototype<PrefabEntity>
     {
-        private List<IComponent> Components;
+        private List<IComponent> components;
+
+        public PrefabEntity()
+        {
+            components = new List<IComponent>();
+        }
 
         public PrefabEntity(List<IComponent> components)
         {
-            Components = components;
+            this.components = components;
         }
 
         public PrefabEntity Clone()
         {
-            var clonedComponents = new List<IComponent>(this.Components);
+            var clonedComponents = new List<IComponent>(this.components);
 
             return new PrefabEntity(clonedComponents);
         }
 
+        public List<IComponent> Components { get { return components; } }
+
         public List<IComponent> getComponents()
         {
-            return Components;
+            return components;
         }
     }
 }

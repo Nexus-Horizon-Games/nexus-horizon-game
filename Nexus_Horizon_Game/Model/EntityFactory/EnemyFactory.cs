@@ -5,6 +5,7 @@ using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.States;
 using System.Transactions;
+using Nexus_Horizon_Game.Model.Prefab;
 
 namespace Nexus_Horizon_Game.EntityFactory
 {
@@ -95,6 +96,33 @@ namespace Nexus_Horizon_Game.EntityFactory
             pathList.Add(leavingPath);
             MultiPath movementPath = new MultiPath(pathList);
             return movementPath;
+        }
+
+        public static PrefabEntity CreateEnemyPrefab(string type, MultiPath multiPath, int[] attackPaths, float waitTime)
+        {
+            PrefabEntity prefabEntity = new PrefabEntity(new List<IComponent>
+            {
+                new TransformComponent(new Vector2(50.0f, 50.0f)),
+                new PhysicsBody2DComponent(),
+                new ColliderComponent(new Rectangle(0, 0, type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)),
+                new TagComponent(Tag.ENEMY)
+            });
+            
+            if (type == "bird_enemy")
+            {
+                prefabEntity.Components.Add(new SpriteComponent("bird", centered: true));
+                /*prefabEntity.Components.Add(new StateComponent(new List<State>
+                {
+                    new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
+                }));*/
+
+                /*Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(1, () =>
+                {
+                    SetToDeathState(enemyEntity);
+                }));*/
+            }
+
+            return prefabEntity;
         }
 
         public static int CreateEnemy(string type, MultiPath multiPath, int[] attackPaths, float waitTime)
