@@ -11,11 +11,12 @@ namespace Nexus_Horizon_Game.Systems
     {
         public static void Update(GameTime gameTime)
         {
-            var components = Scene.Loaded.ECS.GetComponents<HealthComponent>();
+            var entities = Scene.Loaded.ECS.GetEntitiesWithComponent<HealthComponent>();
 
-            foreach (var component in components.ToList())
+            foreach (var entity in entities.ToList())
             {
-                component.CheckForDeath();
+                var component = Scene.Loaded.ECS.GetComponentFromEntity<HealthComponent>(entity);
+                component.CheckForDeath(entity);
             }
         }
     }
