@@ -9,6 +9,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Controller;
+using Nexus_Horizon_Game.Model.Prefab;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -69,6 +70,7 @@ namespace Nexus_Horizon_Game.Model.Scenes
         /// </summary>
         protected override void LoadScene()
         {
+            // TODO: move json parsing into seperate class:
             dynamic json = JsonConvert.DeserializeObject("""
 {
   "movementTypes": [
@@ -149,12 +151,13 @@ namespace Nexus_Horizon_Game.Model.Scenes
   ],
   "stages": [
     {
+      "startTime": 2.0,
       "duration": 40,
       "spawners": [
         {
           "spawnerType": "multiple",
           "time": 0,
-          "interval": 1,
+          "interval": 0.35,
           "entityCount": 12,
           "entity": {
             "entityType": "Bird",
@@ -170,13 +173,29 @@ namespace Nexus_Horizon_Game.Model.Scenes
         {
           "spawnerType": "multiple",
           "time": 0,
-          "interval": 1,
-          "entityCount": 12,
+          "interval": 0.35,
+          "entityCount": 1,
           "entity": {
             "entityType": "Bird",
             "setComponents": {
               "MovementComponent": {
                 "movementType": "BirdMovement",
+                "direction": [-1, 0]
+              }
+            }
+          },
+          "position": [110, 30]
+        },
+        {
+          "spawnerType": "multiple",
+          "time": 3.0,
+          "interval": 0.6,
+          "entityCount": 2,
+          "entity": {
+            "entityType": "Cat",
+            "setComponents": {
+              "MovementComponent": {
+                "movementType": "CatMovement",
                 "direction": [-1, 0]
               }
             }
@@ -215,6 +234,14 @@ namespace Nexus_Horizon_Game.Model.Scenes
 }
 """);
 
+            // BOSS TIMERS
+            int mbt_entity = this.ECS.CreateEntity(new List<IComponent> { new TimersComponent(new Dictionary<string, Timer>()) });
+
+            var playerFactory = new PlayerFactory();
+            int moveablePlayer2 = playerFactory.CreateEntity();
+            int[] attack = { 1 };
+            int[] catattack = { 1, 2 };
+
             waveHandler = new WaveHandler();
 
             dynamic movementTypes = json.movementTypes;
@@ -223,28 +250,46 @@ namespace Nexus_Horizon_Game.Model.Scenes
             Debug.WriteLine($"stages: {stages.Count}");
 
 
-            // BOSS TIMERS
-            int mbt_entity = this.ECS.CreateEntity(new List<IComponent> { new TimersComponent(new Dictionary<string, Timer>()) });
+            Dictionary<string, PrefabEntity> entityTypesLookup = new();
+            entityTypesLookup["Bird"] = EnemyFactory.CreateEnemyPrefab("bird_enemy", EnemyFactory.sampleBirdPath1(), attack, 0.0f);
+            entityTypesLookup["Cat"] = EnemyFactory.CreateEnemyPrefab("cat_enemy", EnemyFactory.sampleCatPath1(80), catattack, 0.0f);
 
-            var playerFactory = new PlayerFactory();
-            int moveablePlayer2 = playerFactory.CreateEntity();
-            float waitTime = 1;
-            int[] attack = { 1 };
-            int[] catattack = { 1, 2 };
-
-            Wave birdWave = new Wave();
-            birdWave.startTime = 2.0f;
-            birdWave.duration = 4.0f;
-
-            for (int i = 0; i < 8; i++)
+            foreach (dynamic stage in stages)
             {
-                birdWave.entitiesToSpawn.Enqueue(EnemyFactory.CreateEnemyPrefab("bird_enemy", EnemyFactory.sampleBirdPath2(i * 25), attack, i / 7.0f), 0.0f);
+                Wave wave = new Wave();
+                wave.duration = (double)stage.duration;
+                wave.startTime = (double)stage.startTime;
+
+                JArray spawners = stage.spawners;
+
+                foreach (dynamic spawner in spawners)
+                {
+                    string type = spawner.spawnerType;
+                    double startTime = spawner.time;
+                    int entityCount = spawner.entityCount;
+                    double interval = spawner.interval;
+
+                    dynamic entityToSpawn = spawner.entity;
+                    string entityType = entityToSpawn.entityType;
+
+                    for (int i = 0; i < entityCount; i++)
+                    {
+                        wave.entitiesToSpawn.Enqueue(entityTypesLookup[entityType], startTime + i * interval);
+                    }
+                }
+
+                waveHandler.AddWave(wave);
+
+                break; // TODO: remove
             }
 
-            waveHandler.AddWave(birdWave);
 
 
-            waitTime += 2;
+            // ---- OLD WAVE CODE:
+
+            //float waitTime = 1;
+
+            /*waitTime += 2;
 
             for (int i = 0; i < 8; i++)
             {
@@ -307,7 +352,7 @@ namespace Nexus_Horizon_Game.Model.Scenes
                 EnemyFactory.CreateBoss("chef_boss");
             }));
             bossTimersComponent.timers["Final-Boss"].Start();
-            this.ECS.SetComponentInEntity(mbt_entity, bossTimersComponent);
+            this.ECS.SetComponentInEntity(mbt_entity, bossTimersComponent);*/
 
             //EnemyFactory.CreateBoss("evil_guinea_pig_boss");
 

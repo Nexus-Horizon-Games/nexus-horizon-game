@@ -4,7 +4,9 @@ namespace Nexus_Horizon_Game.States
 {
     internal abstract class State
     {
-        private readonly int entity = 0;
+        private int entity = 0;
+
+        protected State() { }
 
         protected State(int entity)
         {
@@ -21,10 +23,16 @@ namespace Nexus_Horizon_Game.States
         public event OnStopped OnStopEvent;
 
         public virtual void OnUpdate(GameTime gameTime) { }
+        public virtual void Initalize(int entity) { this.entity = entity; }
         public virtual void OnStart() { }
         public virtual void OnStop()
         {
             OnStopEvent?.Invoke();
+        }
+
+        public virtual State Clone()
+        {
+            return this;
         }
     }
 }

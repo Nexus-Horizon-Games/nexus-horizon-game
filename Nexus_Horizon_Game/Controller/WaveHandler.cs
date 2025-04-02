@@ -92,6 +92,7 @@ namespace Nexus_Horizon_Game.Controller
                 {
                     wave.entitiesToSpawn.Dequeue();
 
+                    Debug.WriteLine("spawning an entity -----");
                     Scene.Loaded.ECS.CreateEntity(entity.Clone()); // spawn the entity
                 }
             }
