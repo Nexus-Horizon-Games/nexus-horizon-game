@@ -103,10 +103,11 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
-                new ColliderComponent(new Rectangle(0, 0, type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)),
                 new TagComponent(Tag.ENEMY)
             });
-            
+
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(enemyEntity, new ColliderComponent(enemyEntity, new Point(type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)));
+
             if (type == "bird_enemy")
             {
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new SpriteComponent("bird", centered: true));
@@ -157,7 +158,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
                 // added hitbox cetering on sprite
-                Scene.Loaded.ECS.AddComponent(bossEntity, new ColliderComponent(new Rectangle(-8, -8, 17, 17)));
+                Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(bossEntity, new Point(17, 17), new Point(-8, -8)));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>              
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
@@ -174,7 +175,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
                 // added hitbox cetering on sprite
-                Scene.Loaded.ECS.AddComponent(bossEntity, new ColliderComponent(new Rectangle(-6, -9, 12, 18)));
+                Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(bossEntity, new Point(12, 18), new Point(-6, -9)));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
