@@ -26,7 +26,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         private Timer bulletTimerConstant;
         private Timer bulletTimerEndShots;
         private const float bulletTimeInterval = 0.05f;
-        
 
         // collision
         private int hitboxEntityID;
