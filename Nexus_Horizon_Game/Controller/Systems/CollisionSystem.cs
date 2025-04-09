@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nexus_Horizon_Game.Components;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -51,7 +53,7 @@ namespace Nexus_Horizon_Game.Controller
             TagComponent otherTag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(otherEntityID);
 
             // if player bullet hits enemy, bullet gets destoryed.
-            if (bulletTag.Tag == Tag.PLAYER_PROJECTILE && otherTag.Tag == Tag.ENEMY)
+            if ((bulletTag.Tag & Tag.PLAYER_PROJECTILE) == Tag.PLAYER_PROJECTILE && (otherTag.Tag & Tag.ENEMY) == Tag.ENEMY)
             {
                 // health / collision component implemented for enemies 
                 if (Scene.Loaded.ECS.EntityHasComponent<HealthComponent>(otherEntityID, out HealthComponent enemyHealth))
@@ -63,7 +65,7 @@ namespace Nexus_Horizon_Game.Controller
                 Scene.Loaded.ECS.DestroyEntity(bulletEntity);
             }
             // if enemy bullet hits player, destroy the bullet
-            else if (bulletTag.Tag == Tag.ENEMY_PROJECTILE && otherTag.Tag == Tag.PLAYER)
+            else if ((bulletTag.Tag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE && (otherTag.Tag & Tag.PLAYER) == Tag.PLAYER)
             {
                 Scene.Loaded.ECS.DestroyEntity(bulletEntity);
             }
@@ -72,20 +74,20 @@ namespace Nexus_Horizon_Game.Controller
         {
             // gets every entity with ColliderComponent
 
-            IEnumerable<int> allColliderIDs = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
+            List<int> allColliderIDs = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
 
             // separates their IDs from their tags
             // player bullet
-            IEnumerable<int> playerBulletIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.PLAYER_PROJECTILE);
+            List<int> playerBulletIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.PLAYER_PROJECTILE) == Tag.PLAYER_PROJECTILE).ToList();
 
             // enemy bullet
-            IEnumerable<int> enemyBulletIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.ENEMY_PROJECTILE);
+            List<int> enemyBulletIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE).ToList();
 
             // playerID
-            IEnumerable<int> playerIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.PLAYER);
+            List<int> playerIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.PLAYER) == Tag.PLAYER).ToList();
 
             // enemyIDs
-            IEnumerable<int> enemyIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.ENEMY);
+            IEnumerable<int> enemyIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.ENEMY) == Tag.ENEMY);
 
             // checks player bullets against enemies
             foreach (int bulletID in playerBulletIDs)
@@ -116,7 +118,7 @@ namespace Nexus_Horizon_Game.Controller
                     }
                 }
             }
-
+            
             // checks enemy bullets against player
             foreach (int bulletID in enemyBulletIDs)
             {
@@ -144,9 +146,10 @@ namespace Nexus_Horizon_Game.Controller
                     }
                 }
             }
+            
         }
-            }
-        }
+    }
+}
 
 
 

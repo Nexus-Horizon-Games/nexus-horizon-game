@@ -2,6 +2,7 @@
 using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
 using Nexus_Horizon_Game.Entity_Type_Behaviours;
+using System.Diagnostics;
 //using Nexus_Horizon_Game.Behaviours;
 
 namespace Nexus_Horizon_Game.EntityFactory
@@ -52,6 +53,8 @@ namespace Nexus_Horizon_Game.EntityFactory
 
             // Sets tag for either player bullet or enemy bullet. 
             Tag bulletTag = isPlayerBullet ? Tag.PLAYER_PROJECTILE : Tag.ENEMY_PROJECTILE;
+
+            // Debug.WriteLine(bulletTag);
 
             int entity = Scene.Loaded.ECS.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),

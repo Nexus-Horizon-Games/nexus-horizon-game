@@ -48,7 +48,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             }
             else
             {
-                Debug.WriteLine("~Could Not Retrieve A Component From Bullet~");
+                throw new Exception("~Could Not Retrieve A Component From Bullet~");
             }
         
         }

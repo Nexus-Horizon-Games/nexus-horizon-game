@@ -84,7 +84,7 @@ namespace Nexus_Horizon_Game
         /// removes all components from the entity and adds it to the destroyed entities queue.
         /// </summary>
         /// <param name="entity"> ID of entity wanting to be destroyed. </param>
-        public void DestroyEntity(int entity)
+        public void DestroyEntity(int entity) //!!!!! GARBAGE COLLECTION (GC) FOR REFERENCED CLASSES IN COMPONENTS IS BAD ||OR|| THIS FUNCTION IS REALLY BAD WHEN DESTROYING ENTITIES !!!!!!\\\\\
         {
             if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
 

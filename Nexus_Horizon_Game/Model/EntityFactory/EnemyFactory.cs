@@ -103,7 +103,6 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
-                new TagComponent(Tag.ENEMY)
             });
 
             Scene.Loaded.ECS.AddComponent<ColliderComponent>(enemyEntity, new ColliderComponent(enemyEntity, new Point(type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)));
@@ -111,9 +110,10 @@ namespace Nexus_Horizon_Game.EntityFactory
             if (type == "bird_enemy")
             {
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new SpriteComponent("bird", centered: true));
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new TagComponent(Tag.ENEMY | Tag.SMALLGRUNT));
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new StateComponent(new List<State>
                 {
-                    new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
+                    new BirdEnemyState(enemyEntity, multiPath, attackPaths, waitTime, bulletsTag: Tag.ENEMY_PROJECTILE)
                 }));
 
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(1, () =>
@@ -124,9 +124,10 @@ namespace Nexus_Horizon_Game.EntityFactory
             if (type == "cat_enemy")
             {
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new SpriteComponent("cat", centered: true));
+                Scene.Loaded.ECS.AddComponent(enemyEntity, new TagComponent(Tag.ENEMY | Tag.MEDIUMGRUNT));
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new StateComponent(new List<State>
                 {
-                    new CatEnemyState(enemyEntity, multiPath, attackPaths, waitTime)
+                    new CatEnemyState(enemyEntity, multiPath, attackPaths, waitTime, bulletsTag : Tag.ENEMY_PROJECTILE)
                 }));
 
                 Scene.Loaded.ECS.AddComponent(enemyEntity, new HealthComponent(7, () =>
@@ -150,19 +151,18 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 new TransformComponent(new Vector2(Arena.Size.X / 2.0f, -20.0f)),
                 new PhysicsBody2DComponent(accelerationEnabled: true),
-
-                new TagComponent(Tag.ENEMY)
             });
 
             if (type == "evil_guinea_pig_boss") // mid boss
             {
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
+                Scene.Loaded.ECS.AddComponent(bossEntity, new TagComponent(Tag.ENEMY | Tag.HALFBOSS));
                 // added hitbox cetering on sprite
                 Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(bossEntity, new Point(17, 17), new Point(-8, -8)));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>              
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
-                    new GuineaPigBossState(bossEntity, 15.0f),
+                    new GuineaPigBossState(bossEntity, 15.0f, bulletsTag : Tag.ENEMY_PROJECTILE),
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
 
@@ -174,13 +174,14 @@ namespace Nexus_Horizon_Game.EntityFactory
             else if (type == "chef_boss") // final boss
             {
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
+                Scene.Loaded.ECS.AddComponent(bossEntity, new TagComponent(Tag.ENEMY | Tag.BOSS));
                 // added hitbox cetering on sprite
                 Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(bossEntity, new Point(12, 18), new Point(-6, -9)));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
-                    new ChefBossStage1State(bossEntity, Stage1Length),
-                    new ChefBossStage2State(bossEntity, Stage2Length),
+                    new ChefBossStage1State(bossEntity, Stage1Length, bulletsTag : Tag.ENEMY_PROJECTILE),
+                    new ChefBossStage2State(bossEntity, Stage2Length, bulletsTag : Tag.ENEMY_PROJECTILE),
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
 
