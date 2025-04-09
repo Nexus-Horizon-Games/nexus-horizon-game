@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nexus_Horizon_Game.Components;
 using System;
@@ -70,24 +70,45 @@ namespace Nexus_Horizon_Game.Controller
                 Scene.Loaded.ECS.DestroyEntity(bulletEntity);
             }
         }
+
+        /// <summary>
+        /// THIS WAY OF CHECKING FOR COLLISIONS IS JUST TO SLOW SO IT LAGS REALLY BAD
+        /// </summary>
+        /// <param name="gametime"></param>
         public static void Update(GameTime gametime)
         {
             // gets every entity with ColliderComponent
 
-            List<int> allColliderIDs = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
+            IEnumerable<int> allColliderIDs = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
+
+            List<int> playerBulletIDs = new();
+            List<int> enemyBulletIDs = new();
+            List<int> playerIDs = new();
+            List<int> enemyIDs = new();
+
 
             // separates their IDs from their tags
-            // player bullet
-            List<int> playerBulletIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.PLAYER_PROJECTILE) == Tag.PLAYER_PROJECTILE).ToList();
+            foreach (int enityID in allColliderIDs)
+            {
+                Tag entityTag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(enityID).Tag;
 
-            // enemy bullet
-            List<int> enemyBulletIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE).ToList();
-
-            // playerID
-            List<int> playerIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.PLAYER) == Tag.PLAYER).ToList();
-
-            // enemyIDs
-            IEnumerable<int> enemyIDs = allColliderIDs.Where(id => (Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag & Tag.ENEMY) == Tag.ENEMY);
+                if ((entityTag & Tag.PLAYER_PROJECTILE) == Tag.PLAYER_PROJECTILE)            // player bullet 
+                {
+                    playerBulletIDs.Add(enityID);
+                }
+                else if((entityTag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE)            // enemy bullet
+                {
+                    enemyBulletIDs.Add(enityID);
+                }
+                else if((entityTag & Tag.PLAYER) == Tag.PLAYER)            // playerID
+                {
+                    playerIDs.Add(enityID);
+                }
+                else if((entityTag & Tag.ENEMY) == Tag.ENEMY)            // enemyIDs
+                {
+                    enemyIDs.Add(enityID);
+                }
+            }
 
             // checks player bullets against enemies
             foreach (int bulletID in playerBulletIDs)
