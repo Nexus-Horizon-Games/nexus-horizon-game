@@ -31,17 +31,20 @@ namespace Nexus_Horizon_Game.States
         private bool isMoving = false;
         private int spawnerEntity;
 
-        public BirdEnemyState(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime) : base(thisEntity)
+        private Tag bulletsTag;
+
+        public BirdEnemyState(int thisEntity, MultiPath movementPath, int[] attackPaths, float waitTime, Tag bulletsTag = 0) : base(thisEntity)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;
             this.waitTime = waitTime;
+            this.bulletsTag = bulletsTag;
         }
 
         public override void OnStart()
         {
             isMoving = false;
-            this.spawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
+            this.spawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
         }
 
         public override void OnUpdate(GameTime gameTime)

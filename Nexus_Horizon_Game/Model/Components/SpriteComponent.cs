@@ -42,6 +42,11 @@ namespace Nexus_Horizon_Game.Components
             }
         }
 
+        public float Scale
+        {
+            get => scale;
+        }
+
         public uint SpriteLayer
         {
             get => spriteLayer;

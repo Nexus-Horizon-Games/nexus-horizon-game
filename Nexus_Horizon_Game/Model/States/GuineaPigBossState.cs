@@ -42,8 +42,11 @@ namespace Nexus_Horizon_Game.States
         private TimerContainer timerContainer = new TimerContainer();
         private int smallSpawnerEntity;
         private int bigSpawnerEntity;
-        public GuineaPigBossState(int entity, float timeLength) : base(entity, timeLength)
+
+        private Tag bulletsTag;
+        public GuineaPigBossState(int entity, float timeLength, Tag bulletsTag = 0) : base(entity, timeLength)
         {
+            this.bulletsTag = bulletsTag;
         }
 
         public override void OnStart()
@@ -68,8 +71,8 @@ namespace Nexus_Horizon_Game.States
 
             // Start the movement timer now that we're on-screen.
             timerContainer.GetTimer("move_action").Start();
-            this.smallSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", SmallBulletScale, 99);
-            this.bigSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", BigBulletScale, 99);
+            this.smallSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", SmallBulletScale, 99, projectileTag: bulletsTag);
+            this.bigSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", BigBulletScale, 99, projectileTag: bulletsTag);
         }
 
         public override void OnStop()

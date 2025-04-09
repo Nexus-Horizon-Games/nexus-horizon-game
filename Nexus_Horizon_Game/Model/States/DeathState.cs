@@ -17,7 +17,7 @@ namespace Nexus_Horizon_Game.States
 
         public override void OnStart()
         {
-            Debug.WriteLine($"enity {this.Entity} died!!!");
+            // Debug.WriteLine($"enity {this.Entity} died!!!");
 
             //OnStop();
             // use this to update the ECS instead of creating a loop with OnStop(), So no stack overflow exception is caused.

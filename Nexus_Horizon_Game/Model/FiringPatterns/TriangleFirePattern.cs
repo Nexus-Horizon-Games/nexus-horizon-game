@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Model.EntityPatterns
 {
-    internal class TriangleFiringPattern : IFiringPattern
+    internal class TriangleFiringPattern : AbstractFiringPattern, IFiringPattern
     {
         public void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer)
         {
@@ -38,67 +38,27 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
                 if (bulletNum == 1)
                 {
                     Vector2 fireDirection = GetVectFromDirection(direction, 0);
-                    spawnEntity(position, fireDirection, speed, prefab);
+                    SpawnEntity(position, fireDirection, speed, prefab);
                 }
                 if (bulletNum == 2)
                 {
                     Vector2 fireDirection = GetVectFromDirection(direction, MathHelper.ToRadians(1));
-                    spawnEntity(position, fireDirection, speed, prefab);
+                    SpawnEntity(position, fireDirection, speed, prefab);
                     fireDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-1));
-                    spawnEntity(position, fireDirection, speed, prefab);
+                    SpawnEntity(position, fireDirection, speed, prefab);
                 }
                 if (bulletNum == 3)
                 {
                     Vector2 fireDirection = GetVectFromDirection(direction, 0);
-                    spawnEntity(position, fireDirection, speed, prefab);
+                    SpawnEntity(position, fireDirection, speed, prefab);
                     fireDirection = GetVectFromDirection(direction, MathHelper.ToRadians(2));
-                    spawnEntity(position, fireDirection, speed, prefab);
+                    SpawnEntity(position, fireDirection, speed, prefab);
                     fireDirection = GetVectFromDirection(direction, MathHelper.ToRadians(-2));
-                    spawnEntity(position, fireDirection, speed, prefab);
+                    SpawnEntity(position, fireDirection, speed, prefab);
                 }
                 bulletNum++;
             }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: timeInterval * 4));
             return;
-        }
-        private void spawnEntity(Vector2 position, Vector2 fireDirection, float speed, PrefabEntity prefab)
-        {
-            List<IComponent> components = prefab.getComponents();
-            components.Add(new PhysicsBody2DComponent()
-            {
-                Velocity = new Vector2(speed * fireDirection.X, speed * fireDirection.Y)
-            });
-            int firedEntity = Scene.Loaded.ECS.CreateEntity(components);
-            Scene.Loaded.ECS.SetComponentInEntity<BehaviourComponent>(firedEntity, new BehaviourComponent(new Bullet(firedEntity)));
-        }
-        public Vector2 GetVectFromDirection(double direction, double variation)
-        {
-            direction += variation;
-            float xComponent = (float)(Math.Cos(direction));
-            float yComponent = (float)(Math.Sin(direction));
-            return new Vector2(xComponent, yComponent);
-        }
-
-        public Vector2 GetPlayerPosition()
-        {
-            var entitesWithTag = Scene.Loaded.ECS.GetEntitiesWithComponent<TagComponent>();
-            var playerEntity = -1;
-            foreach (var entity in entitesWithTag)
-            {
-                var tag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(entity);
-                if (tag.Tag == Tag.PLAYER)
-                {
-                    playerEntity = entity;
-                    break;
-                }
-            }
-
-            Vector2 playerPosition = Vector2.Zero;
-            if (playerEntity != -1)
-            {
-                playerPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(playerEntity).position;
-            }
-            Debug.WriteLine("player position is " + playerPosition);
-            return playerPosition;
         }
     }
 }
