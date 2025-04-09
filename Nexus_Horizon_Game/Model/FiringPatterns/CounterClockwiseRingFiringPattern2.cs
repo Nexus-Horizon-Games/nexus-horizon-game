@@ -44,8 +44,8 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
             int firedEntity = base.SpawnEntity(position,fireDirection, speed, prefab);
 
             
-            // this gets set first in the base but is overriden by this behabiour all good for now
-            Scene.Loaded.ECS.AddComponent<BehaviourComponent>(firedEntity, new BehaviourComponent(new Bullet(firedEntity, bulletBehavior: (gametime, bullet, bulletEntity, previousVelocity) =>
+            // this gets added first of the base function but is overriden by this behaviour all good for now
+            Scene.Loaded.ECS.SetComponentInEntity<BehaviourComponent>(firedEntity, new BehaviourComponent(new Bullet(firedEntity, bulletBehavior: (gametime, bullet, bulletEntity, previousVelocity) =>
             {
                 if (bullet.TimeAlive > 0.3f && bullet.TimeAlive < 1.2f)
                 {
