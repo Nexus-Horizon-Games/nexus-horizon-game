@@ -81,7 +81,7 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
                 position = position
             });
             int firedEntity = Scene.Loaded.ECS.CreateEntity(components);
-            Scene.Loaded.ECS.AddComponent<ColliderComponent>(firedEntity, new ColliderComponent(new Point(scaledWidth, scaledHeight), new Point(-scaledWidth / 2, -scaledHeight / 2), entityIDFollowing: firedEntity));
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(firedEntity, new ColliderComponent(new Point(scaledWidth, scaledHeight), new Point(-scaledWidth / 2, -scaledHeight / 2)));
             Scene.Loaded.ECS.AddComponent<BehaviourComponent>(firedEntity, new BehaviourComponent(new Bullet(firedEntity)));
             return firedEntity;
         }

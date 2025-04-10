@@ -35,6 +35,7 @@ namespace Nexus_Horizon_Game.Controller
             if (componentType == typeof(ColliderComponent))
             {
                 var collider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(entity);
+                collider.Initalize(entity);
 
                 // subscribe to OnCollisionEvent
                 collider.OnCollision += (otherEntityID) => CollisionHandler(entity, otherEntityID);

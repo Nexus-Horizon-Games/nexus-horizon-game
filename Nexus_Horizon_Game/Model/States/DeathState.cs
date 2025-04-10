@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Nexus_Horizon_Game.States
 {
     /// <summary>
-    /// The state for when an entity dies (TODO: update to add entity drops, death animation, etc.)
+    /// The state for when an entity dies
     /// </summary>
     internal class DeathState : State
     {
@@ -21,10 +21,7 @@ namespace Nexus_Horizon_Game.States
             // Points Change on death
             GameplayManager.Instance.KilledEnemy(this.Entity);
 
-            // Debug.WriteLine($"enity {this.Entity} died!!!");
-
-            //OnStop();
-            // use this to update the ECS instead of creating a loop with OnStop(), So no stack overflow exception is caused.
+            // Destory the entity
             Scene.Loaded.ECS.DestroyEntity(this.Entity);
         }
         
