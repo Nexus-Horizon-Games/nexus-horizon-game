@@ -2,24 +2,18 @@ using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Components;
-using Nexus_Horizon_Game.Model.Entity_Type_Behaviours.MenuBehaviour.States;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.GameManagers;
 using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.View.InputSystem;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Nexus_Horizon_Game.Model.EntityFactory;
-using Nexus_Horizon_Game.Model.Components;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Controller;
 using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
-using Nexus_Horizon_Game.Model.EntityPatterns;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {

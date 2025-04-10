@@ -320,7 +320,7 @@ namespace Nexus_Horizon_Game
         /// <returns> true when entity is not destroyed. </returns>
         public bool IsEntityAlive(int entity)
         {
-            return entity < isEntityAlive.Count &&
+            return entity >= 0 && entity < isEntityAlive.Count &&
                 isEntityAlive[entity];
         }
 

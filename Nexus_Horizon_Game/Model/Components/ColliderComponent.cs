@@ -10,7 +10,7 @@ namespace Nexus_Horizon_Game.Components
     {
         private bool isEmpty;
 
-        private int entityIDFollowing;
+        private int entityIDFollowing = -1;
         private Rectangle rect; 
 
         public event OnCollision OnCollision; // This is where we can add listeners for actions to happen when a collision happens to a collider.
@@ -19,12 +19,10 @@ namespace Nexus_Horizon_Game.Components
                                                // this requires these behaviours subscribing to onCollsion to carefully unsubscribe when they are no longer
                                                // alive.
 
-        public ColliderComponent(Point size, Point? position = null, int entityIDFollowing = -1)
+        public ColliderComponent(Point size, Point? position = null)
         {
             this.isEmpty = false;
             OnCollision = null;
-
-            this.entityIDFollowing = entityIDFollowing;
             
             Point setPosition = new Point(0, 0);
             if (position != null) 
@@ -32,6 +30,15 @@ namespace Nexus_Horizon_Game.Components
                 setPosition = (Point)position; 
             } 
             this.rect = new Rectangle(setPosition, size);
+        }
+
+        /// <summary>
+        /// Initalizes this component, should be called before any calculations are done on it.
+        /// </summary>
+        /// <param name="entity">The entity that this collider should follow.</param>
+        public void Initalize(int entity)
+        {
+            entityIDFollowing = entity;
         }
 
         public Rectangle Bounds 
