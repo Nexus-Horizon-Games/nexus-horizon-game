@@ -1,8 +1,9 @@
 using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Model.Components.Interfaces;
 
 namespace Nexus_Horizon_Game.Components
 {
-    internal struct SpriteComponent : IComponent
+    internal struct SpriteComponent : IComponent, ISpriteTypeComponent
     {
         private bool isEmpty;
         private bool isUI = false;

@@ -92,7 +92,7 @@ namespace Nexus_Horizon_Game
 
             foreach (List<IComponent> componentList in componentLists.Values)
             {
-                if (entity >= componentList.Count) { continue; } // the component list is too small, so no need to remove anything
+                if (entity >= componentList.Count || componentList[entity].IsEmptyComponent()) { continue; } // the component list is too small, so no need to remove anything
 
                 var makeEmptyComponent = componentList[entity].GetType().GetMethod("MakeEmptyComponent");
                 componentList[entity] = makeEmptyComponent?.Invoke(null, null) as IComponent;
