@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.Model;
-using Nexus_Horizon_Game.Model.Components;
 
 namespace Nexus_Horizon_Game.Model.Prefab
 {
@@ -22,19 +19,12 @@ namespace Nexus_Horizon_Game.Model.Prefab
 
         public PrefabEntity Clone()
         {
-
             var clonedComponents = new List<IComponent>();
-
             components.ForEach(c => clonedComponents.Add(c.Clone()));
 
             return new PrefabEntity(clonedComponents);
         }
 
-        public List<IComponent> Components { get { return components; } }
-
-        public List<IComponent> getComponents()
-        {
-            return components;
-        }
+        public List<IComponent> Components => components;
     }
 }

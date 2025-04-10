@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Controller;
 using Nexus_Horizon_Game.Model.Prefab;
+using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.Model.EntityPatterns;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -299,10 +301,15 @@ namespace Nexus_Horizon_Game.Model.Scenes
                     dynamic entityToSpawn = spawner.entity;
                     string entityType = entityToSpawn.entityType;
 
-                    for (int i = 0; i < entityCount; i++)
+                    wave.entitiesToSpawn.Enqueue(new PrefabEntity(new List<IComponent>
+                    {
+                        new BehaviourComponent(new TimedEntitySpanwerBehaviour(entityTypesLookup[entityType], new LoopTimer((float)interval), (float)interval * entityCount))
+                    }), startTime);
+
+                    /*for (int i = 0; i < entityCount; i++)
                     {
                         wave.entitiesToSpawn.Enqueue(entityTypesLookup[entityType], startTime + i * interval);
-                    }
+                    }*/
                 }
 
                 waveHandler.AddWave(wave);

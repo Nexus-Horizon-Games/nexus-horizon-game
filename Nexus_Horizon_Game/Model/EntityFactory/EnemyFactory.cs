@@ -1,12 +1,8 @@
 using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.States;
-using System.Transactions;
-using Nexus_Horizon_Game.Model.GameManagers;
-using System.Net.Cache;
 using Nexus_Horizon_Game.Model.Prefab;
 
 namespace Nexus_Horizon_Game.EntityFactory
@@ -116,6 +112,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                 prefabEntity.Components.Add(new TagComponent(Tag.ENEMY | Tag.SMALLGRUNT));
                 prefabEntity.Components.Add(new StateComponent(new List<State>
                 {
+                    new ChefBossStage1State(30.0f),
                     new BirdEnemyState(multiPath, attackPaths, waitTime)
                 }));
 
@@ -226,7 +223,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
-                    new ChefBossStage1State(bossEntity, Stage1Length, bulletsTag : Tag.ENEMY_PROJECTILE),
+                    new ChefBossStage1State(Stage1Length, bulletsTag : Tag.ENEMY_PROJECTILE),
                     new ChefBossStage2State(bossEntity, Stage2Length, bulletsTag : Tag.ENEMY_PROJECTILE),
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, -20.0f), EnteringSpeed),
                 }));
