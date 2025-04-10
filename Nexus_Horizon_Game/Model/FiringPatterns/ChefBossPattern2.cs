@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Model.EntityPatterns
 {
-    internal class ChefBossPattern2 : IFiringPattern
+    internal class ChefBossPattern2 : AbstractFiringPattern, IFiringPattern
     {
         public void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer)
         {
@@ -66,57 +66,12 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
                 Vector2 spawner3Direction = new Vector2((float)Math.Cos(Spawner3Angle + angle), (float)Math.Sin(Spawner3Angle + angle));
 
                 // Spawn the bullets:
-                spawnEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed, prefab);
-                spawnEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed, prefab);
-                spawnEntity(bossPosition + spawner3, spawner3Direction, BulletSpeed, prefab);
+                SpawnEntity(bossPosition + spawner1, spawner1Direction, BulletSpeed, prefab);
+                SpawnEntity(bossPosition + spawner2, spawner2Direction, BulletSpeed, prefab);
+                SpawnEntity(bossPosition + spawner3, spawner3Direction, BulletSpeed, prefab);
 
             }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: SpawnTimeLength));
             return;
-        }
-        private void spawnEntity(Vector2 position, Vector2 fireDirection, float speed, PrefabEntity prefab)
-        {
-            List<IComponent> components = prefab.getComponents();
-            components.RemoveAll(x => x.GetType() == typeof(TransformComponent));
-            components.Add(new PhysicsBody2DComponent()
-            {
-                Velocity = new Vector2(speed * fireDirection.X, speed * fireDirection.Y)
-            });
-            components.Add(new TransformComponent()
-            {
-                position = position
-            });
-            int firedEntity = Scene.Loaded.ECS.CreateEntity(components);
-            Scene.Loaded.ECS.SetComponentInEntity<BehaviourComponent>(firedEntity, new BehaviourComponent(new Bullet(firedEntity)));
-        }
-        public Vector2 GetVectFromDirection(double direction, double variation)
-        {
-            direction += variation;
-            float xComponent = (float)(Math.Cos(direction));
-            float yComponent = (float)(Math.Sin(direction));
-            return new Vector2(xComponent, yComponent);
-        }
-
-        public Vector2 GetPlayerPosition()
-        {
-            var entitesWithTag = Scene.Loaded.ECS.GetEntitiesWithComponent<TagComponent>();
-            var playerEntity = -1;
-            foreach (var entity in entitesWithTag)
-            {
-                var tag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(entity);
-                if (tag.Tag == Tag.PLAYER)
-                {
-                    playerEntity = entity;
-                    break;
-                }
-            }
-
-            Vector2 playerPosition = Vector2.Zero;
-            if (playerEntity != -1)
-            {
-                playerPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(playerEntity).position;
-            }
-            Debug.WriteLine("player position is " + playerPosition);
-            return playerPosition;
         }
     }
 }

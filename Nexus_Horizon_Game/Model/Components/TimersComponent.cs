@@ -11,8 +11,14 @@ namespace Nexus_Horizon_Game.Components
 
         public TimersComponent(Dictionary<string, Timer> timers)
         {
-            this.isEmpty = false;
             this.timers = timers;
+            this.isEmpty = false;
+        }
+
+        public TimersComponent()
+        {
+            this.timers = new Dictionary<string, Timer>();
+            this.isEmpty = false;
         }
 
         bool IComponent.IsEmpty
