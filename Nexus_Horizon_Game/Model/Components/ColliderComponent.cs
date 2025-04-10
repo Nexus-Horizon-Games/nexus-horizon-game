@@ -19,7 +19,7 @@ namespace Nexus_Horizon_Game.Components
                                                // this requires these behaviours subscribing to onCollsion to carefully unsubscribe when they are no longer
                                                // alive.
 
-        public ColliderComponent(int entityIDFollowing, Point size, Point? position = null)
+        public ColliderComponent(Point size, Point? position = null, int entityIDFollowing = -1)
         {
             this.isEmpty = false;
             OnCollision = null;
@@ -48,6 +48,15 @@ namespace Nexus_Horizon_Game.Components
 
                 throw new System.MemberAccessException($"The Entity {this.entityIDFollowing} must contain a transform when using collisions");
             } 
+        }
+
+        /// <summary>
+        /// this could be another entity its following or itself if the collider is on itself C:
+        /// </summary>
+        /// <param name="entityID"></param>
+        public void SetEntityIDFollowingTo(int entityID)
+        {
+            this.entityIDFollowing = entityID;
         }
 
         bool IComponent.IsEmpty
@@ -79,7 +88,7 @@ namespace Nexus_Horizon_Game.Components
         /// <inheritdoc/>
         public static IComponent MakeEmptyComponent()
         {
-            ColliderComponent collider = new ColliderComponent(-1, new Point(0, 0));
+            ColliderComponent collider = new ColliderComponent(new Point(0, 0));
             collider.isEmpty = true;
             return collider;
         }

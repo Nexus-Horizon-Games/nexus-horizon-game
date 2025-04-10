@@ -106,13 +106,14 @@ namespace Nexus_Horizon_Game.EntityFactory
             {
                 new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new PhysicsBody2DComponent(),
-                new ColliderComponent(new Rectangle(0, 0, type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)),
+                new ColliderComponent(new Point(type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)), // Needs to have a set entityID following or else it wont know where transform is
                 new TagComponent(Tag.ENEMY)
             });
-            
+
             if (type == "bird_enemy")
             {
                 prefabEntity.Components.Add(new SpriteComponent("bird", centered: true));
+                prefabEntity.Components.Add(new TagComponent(Tag.ENEMY | Tag.SMALLGRUNT));
                 prefabEntity.Components.Add(new StateComponent(new List<State>
                 {
                     new BirdEnemyState(multiPath, attackPaths, waitTime)
@@ -127,6 +128,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             if (type == "cat_enemy")
             {
                 prefabEntity.Components.Add(new SpriteComponent("cat", centered: true));
+                prefabEntity.Components.Add(new TagComponent(Tag.ENEMY | Tag.MEDIUMGRUNT));
                 prefabEntity.Components.Add(new StateComponent(new List<State>
                 {
                     new CatEnemyState(multiPath, attackPaths, waitTime)
@@ -149,7 +151,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                 new PhysicsBody2DComponent(),
             });
 
-            Scene.Loaded.ECS.AddComponent<ColliderComponent>(enemyEntity, new ColliderComponent(enemyEntity, new Point(type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6)));
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(enemyEntity, new ColliderComponent(new Point(type == "bird_enemy" ? 10 : 10, type == "bird_enemy" ? 6 : 6), entityIDFollowing: enemyEntity));
 
             if (type == "bird_enemy")
             {
@@ -202,7 +204,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("evil_guinea_pig", centered: true));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new TagComponent(Tag.ENEMY | Tag.HALFBOSS));
                 // added hitbox cetering on sprite
-                Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(bossEntity, new Point(17, 17), new Point(-8, -8)));
+                Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(new Point(17, 17), new Point(-8, -8), entityIDFollowing: bossEntity));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>              
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
@@ -220,7 +222,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                 Scene.Loaded.ECS.AddComponent(bossEntity, new SpriteComponent("chef_boss", centered: true));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new TagComponent(Tag.ENEMY | Tag.BOSS));
                 // added hitbox cetering on sprite
-                Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(bossEntity, new Point(12, 18), new Point(-6, -9)));
+                Scene.Loaded.ECS.AddComponent<ColliderComponent>(bossEntity, new ColliderComponent(new Point(12, 18), new Point(-6, -9), entityIDFollowing: bossEntity));
                 Scene.Loaded.ECS.AddComponent(bossEntity, new StateComponent(new List<State>
                 {
                     new MoveToPointState(bossEntity, new Vector2(Arena.Size.X / 2.0f, 40.0f), EnteringSpeed),
