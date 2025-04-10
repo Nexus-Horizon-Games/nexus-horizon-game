@@ -27,6 +27,8 @@ namespace Nexus_Horizon_Game.Timers
             this.data = data;
         }
 
+        public float Delay => delay;
+
         public override void Start()
         {
             startTime = 0.0;

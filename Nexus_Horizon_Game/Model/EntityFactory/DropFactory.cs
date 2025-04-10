@@ -44,7 +44,7 @@ namespace Nexus_Horizon_Game.Model.EntityFactory
 
             });
 
-            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entity, new ColliderComponent(new Point(scaledWidth, scaledHeight), entityIDFollowing: entity));
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entity, new ColliderComponent(new Point(scaledWidth, scaledHeight)));
 
             return entity;
         }

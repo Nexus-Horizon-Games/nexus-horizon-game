@@ -9,6 +9,7 @@ namespace Nexus_Horizon_Game
     internal class ECS
     {
         private Dictionary<Type, List<IComponent>> componentLists = new();
+        private List<bool> isEntityAlive = new(); // if isEntityAlive[entity], then entity is alive
         private PriorityQueue<int, int> destroyedEntities = new();
         private int nextId = 0;
 
@@ -26,9 +27,14 @@ namespace Nexus_Horizon_Game
 
             // use a destroyed entity if one is available
             // otherwise create a new entity and the components it may have
-            if (destroyedEntities.Count != 0) { newEntity = destroyedEntities.Dequeue(); }
+            if (destroyedEntities.Count != 0)
+            {
+                newEntity = destroyedEntities.Dequeue();
+                isEntityAlive[newEntity] = true;
+            }
             else
             {
+                isEntityAlive.Add(true);
                 newEntity = nextId;
                 nextId++;
             }
@@ -87,14 +93,14 @@ namespace Nexus_Horizon_Game
         /// <returns> The id of the newly created entity. </returns>
         public int CreateEntity(PrefabEntity entityPrefab)
         {
-            return CreateEntity(entityPrefab.getComponents());
+            return CreateEntity(entityPrefab.Components);
         }
 
         /// <summary>
         /// removes all components from the entity and adds it to the destroyed entities queue.
         /// </summary>
         /// <param name="entity"> ID of entity wanting to be destroyed. </param>
-        public void DestroyEntity(int entity) //!!!!! GARBAGE COLLECTION (GC) FOR REFERENCED CLASSES IN COMPONENTS IS BAD ||OR|| THIS FUNCTION IS REALLY BAD WHEN DESTROYING ENTITIES !!!!!!\\\\\
+        public void DestroyEntity(int entity)
         {
             if (!this.IsEntityAlive(entity)) { return; } // entity is either destroyed or has not been created yet
 
@@ -108,6 +114,7 @@ namespace Nexus_Horizon_Game
                 componentList[entity] = makeEmptyComponent?.Invoke(null, null) as IComponent;
             }
 
+            isEntityAlive[entity] = false;
             destroyedEntities.Enqueue(entity, entity);
         }
 
@@ -313,8 +320,8 @@ namespace Nexus_Horizon_Game
         /// <returns> true when entity is not destroyed. </returns>
         public bool IsEntityAlive(int entity)
         {
-            return !destroyedEntities.UnorderedItems.Any((element) => element.ToTuple().Item1 == entity) && // not in destroyed
-                entity < nextId; // entity has been created in ECS before
+            return entity >= 0 && entity < isEntityAlive.Count &&
+                isEntityAlive[entity];
         }
 
         public void CheckActiveDependency<T>(Type dependentComponent, int entityID) where T : IComponent
