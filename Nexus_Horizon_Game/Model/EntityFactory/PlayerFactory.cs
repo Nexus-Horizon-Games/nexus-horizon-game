@@ -47,7 +47,7 @@ namespace Nexus_Horizon_Game.EntityFactory
             playerTimerComponent.timers.Add("DeathCooldown", new DelayTimer(1.75f, (gameTime, data) =>
             {
                 //create collider where its connected to playerID
-                Scene.Loaded.ECS.AddComponent<ColliderComponent>(hitboxEntityID, new ColliderComponent(playerEntityID, new Point(2, 1), new Point(0, 0)));
+                Scene.Loaded.ECS.AddComponent<ColliderComponent>(hitboxEntityID, new ColliderComponent(new Point(2, 1), new Point(0, 0), entityIDFollowing: playerEntityID));
 
                 // Death Script Setup
                 Scene.Loaded.ECS.EntityHasComponent<ColliderComponent>(hitboxEntityID, out ColliderComponent collComp);
