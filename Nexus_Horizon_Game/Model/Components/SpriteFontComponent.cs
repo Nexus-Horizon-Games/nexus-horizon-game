@@ -1,9 +1,10 @@
 ﻿using Nexus_Horizon_Game.Components;
 using Microsoft.Xna.Framework;
+using Nexus_Horizon_Game.Model.Components.Interfaces;
 
 namespace Nexus_Horizon_Game.Model.Components
 {
-    internal struct SpriteFontComponent : IComponent
+    internal struct SpriteFontComponent : IComponent, ISpriteTypeComponent
     {
         private bool isEmpty = false;
         public string fontPath = "Fonts/";

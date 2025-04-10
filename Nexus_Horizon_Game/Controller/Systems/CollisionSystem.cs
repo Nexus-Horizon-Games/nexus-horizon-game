@@ -1,12 +1,16 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Model.GameManagers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.Controller
 {
@@ -33,7 +37,7 @@ namespace Nexus_Horizon_Game.Controller
                 var collider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(entity);
 
                 // subscribe to OnCollisionEvent
-                collider.OnCollisionEvent += (otherEntityID) => CollisionHandler(entity, otherEntityID);
+                collider.OnCollision += (otherEntityID) => CollisionHandler(entity, otherEntityID);
 
                 // keeps track of subscribtions/collisions
                 colliderMap[entity] = collider;
@@ -52,101 +56,174 @@ namespace Nexus_Horizon_Game.Controller
             TagComponent otherTag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(otherEntityID);
 
             // if player bullet hits enemy, bullet gets destoryed.
-            if (bulletTag.Tag == Tag.PLAYER_PROJECTILE && otherTag.Tag == Tag.ENEMY)
+            if ((bulletTag.Tag & Tag.PLAYER_PROJECTILE) == Tag.PLAYER_PROJECTILE && (otherTag.Tag & Tag.ENEMY) == Tag.ENEMY)
             {
                 // health / collision component implemented for enemies 
                 if (Scene.Loaded.ECS.EntityHasComponent<HealthComponent>(otherEntityID, out HealthComponent enemyHealth))
                 {
                     // sets how much health is subtracted per bullet collision
-                    enemyHealth.health -= 0.5f; // subtracts 1 health point
+                    enemyHealth.health -= (0.5f * GameplayManager.Instance.PowerMultiplier()); // subtracts 1 health point
                     Scene.Loaded.ECS.SetComponentInEntity(otherEntityID, enemyHealth);
                 }
+                GameplayManager.Instance.DealtDamage();
                 Scene.Loaded.ECS.DestroyEntity(bulletEntity);
             }
             // if enemy bullet hits player, destroy the bullet
-            else if (bulletTag.Tag == Tag.ENEMY_PROJECTILE && otherTag.Tag == Tag.PLAYER)
+            else if ((bulletTag.Tag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE && (otherTag.Tag & Tag.PLAYER) == Tag.PLAYER)
             {
                 Scene.Loaded.ECS.DestroyEntity(bulletEntity);
             }
         }
+
+        /// <summary>
+        /// THIS WAY OF CHECKING FOR COLLISIONS IS JUST TO SLOW SO IT LAGS REALLY BAD
+        /// </summary>
+        /// <param name="gametime"></param>
         public static void Update(GameTime gametime)
         {
             // gets every entity with ColliderComponent
+
             List<int> allColliderIDs = Scene.Loaded.ECS.GetEntitiesWithComponent<ColliderComponent>();
 
+            List<int> playerBulletIDs = new();
+            List<int> checkPlayerColliderIDs = new();
+            List<int> playerIDs = new();
+            List<int> enemyIDs = new();
+
+
             // separates their IDs from their tags
-            // player bullet
-            List<int> playerBulletIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.PLAYER_PROJECTILE).ToList();
+            foreach (int enityID in allColliderIDs)
+            {
+                Tag entityTag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(enityID).Tag;
 
-            // enemy bullet
-            List<int> enemyBulletIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.ENEMY_PROJECTILE).ToList();
-
-            // playerID
-            List<int> playerIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.PLAYER).ToList();
-
-            // enemyIDs
-            List<int> enemyIDs = allColliderIDs.Where(id => Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(id).Tag == Tag.ENEMY).ToList();
+                if ((entityTag & Tag.PLAYER_PROJECTILE) == Tag.PLAYER_PROJECTILE)            // player bullet 
+                {
+                    playerBulletIDs.Add(enityID);
+                }
+                else if((entityTag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE || (entityTag & Tag.POWERDROP) == Tag.POWERDROP || (entityTag & Tag.POINTDROP) == Tag.POINTDROP)            // enemy bullet
+                {
+                    checkPlayerColliderIDs.Add(enityID);
+                }
+                else if((entityTag & Tag.PLAYER) == Tag.PLAYER)            // playerID
+                {
+                    playerIDs.Add(enityID);
+                }
+                else if((entityTag & Tag.ENEMY) == Tag.ENEMY)            // enemyIDs
+                {
+                    enemyIDs.Add(enityID);
+                }
+            }
 
             // checks player bullets against enemies
             foreach (int bulletID in playerBulletIDs)
             {
                 ColliderComponent bulletCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(bulletID);
-                TransformComponent bulletTransform = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(bulletID);
-                Rectangle bulletWorldBounds = new Rectangle(
-                    bulletCollider.Bounds.X + (int)bulletTransform.position.X,
-                    bulletCollider.Bounds.Y + (int)bulletTransform.position.Y,
-                    bulletCollider.Bounds.Width,
-                    bulletCollider.Bounds.Height);
 
                 foreach (int enemyID in enemyIDs)
                 {
-                    ColliderComponent enemyCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(enemyID);
-                    TransformComponent enemyTransform = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(enemyID);
-                    Rectangle enemyWorldBounds = new Rectangle(
-                        enemyCollider.Bounds.X + (int)enemyTransform.position.X,
-                        enemyCollider.Bounds.Y + (int)enemyTransform.position.Y,
-                        enemyCollider.Bounds.Width,
-                        enemyCollider.Bounds.Height);
+                    
+                    if (!Scene.Loaded.ECS.IsEntityAlive(bulletID)) // if bullet has been destroyed no need to keep checking if it hit something (Plus it creates errors with new bound checking)
+                    {
+                        break;
+                    }
 
-                    if (bulletWorldBounds.Intersects(enemyWorldBounds))
+
+                    if (!Scene.Loaded.ECS.IsEntityAlive(enemyID)) // if enemy is already dead continue onto the next enemy no need to check (Plus it creates errors with new bound checking)
+                    {
+                        continue;
+                    }
+                    
+
+                    ColliderComponent enemyCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(enemyID);
+
+                    if (bulletCollider.Bounds.Intersects(enemyCollider.Bounds))
                     {
                         //Debug.WriteLine($"[CollisionSystem] Player bullet {bulletID} hit enemy {enemyID}");
                         bulletCollider.SendOnCollisionInfo(enemyID);
                     }
-                }
-            }
-
-            // checks enemy bullets against player
-            foreach (int bulletID in enemyBulletIDs)
-            {
-                ColliderComponent bulletCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(bulletID);
-                TransformComponent bulletTransform = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(bulletID);
-                Rectangle bulletWorldBounds = new Rectangle(
-                    bulletCollider.Bounds.X + (int)bulletTransform.position.X,
-                    bulletCollider.Bounds.Y + (int)bulletTransform.position.Y,
-                    bulletCollider.Bounds.Width,
-                    bulletCollider.Bounds.Height);
-
-                foreach (int playerID in playerIDs)
-                {
-                    ColliderComponent playerCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(playerID);
-                    TransformComponent playerTransform = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(playerID);
-                    Rectangle playerWorldBounds = new Rectangle(
-                        playerCollider.Bounds.X + (int)playerTransform.position.X,
-                        playerCollider.Bounds.Y + (int)playerTransform.position.Y,
-                        playerCollider.Bounds.Width,
-                        playerCollider.Bounds.Height);
-
-                    if (bulletWorldBounds.Intersects(playerWorldBounds))
+                    else
                     {
-                        //Debug.WriteLine($"[CollisionSystem] Enemy bullet {bulletID} hit player {playerID}");
-                        bulletCollider.SendOnCollisionInfo(playerID);
+                        if (Scene.Loaded.ECS.EntityHasComponent<TagComponent>(bulletID, out TagComponent tagComp))
+                        {
+                            if ((tagComp.Tag & Tag.POWERDROP) == Tag.POWERDROP || (tagComp.Tag & Tag.POINTDROP) == Tag.POINTDROP)
+                            {
+                                DeleteOnOutOfBounds(bulletID);
+                            }
+                        }
                     }
                 }
             }
+            
+            // checks enemy bullets against player
+            foreach (int playerID in playerIDs)
+            {
+                ColliderComponent playerCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(playerID);
+
+                foreach (int checkPlayerID in checkPlayerColliderIDs)
+                {
+                    if (!Scene.Loaded.ECS.IsEntityAlive(checkPlayerID)) // if bullet has been destroyed no need to keep checking if it hit something (Plus it creates errors with new bound checking)
+                    {
+                        continue;
+                    }
+
+                    if (!Scene.Loaded.ECS.IsEntityAlive(playerID)) // if player is already dead continue onto the next player no need to check (Plus it creates errors with new bound checking)
+                    {
+                        break;
+                    }
+
+                    ColliderComponent checkPlayerCollider = Scene.Loaded.ECS.GetComponentFromEntity<ColliderComponent>(checkPlayerID);
+
+                    if (checkPlayerCollider.Bounds.Intersects(playerCollider.Bounds))
+                    {
+                        //Debug.WriteLine($"[CollisionSystem] Enemy bullet {bulletID} hit player {playerID}");
+                        playerCollider.SendOnCollisionInfo(checkPlayerID);
+                        checkPlayerCollider.SendOnCollisionInfo(playerID);
+
+                        if (Scene.Loaded.ECS.EntityHasComponent<TagComponent>(checkPlayerID, out TagComponent tagComp))
+                        { 
+                            if ((tagComp.Tag & Tag.ENEMY_PROJECTILE) == Tag.ENEMY_PROJECTILE)
+                            {
+                                break; // im using this instead of the below findiing entity alive cause it propogates a ton of bullet collisions and for some reason playerID is still alive ?
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (Scene.Loaded.ECS.EntityHasComponent<TagComponent>(checkPlayerID, out TagComponent tagComp))
+                        { 
+                            if((tagComp.Tag & Tag.POWERDROP) == Tag.POWERDROP || (tagComp.Tag & Tag.POINTDROP) == Tag.POINTDROP)
+                            { 
+                                DeleteOnOutOfBounds(checkPlayerID);
+                            }
+                        }
+                    }
+                }
+            }
+            
         }
+
+        /// <summary>
+        /// deletes the entity of a bullet when out of the radius of the play area
+        /// </summary>
+        /// <param name="entity"></param>
+        private static void DeleteOnOutOfBounds(int entity)
+        {
+            if (Scene.Loaded.ECS.EntityHasComponent<TransformComponent>(entity, out TransformComponent transformComp))
+            {
+                Vector2 arenaDirection = Arena.CheckEntityInArena(transformComp, out Vector2 boundaryIn, 2f, 2f);
+
+                if (arenaDirection.X != 0 || arenaDirection.Y != 0)
+                {
+                    Scene.Loaded.ECS.DestroyEntity(entity);
+                }
+            }
+            else
+            {
+                throw new Exception("Must Have Transform To Delete Out Of Bounds");
             }
         }
+    }
+}
 
 
 
