@@ -27,8 +27,12 @@ namespace Nexus_Horizon_Game.States
 
         private TimerContainer timerContainer = new TimerContainer();
         private int spawnerEntity;
-        public ChefBossStage1State(int entity, float timeLength) : base(entity, timeLength)
+
+        private Tag bulletsTag;
+
+        public ChefBossStage1State(int entity, float timeLength, Tag bulletsTag = 0) : base(entity, timeLength)
         {
+            this.bulletsTag = bulletsTag;
         }
 
         public override void OnStart()
@@ -45,7 +49,7 @@ namespace Nexus_Horizon_Game.States
                 OnMoveAction(gameTime, null); // start first move
                 timerContainer.GetTimer("move_action").Start();
             }));
-            this.spawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
+            this.spawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
         }
 
         public override void OnStop()

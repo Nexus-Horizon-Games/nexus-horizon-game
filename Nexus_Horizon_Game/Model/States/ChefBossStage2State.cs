@@ -29,8 +29,11 @@ namespace Nexus_Horizon_Game.States
         private int defaultSpawnerEntity;
         private int ringSpawnerEntity;
 
-        public ChefBossStage2State(int entity, float timeLength) : base(entity, timeLength)
+        private Tag bulletsTag;
+
+        public ChefBossStage2State(int entity, float timeLength, Tag bulletsTag = 0) : base(entity, timeLength)
         {
+            this.bulletsTag = bulletsTag;
         }
 
         public override void OnStart()
@@ -47,8 +50,8 @@ namespace Nexus_Horizon_Game.States
                 OnMoveAction(gameTime, null); // start first move
                 timerContainer.GetTimer("move_action").Start();
             }));
-            this.defaultSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
-            this.ringSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample");
+            this.defaultSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
+            this.ringSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
         }
 
         public override void OnStop()

@@ -5,6 +5,7 @@ using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.Prefab;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -23,12 +24,15 @@ namespace Nexus_Horizon_Game.Model.EntityFactory
             return spawnerID;
         }
 
-        public static int CreateBulletSpawner(string textureName, float scale = 0.25f, uint spriteLayer = 0)
+        public static int CreateBulletSpawner(string textureName, float scale = 0.25f, uint spriteLayer = 0, Tag projectileTag = 0)
         {
             List<IComponent> components = new List<IComponent>
             { new TransformComponent(Vector2.Zero),
               new SpriteComponent(textureName, color: Color.White, scale: scale, spriteLayer: spriteLayer, centered: true),
+              new TagComponent(projectileTag),
+                          
             };
+
             int spawnerID = Scene.Loaded.ECS.CreateEntity();
             Scene.Loaded.ECS.AddComponent(spawnerID, new BehaviourComponent(new EntitySpawner(spawnerID, new PrefabEntity(components))));
             return spawnerID;
