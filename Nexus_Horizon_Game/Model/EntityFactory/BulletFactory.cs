@@ -29,7 +29,7 @@ namespace Nexus_Horizon_Game.EntityFactory
                 new TagComponent(Tag.PLAYER_PROJECTILE)
             });
 
-            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entityID, new ColliderComponent(new Point(8, 8), entityIDFollowing: entityID));
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entityID, new ColliderComponent(new Point(8, 8)));
 
             return entityID;
         }
@@ -68,7 +68,7 @@ namespace Nexus_Horizon_Game.EntityFactory
       
             });
 
-            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entity, new ColliderComponent(new Point(scaledWidth, scaledHeight), new Point(-scaledWidth / 2, -scaledHeight / 2), entityIDFollowing: entity));
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entity, new ColliderComponent(new Point(scaledWidth, scaledHeight), new Point(-scaledWidth / 2, -scaledHeight / 2)));
 
             // bullet logic behavior attached to ECS
             Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new Bullet(entity, bulletAction)));

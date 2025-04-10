@@ -25,6 +25,19 @@ namespace Nexus_Horizon_Game.Timers
         /// <param name="timeInterval"> the time between each invoke. </param>
         /// <param name="onElapsed"> listener after timer expires. </param>
         /// <param name="data"> data wanted to set through to listener. </param>
+        public LoopTimer(float timeInterval, object data = null, float? stopAfter = null)
+        {
+            interval = timeInterval;
+            this.data = data;
+            this.stopAfter = stopAfter;
+        }
+
+        /// <summary>
+        /// initializes a timer.
+        /// </summary>
+        /// <param name="timeInterval"> the time between each invoke. </param>
+        /// <param name="onElapsed"> listener after timer expires. </param>
+        /// <param name="data"> data wanted to set through to listener. </param>
         public LoopTimer(float timeInterval, OnElapsed onElapsed, object data = null, float? stopAfter = null)
         {
             interval = timeInterval;

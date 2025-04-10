@@ -19,8 +19,8 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
         public void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer)
         {
             List<int> firedEntities = new List<int>();
-            List<IComponent> components = prefab.getComponents();
-            Vector2 position = ((TransformComponent)prefab.getComponents().FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
+            List<IComponent> components = prefab.Components;
+            Vector2 position = ((TransformComponent)prefab.Components.FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
             float velocity = 7f;
             var playerPosition = GetPlayerPosition();
             double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));

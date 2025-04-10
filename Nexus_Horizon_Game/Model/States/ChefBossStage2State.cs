@@ -142,7 +142,7 @@ namespace Nexus_Horizon_Game.States
         {
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(defaultSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
-            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
+            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
             if (counterClockwise)
             {
                 entitySpawner.SpawnEntitiesWithPattern(new CounterClockwiseRingFiringPattern2(), gameTime, timerContainer);
@@ -156,7 +156,7 @@ namespace Nexus_Horizon_Game.States
         private void FireBulletPattern2(GameTime gameTime)
         {
             Scene.Loaded.ECS.SetComponentInEntity(defaultSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
-            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
+            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new ChefBossPattern2(), gameTime, timerContainer);
         }
 

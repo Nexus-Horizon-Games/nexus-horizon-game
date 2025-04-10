@@ -27,6 +27,10 @@ namespace Nexus_Horizon_Game
                 {
                     StateSystem.OnNewStateComponent(entity);
                 }
+                else if (componentType == typeof(BehaviourComponent))
+                {
+                    BehaviourSystem.OnNewBehaviourComponent(entity);
+                }
             };
         }
 
