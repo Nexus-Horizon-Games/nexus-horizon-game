@@ -1,4 +1,5 @@
 using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Model.Prefab;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +79,15 @@ namespace Nexus_Horizon_Game
             }
 
             return newEntity;
+        }
+
+        /// <summary>
+        /// Creates a new entity with the given prototype.
+        /// </summary>
+        /// <returns> The id of the newly created entity. </returns>
+        public int CreateEntity(PrefabEntity entityPrefab)
+        {
+            return CreateEntity(entityPrefab.getComponents());
         }
 
         /// <summary>

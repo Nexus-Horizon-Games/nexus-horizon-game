@@ -39,6 +39,13 @@ namespace Nexus_Horizon_Game.States
             this.bulletsTag = bulletsTag;
         }
 
+        public CatEnemyState(MultiPath movementPath, int[] attackPaths, float waitTime)
+        {
+            this.movementPath = movementPath;
+            this.attackPaths = attackPaths;
+            this.waitTime = waitTime;
+        }
+
         public override void OnStart()
         {
             isMoving = false;
@@ -106,6 +113,12 @@ namespace Nexus_Horizon_Game.States
             Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new TriangleFiringPattern(), gameTime, timerContainer);
+        }
+
+        public override State Clone()
+        {
+            var clone = new CatEnemyState(movementPath, attackPaths, waitTime);
+            return clone;
         }
     }
 }

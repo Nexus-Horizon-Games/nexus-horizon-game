@@ -41,6 +41,13 @@ namespace Nexus_Horizon_Game.States
             this.bulletsTag = bulletsTag;
         }
 
+        public BirdEnemyState(MultiPath movementPath, int[] attackPaths, float waitTime)
+        {
+            this.movementPath = movementPath;
+            this.attackPaths = attackPaths;
+            this.waitTime = waitTime;
+        }
+
         public override void OnStart()
         {
             isMoving = false;
@@ -106,6 +113,12 @@ namespace Nexus_Horizon_Game.States
             EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new DirectFiringPattern(), gameTime, timerContainer);
             //call on spawner to spawn bullets
+        }
+
+        public override State Clone()
+        {
+            var clone = new BirdEnemyState(movementPath, attackPaths, waitTime);
+            return clone;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.Model.GameManagers;
