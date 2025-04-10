@@ -93,7 +93,7 @@ namespace Nexus_Horizon_Game
         /// <returns> The id of the newly created entity. </returns>
         public int CreateEntity(PrefabEntity entityPrefab)
         {
-            return CreateEntity(entityPrefab.getComponents());
+            return CreateEntity(entityPrefab.Components);
         }
 
         /// <summary>

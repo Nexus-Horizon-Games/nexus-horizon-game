@@ -110,7 +110,7 @@ namespace Nexus_Horizon_Game.States
         private void OnFireBullets(GameTime gameTime)
         {
             Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
-            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
+            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new DirectFiringPattern(), gameTime, timerContainer);
             //call on spawner to spawn bullets
         }

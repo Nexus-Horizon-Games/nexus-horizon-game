@@ -20,7 +20,7 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
         {
             List<int> firedEntities = new List<int>();
 
-            Vector2 position = ((TransformComponent)prefab.getComponents().FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
+            Vector2 position = ((TransformComponent)prefab.Components.FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
             float velocity = 7f;
             var playerPosition = GetPlayerPosition();
             double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));

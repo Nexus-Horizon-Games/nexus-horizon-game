@@ -53,7 +53,7 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
         /// <returns></returns>
         protected virtual int SpawnEntity(Vector2 position, Vector2 fireDirection, float velocity, PrefabEntity prefab)
         {
-            List<IComponent> components = prefab.getComponents();
+            List<IComponent> components = prefab.Clone().Components;
             SpriteComponent spriteComp;
 
             try

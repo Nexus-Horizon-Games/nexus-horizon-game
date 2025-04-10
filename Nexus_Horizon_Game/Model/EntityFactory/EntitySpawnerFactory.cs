@@ -1,16 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.Prefab;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using static Nexus_Horizon_Game.Entity_Type_Behaviours.Bullet;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Nexus_Horizon_Game.Model.EntityFactory
@@ -20,7 +12,7 @@ namespace Nexus_Horizon_Game.Model.EntityFactory
         public static int CreateEntitySpawner(PrefabEntity prefab)
         {
             int spawnerID = Scene.Loaded.ECS.CreateEntity();
-            Scene.Loaded.ECS.AddComponent(spawnerID, new BehaviourComponent(new EntitySpawner(spawnerID, prefab)));
+            Scene.Loaded.ECS.AddComponent(spawnerID, new BehaviourComponent(new EntitySpawnerBehaviour(spawnerID, prefab)));
             return spawnerID;
         }
 
@@ -34,7 +26,7 @@ namespace Nexus_Horizon_Game.Model.EntityFactory
             };
 
             int spawnerID = Scene.Loaded.ECS.CreateEntity();
-            Scene.Loaded.ECS.AddComponent(spawnerID, new BehaviourComponent(new EntitySpawner(spawnerID, new PrefabEntity(components))));
+            Scene.Loaded.ECS.AddComponent(spawnerID, new BehaviourComponent(new EntitySpawnerBehaviour(spawnerID, new PrefabEntity(components))));
             return spawnerID;
         }
     }
