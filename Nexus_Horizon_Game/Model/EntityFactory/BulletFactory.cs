@@ -45,8 +45,8 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             direction.Normalize();
 
-            int originalWidth = 32;
-            int originalHeight = 32;
+            int originalWidth = 16;
+            int originalHeight = 16;
 
             int scaledWidth = (int)(originalWidth * scale);
             int scaledHeight = (int)(originalHeight * scale);

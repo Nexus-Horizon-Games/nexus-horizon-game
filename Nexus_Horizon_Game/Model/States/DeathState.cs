@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
+using Nexus_Horizon_Game.Model.GameManagers;
 using Nexus_Horizon_Game.Paths;
 using System.Diagnostics;
 
@@ -17,6 +18,9 @@ namespace Nexus_Horizon_Game.States
 
         public override void OnStart()
         {
+            // Points Change on death
+            GameplayManager.Instance.KilledEnemy(this.Entity);
+
             // Debug.WriteLine($"enity {this.Entity} died!!!");
 
             //OnStop();

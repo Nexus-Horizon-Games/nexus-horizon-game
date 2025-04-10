@@ -5,6 +5,8 @@ using Nexus_Horizon_Game.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.States;
 using System.Transactions;
+using Nexus_Horizon_Game.Model.GameManagers;
+using System.Net.Cache;
 
 namespace Nexus_Horizon_Game.EntityFactory
 {

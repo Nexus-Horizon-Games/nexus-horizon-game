@@ -13,11 +13,6 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
     internal class Player : Behaviour
     {
-        // For Disposing
-        private bool _disposed = false; // whenever the player is disposed this will be true.
-        private List<(Keys, Action<Keys>)> keyDownListeners = new List<(Keys, Action<Keys>)>();
-        private List<(Keys, Action<Keys>)> keyUpListeners = new List<(Keys, Action<Keys>)>();
-
         // bullets
         private float xBulletOffset = 4f;
         private float yBulletOffset = -2f;
@@ -40,9 +35,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <summary>
         /// entity id of player collider.
         /// </summary>
-        public int HitBoxEntityID
+        public int HitboxEntityID
         {
-            get => HitBoxEntityID;
+            get => hitboxEntityID;
         }
 
 

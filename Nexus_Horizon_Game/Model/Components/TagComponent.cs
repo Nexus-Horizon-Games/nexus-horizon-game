@@ -17,6 +17,8 @@ namespace Nexus_Horizon_Game.Components
         MEDIUMGRUNT = 32,
         HALFBOSS = 64,
         BOSS = 128,
+        POWERDROP = 256,
+        POINTDROP = 512,
     }
 
     internal struct TagComponent : IComponent
