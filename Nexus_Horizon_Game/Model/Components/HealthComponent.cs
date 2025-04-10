@@ -16,7 +16,7 @@ namespace Nexus_Horizon_Game.Components
         /// <summary>
         /// Triggered when health goes below 1.
         /// </summary>
-        public event OnDeath onDeathEvent;
+        public event OnDeath? onDeathEvent;
 
         public HealthComponent(float health)
         {
@@ -76,6 +76,7 @@ namespace Nexus_Horizon_Game.Components
             HealthComponent healthComp = new HealthComponent(-1)
             {
                 isEmpty = true,
+                onDeathEvent = null,
             };
 
             return healthComp;

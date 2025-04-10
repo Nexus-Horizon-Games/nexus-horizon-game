@@ -2,6 +2,7 @@
 using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
 using Nexus_Horizon_Game.Entity_Type_Behaviours;
+using System.Diagnostics;
 //using Nexus_Horizon_Game.Behaviours;
 
 namespace Nexus_Horizon_Game.EntityFactory
@@ -21,13 +22,16 @@ namespace Nexus_Horizon_Game.EntityFactory
         /// <returns> entity ID. </returns>
         public override int CreateEntity()
         {
-            return Scene.Loaded.ECS.CreateEntity(new List<IComponent>
+            int entityID = Scene.Loaded.ECS.CreateEntity(new List<IComponent>
             { new TransformComponent(new Vector2(0.0f, 0.0f)),
                 new SpriteComponent(textureName, color: Color.White, scale: 0.25f, spriteLayer: 0),
                 new PhysicsBody2DComponent(),
-                new ColliderComponent(new Rectangle(0, 0, 8, 8)), // Default hitbox based on scale.
                 new TagComponent(Tag.PLAYER_PROJECTILE)
             });
+
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entityID, new ColliderComponent(new Point(8, 8), entityIDFollowing: entityID));
+
+            return entityID;
         }
 
         /// <summary>
@@ -41,16 +45,16 @@ namespace Nexus_Horizon_Game.EntityFactory
         {
             direction.Normalize();
 
-            int originalWidth = 32;
-            int originalHeight = 32;
+            int originalWidth = 16;
+            int originalHeight = 16;
 
             int scaledWidth = (int)(originalWidth * scale);
             int scaledHeight = (int)(originalHeight * scale);
 
-            Rectangle hitbox = new Rectangle(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
-
             // Sets tag for either player bullet or enemy bullet. 
             Tag bulletTag = isPlayerBullet ? Tag.PLAYER_PROJECTILE : Tag.ENEMY_PROJECTILE;
+
+            // Debug.WriteLine(bulletTag);
 
             int entity = Scene.Loaded.ECS.CreateEntity(new List<IComponent>
             { new TransformComponent(SpawnPoint),
@@ -59,11 +63,12 @@ namespace Nexus_Horizon_Game.EntityFactory
               {
                   Velocity = new Vector2(velocity * direction.X, velocity * direction.Y),
               },
-            
-                new ColliderComponent(hitbox),              
+                       
                 new TagComponent(bulletTag)
       
             });
+
+            Scene.Loaded.ECS.AddComponent<ColliderComponent>(entity, new ColliderComponent(new Point(scaledWidth, scaledHeight), new Point(-scaledWidth / 2, -scaledHeight / 2), entityIDFollowing: entity));
 
             // bullet logic behavior attached to ECS
             Scene.Loaded.ECS.AddComponent(entity, new BehaviourComponent(new Bullet(entity, bulletAction)));

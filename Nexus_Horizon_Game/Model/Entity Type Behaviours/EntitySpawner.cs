@@ -43,6 +43,7 @@ namespace Nexus_Horizon_Game.Model.Entity_Type_Behaviours
             components.RemoveAll(x => x.GetType() == typeof(TransformComponent));
             Vector2 position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             components.Add(new TransformComponent(position, 0));
+
             pattern.Fire(clonedPrefab.Clone(), gameTime, timerContainer);
         }
     }
