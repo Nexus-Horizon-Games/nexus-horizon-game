@@ -91,42 +91,56 @@
     {
       "typeNameId": "MidBoss",
       "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
+        "TransformComponent": { "position": [ "mid_arena_x", -20.0 ] },
+        "PhysicsBody2DComponent": "default_with_acceleration",
         "SpriteComponent": {
-          "textureName": "evil_guinea_pig"
+          "textureName": "evil_guinea_pig",
+          "centered": true
         },
         "StateComponent": {
           "states": [
             {
-              "stateType": "MidBossState1",
-              "constructor": ["BulletA"]
-            },
-            {
-              "stateType": "MidBossState2"
+              "stateType": "CatEnemyState"
             }
           ]
+        },
+        "TagComponent": {
+          "tags": ["enemy", "halfboss"]
+        },
+        "ColliderComponent": {
+          "size": [17.0, 17.0],
+          "position": [-8.0, -8.0]
+        },
+        "HealthComponent": {
+          "health": 101
         }
       }
     },
     {
       "typeNameId": "FinalBoss",
       "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
+        "TransformComponent": { "position": [ "mid_arena_x", -20.0 ] },
+        "PhysicsBody2DComponent": "default_with_acceleration",
         "SpriteComponent": {
-          "textureName": "evil_guinea_pig"
+          "textureName": "chef_boss",
+          "centered": true
         },
         "StateComponent": {
           "states": [
             {
-              "stateType": "FinalBossState1",
-              "constructor": ["BulletA"]
-            },
-            {
-              "stateType": "FinalBossState2"
+              "stateType": "CatEnemyState"
             }
           ]
+        },
+        "TagComponent": {
+          "tags": ["enemy", "boss"]
+        },
+        "ColliderComponent": {
+          "size": [12.0, 18.0],
+          "position": [-6.0, -9.0]
+        },
+        "HealthComponent": {
+          "health": 164
         }
       }
     }
@@ -134,7 +148,7 @@
   "stages": [
     {
       "startTime": 2.0,
-      "duration": 40,
+      "duration": 10,
       "spawners": [
         {
           "spawnerType": "multiple",
@@ -187,28 +201,28 @@
       ]
     },
     {
-      "duration": 50,
+      "startTime": 12.0,
+      "duration": 10,
       "spawners": [
         {
           "spawnerType": "single",
           "time": 0,
           "entity": {
             "entityType": "MidBoss"
-          },
-          "position": [50, -10]
+          }
         }
       ]
     },
     {
-      "duration": 65,
+      "startTime": 22.0,
+      "duration": 10,
       "spawners": [
         {
           "spawnerType": "single",
           "time": 0,
           "entity": {
             "entityType": "FinalBoss"
-          },
-          "position": [50, -10]
+          }
         }
       ]
     }
