@@ -4,16 +4,11 @@ using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Components;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.GameManagers;
-using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.View.InputSystem;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Controller;
-using Nexus_Horizon_Game.Model.Prefab;
-using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
+using Nexus_Horizon_Game.Json;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
@@ -93,225 +88,17 @@ namespace Nexus_Horizon_Game.Model.Scenes
         /// </summary>
         protected override void LoadScene()
         {
-            // TODO: move json parsing into seperate class:
-            dynamic json = JsonConvert.DeserializeObject("""
-{
-  "movementTypes": [
-    {
-      "typeNameId": "BirdMovement",
-      "movementType": "path",
-      "pathType": "quadratic",
-      "points": [
-        [0.0, 0.0],
-        [50.0, 0.0],
-        [50.0, 100.0]
-      ]
-    }
-  ],
-  "entityTypes": [
-    {
-      "typeNameId": "CoalBullet",
-      "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
-        "SpriteComponent": {
-          "textureName": "BulletSample"
-        }
-      }
-    },
-    {
-      "typeNameId": "Bird",
-      "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
-        "SpriteComponent": {
-          "textureName": "bird"
-        }
-      }
-    },
-    {
-      "typeNameId": "MidBoss",
-      "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
-        "SpriteComponent": {
-          "textureName": "evil_guinea_pig"
-        },
-        "StateComponent": {
-          "states": [
-            {
-              "stateClassName": "MidBossState1",
-              "constructor": ["BulletA"]
-            },
-            {
-              "stateClassName": "MidBossState2"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "typeNameId": "FinalBoss",
-      "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
-        "SpriteComponent": {
-          "textureName": "evil_guinea_pig"
-        },
-        "StateComponent": {
-          "states": [
-            {
-              "stateClassName": "FinalBossState1",
-              "constructor": ["BulletA"]
-            },
-            {
-              "stateClassName": "FinalBossState2"
-            }
-          ]
-        }
-      }
-    }
-  ],
-  "stages": [
-    {
-      "startTime": 2.0,
-      "duration": 40,
-      "spawners": [
-        {
-          "spawnerType": "multiple",
-          "time": 0,
-          "interval": 0.35,
-          "entityCount": 12,
-          "entity": {
-            "entityType": "Bird",
-            "setComponents": {
-              "MovementComponent": {
-                "movementType": "BirdMovement",
-                "direction": [-1, 0]
-              }
-            }
-          },
-          "position": [-10, 30]
-        },
-        {
-          "spawnerType": "multiple",
-          "time": 0,
-          "interval": 0.35,
-          "entityCount": 1,
-          "entity": {
-            "entityType": "Bird",
-            "setComponents": {
-              "MovementComponent": {
-                "movementType": "BirdMovement",
-                "direction": [-1, 0]
-              }
-            }
-          },
-          "position": [110, 30]
-        },
-        {
-          "spawnerType": "multiple",
-          "time": 3.0,
-          "interval": 0.6,
-          "entityCount": 2,
-          "entity": {
-            "entityType": "Cat",
-            "setComponents": {
-              "MovementComponent": {
-                "movementType": "CatMovement",
-                "direction": [-1, 0]
-              }
-            }
-          },
-          "position": [110, 30]
-        }
-      ]
-    },
-    {
-      "duration": 50,
-      "spawners": [
-        {
-          "spawnerType": "single",
-          "time": 0,
-          "entity": {
-            "entityType": "MidBoss"
-          },
-          "position": [50, -10]
-        }
-      ]
-    },
-    {
-      "duration": 65,
-      "spawners": [
-        {
-          "spawnerType": "single",
-          "time": 0,
-          "entity": {
-            "entityType": "FinalBoss"
-          },
-          "position": [50, -10]
-        }
-      ]
-    }
-  ]
-}
-""");
-
-            // BOSS TIMERS
-            int mbt_entity = this.ECS.CreateEntity(new List<IComponent> { new TimersComponent(new Dictionary<string, Timer>()) });
-
             var playerFactory = new PlayerFactory();
             int moveablePlayer2 = playerFactory.CreateEntity();
-            int[] attack = { 1 };
-            int[] catattack = { 1, 2 };
 
             waveHandler = new WaveHandler();
 
-            dynamic movementTypes = json.movementTypes;
-            dynamic entityTypes = json.entityTypes;
-            JArray stages = json.stages;
-            Debug.WriteLine($"stages: {stages.Count}");
+            var waves = JsonParser.Parse("level1.json");
 
-
-            Dictionary<string, PrefabEntity> entityTypesLookup = new();
-            entityTypesLookup["Bird"] = EnemyFactory.CreateEnemyPrefab("bird_enemy", EnemyFactory.sampleBirdPath1(), attack, 0.0f);
-            entityTypesLookup["Cat"] = EnemyFactory.CreateEnemyPrefab("cat_enemy", EnemyFactory.sampleCatPath1(80), catattack, 0.0f);
-
-            foreach (dynamic stage in stages)
+            foreach (Wave wave in waves)
             {
-                Wave wave = new Wave();
-                wave.duration = (double)stage.duration;
-                wave.startTime = (double)stage.startTime;
-
-                JArray spawners = stage.spawners;
-
-                foreach (dynamic spawner in spawners)
-                {
-                    string type = spawner.spawnerType;
-                    double startTime = spawner.time;
-                    int entityCount = spawner.entityCount;
-                    double interval = spawner.interval;
-
-                    dynamic entityToSpawn = spawner.entity;
-                    string entityType = entityToSpawn.entityType;
-
-                    wave.entitiesToSpawn.Enqueue(new PrefabEntity(new List<IComponent>
-                    {
-                        new BehaviourComponent(new TimedEntitySpanwerBehaviour(entityTypesLookup[entityType], new LoopTimer((float)interval), (float)interval * entityCount))
-                    }), startTime);
-
-                    /*for (int i = 0; i < entityCount; i++)
-                    {
-                        wave.entitiesToSpawn.Enqueue(entityTypesLookup[entityType], startTime + i * interval);
-                    }*/
-                }
-
                 waveHandler.AddWave(wave);
-
-                break; // TODO: remove
             }
-
-
 
             // ---- OLD WAVE CODE:
 
