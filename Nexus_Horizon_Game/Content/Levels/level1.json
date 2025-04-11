@@ -1,0 +1,216 @@
+{
+  "movementTypes": [
+    {
+      "typeNameId": "BirdMovement",
+      "movementType": "path",
+      "pathType": "quadratic",
+      "points": [
+        [0.0, 0.0],
+        [50.0, 0.0],
+        [50.0, 100.0]
+      ]
+    }
+  ],
+  "entityTypes": [
+    {
+      "typeNameId": "CoalBullet",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "BulletSample"
+        }
+      }
+    },
+    {
+      "typeNameId": "SomeBullet",
+      "components": {
+        "TransformComponent": {
+          "position": [6.0, 54.0]
+        },
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "BulletSample"
+        }
+      }
+    },
+    {
+      "typeNameId": "Bird",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "bird",
+          "centered": true
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateType": "BirdEnemyState"
+            }
+          ]
+        },
+        "TagComponent": {
+          "tags": ["enemy", "smallgrunt"]
+        },
+        "ColliderComponent": {
+          "size": [10.0, 6.0]
+        },
+        "HealthComponent": {
+          "health": 1
+        }
+      }
+    },
+    {
+      "typeNameId": "Cat",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "cat",
+          "centered": true
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateType": "CatEnemyState"
+            }
+          ]
+        },
+        "TagComponent": {
+          "tags": ["enemy", "mediumgrunt"]
+        },
+        "ColliderComponent": {
+          "size": [10.0, 6.0]
+        },
+        "HealthComponent": {
+          "health": 7
+        }
+      }
+    },
+    {
+      "typeNameId": "MidBoss",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "evil_guinea_pig"
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateType": "MidBossState1",
+              "constructor": ["BulletA"]
+            },
+            {
+              "stateType": "MidBossState2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "typeNameId": "FinalBoss",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "evil_guinea_pig"
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateType": "FinalBossState1",
+              "constructor": ["BulletA"]
+            },
+            {
+              "stateType": "FinalBossState2"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "stages": [
+    {
+      "startTime": 2.0,
+      "duration": 40,
+      "spawners": [
+        {
+          "spawnerType": "multiple",
+          "time": 0,
+          "interval": 0.35,
+          "entityCount": 12,
+          "entity": {
+            "entityType": "Bird",
+            "setComponents": {
+              "MovementComponent": {
+                "movementType": "BirdMovement",
+                "direction": [-1, 0]
+              }
+            }
+          },
+          "position": [-10, 30]
+        },
+        {
+          "spawnerType": "multiple",
+          "time": 0,
+          "interval": 0.35,
+          "entityCount": 1,
+          "entity": {
+            "entityType": "Bird",
+            "setComponents": {
+              "MovementComponent": {
+                "movementType": "BirdMovement",
+                "direction": [-1, 0]
+              }
+            }
+          },
+          "position": [110, 30]
+        },
+        {
+          "spawnerType": "multiple",
+          "time": 3.0,
+          "interval": 0.6,
+          "entityCount": 2,
+          "entity": {
+            "entityType": "Cat",
+            "setComponents": {
+              "MovementComponent": {
+                "movementType": "CatMovement",
+                "direction": [-1, 0]
+              }
+            }
+          },
+          "position": [110, 30]
+        }
+      ]
+    },
+    {
+      "duration": 50,
+      "spawners": [
+        {
+          "spawnerType": "single",
+          "time": 0,
+          "entity": {
+            "entityType": "MidBoss"
+          },
+          "position": [50, -10]
+        }
+      ]
+    },
+    {
+      "duration": 65,
+      "spawners": [
+        {
+          "spawnerType": "single",
+          "time": 0,
+          "entity": {
+            "entityType": "FinalBoss"
+          },
+          "position": [50, -10]
+        }
+      ]
+    }
+  ]
+}
