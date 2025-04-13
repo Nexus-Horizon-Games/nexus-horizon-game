@@ -13,28 +13,6 @@
   ],
   "entityTypes": [
     {
-      "typeNameId": "CoalBullet",
-      "components": {
-        "TransformComponent": "default",
-        "PhysicsBody2DComponent": "default",
-        "SpriteComponent": {
-          "textureName": "BulletSample"
-        }
-      }
-    },
-    {
-      "typeNameId": "SomeBullet",
-      "components": {
-        "TransformComponent": {
-          "position": [6.0, 54.0]
-        },
-        "PhysicsBody2DComponent": "default",
-        "SpriteComponent": {
-          "textureName": "BulletSample"
-        }
-      }
-    },
-    {
       "typeNameId": "Bird",
       "components": {
         "TransformComponent": "default",
@@ -91,7 +69,7 @@
     {
       "typeNameId": "MidBoss",
       "components": {
-        "TransformComponent": { "position": [ "mid_arena_x", -20.0 ] },
+        "TransformComponent": { "position": [ "arena_mid_x", -20.0 ] },
         "PhysicsBody2DComponent": "default_with_acceleration",
         "SpriteComponent": {
           "textureName": "evil_guinea_pig",
@@ -100,7 +78,19 @@
         "StateComponent": {
           "states": [
             {
-              "stateType": "CatEnemyState"
+              "stateType": "MoveToPointState",
+              "stopPoint": ["arena_mid_x", 40.0],
+              "speed": 30.0
+            },
+            {
+              "stateType": "GuineaPigBossState",
+              "timeLength": 15.0,
+              "bulletsTag": "enemy_projectile"
+            },
+            {
+              "stateType": "MoveToPointState",
+              "stopPoint": ["arena_mid_x", -20.0],
+              "speed": 30.0
             }
           ]
         },
@@ -119,7 +109,7 @@
     {
       "typeNameId": "FinalBoss",
       "components": {
-        "TransformComponent": { "position": [ "mid_arena_x", -20.0 ] },
+        "TransformComponent": { "position": [ "arena_mid_x", -20.0 ] },
         "PhysicsBody2DComponent": "default_with_acceleration",
         "SpriteComponent": {
           "textureName": "chef_boss",
@@ -128,7 +118,24 @@
         "StateComponent": {
           "states": [
             {
-              "stateType": "CatEnemyState"
+              "stateType": "MoveToPointState",
+              "stopPoint": ["arena_mid_x", 40.0],
+              "speed": 30.0
+            },
+            {
+              "stateType": "ChefBossStage1State",
+              "timeLength": 35.0,
+              "bulletsTag": "enemy_projectile"
+            },
+            {
+              "stateType": "ChefBossStage2State",
+              "timeLength": 30.0,
+              "bulletsTag": "enemy_projectile"
+            },
+            {
+              "stateType": "MoveToPointState",
+              "stopPoint": ["arena_mid_x", -20.0],
+              "speed": 30.0
             }
           ]
         },

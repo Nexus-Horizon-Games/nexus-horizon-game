@@ -44,9 +44,24 @@ namespace Nexus_Horizon_Game.States
         private int bigSpawnerEntity;
 
         private Tag bulletsTag;
-        public GuineaPigBossState(int entity, float timeLength, Tag bulletsTag = 0) : base(entity, timeLength)
+        public GuineaPigBossState(float timeLength, Tag bulletsTag = 0) : base(timeLength)
         {
             this.bulletsTag = bulletsTag;
+        }
+
+        public override void Initalize(int entity)
+        {
+            base.Initalize(entity);
+
+            // Make sure acceleration is enabled
+            if (Scene.Loaded.ECS.EntityHasComponent<PhysicsBody2DComponent>(entity, out PhysicsBody2DComponent component))
+            {
+                component.AccelerationEnabled = true;
+            }
+            else
+            {
+                Scene.Loaded.ECS.AddComponent<PhysicsBody2DComponent>(entity, new PhysicsBody2DComponent(accelerationEnabled: true));
+            }
         }
 
         public override void OnStart()
@@ -199,6 +214,22 @@ namespace Nexus_Horizon_Game.States
             Scene.Loaded.ECS.SetComponentInEntity(smallSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(smallSpawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new CicleFiringPattern1(), gameTime, timerContainer);
+        }
+
+        public override State Clone()
+        {
+            GuineaPigBossState clone;
+
+            if (timer is DelayTimer delayTimer)
+            {
+                clone = new GuineaPigBossState(delayTimer.Delay);
+            }
+            else
+            {
+                clone = new GuineaPigBossState(0.0f);
+            }
+
+            return clone;
         }
     }
 }

@@ -98,6 +98,57 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
+        static private State ParseState(JObject json)
+        {
+            if (!json.TryGetValue("stateType", out JToken stateType))
+                throw new Exception("Every state must have a \"stateType\" property");
+
+            string stateTypeString = (string)stateType;
+
+            switch (stateTypeString)
+            {
+                case "BirdEnemyState":
+                    {
+                        return new BirdEnemyState(EnemyFactory.sampleBirdPath1(), new[] { 1 });
+                    }
+                case "CatEnemyState":
+                    {
+                        return new CatEnemyState(EnemyFactory.sampleCatPath1(80), new[] { 1, 2 });
+                    }
+                case "ChefBossStage1State":
+                    {
+                        var timeLength = JsonHelper.TryParseFloat(json, "timeLength", required: true);
+
+                        return new ChefBossStage1State(timeLength, Tag.ENEMY_PROJECTILE);
+                    }
+                case "ChefBossStage2State":
+                    {
+                        var timeLength = JsonHelper.TryParseFloat(json, "timeLength", required: true);
+
+                        return new ChefBossStage2State(timeLength, Tag.ENEMY_PROJECTILE);
+                    }
+                case "DeathState":
+                    {
+                        throw new Exception("Not supported yet.");
+                    }
+                case "GuineaPigBossState":
+                    {
+                        var timeLength = JsonHelper.TryParseFloat(json, "timeLength", required: true);
+
+                        return new GuineaPigBossState(timeLength, Tag.ENEMY_PROJECTILE);
+                    }
+                case "MoveToPointState":
+                    {
+                        var stopPoint = JsonHelper.TryParseVector2(json, "stopPoint", required: true) ?? Vector2.Zero;
+                        var speed = JsonHelper.TryParseFloat(json, "speed", required: true);
+
+                        return new MoveToPointState(stopPoint, speed);
+                    }
+            }
+
+            throw new Exception("Unrecognized state.");
+        }
+
         static private StateComponent ParseStateComponent(JToken componentJson)
         {
             StateComponent component = new StateComponent(new List<State>());
@@ -124,19 +175,7 @@ namespace Nexus_Horizon_Game.Json
 
                 foreach (JObject state in statesArray)
                 {
-                    if (!state.TryGetValue("stateType", out JToken stateType))
-                        throw new Exception("Every state must have a \"stateType\" property");
-
-                    string stateTypeString = (string)stateType;
-
-                    if (stateTypeString == "BirdEnemyState")
-                    {
-                        component.states.Add(new BirdEnemyState(EnemyFactory.sampleBirdPath1(), new[] { 1 }));
-                    }
-                    else if (stateTypeString == "CatEnemyState")
-                    {
-                        component.states.Add(new CatEnemyState(EnemyFactory.sampleCatPath1(80), new[] { 1, 2 }));
-                    }
+                    component.states.Add(ParseState(state));
                 }
             }
             else
