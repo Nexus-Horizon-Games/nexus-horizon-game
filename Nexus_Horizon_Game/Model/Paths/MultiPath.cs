@@ -8,9 +8,19 @@ namespace Nexus_Horizon_Game.Paths
     {
         private List<IPath> paths;
 
+        public MultiPath()
+        {
+            paths = new List<IPath>();
+        }
+
         public MultiPath(List<IPath> paths)
         {
             this.paths = paths;
+        }
+
+        public void AddPath(IPath path)
+        {
+            paths.Add(path);
         }
 
         public Vector2 GetPoint(float t)

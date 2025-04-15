@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.Timers;
-using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.States
 {
@@ -18,12 +16,12 @@ namespace Nexus_Horizon_Game.States
         private float speed = 0.4f;
         private TimerContainer timerContainer = new TimerContainer();
         private MultiPath movementPath;
-        private int[] attackPaths;
+        private List<int> attackPaths;
         private int spawnerEntity;
 
         private Tag bulletsTag;
 
-        public BirdEnemyState(MultiPath movementPath, int[] attackPaths, Tag bulletsTag = 0)
+        public BirdEnemyState(MultiPath movementPath, List<int> attackPaths, Tag bulletsTag = 0)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;

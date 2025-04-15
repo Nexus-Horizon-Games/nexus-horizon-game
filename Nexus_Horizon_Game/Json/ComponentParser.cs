@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.States;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Nexus_Horizon_Game.Json
 {
     internal static class ComponentParser
     {
-        static private TransformComponent ParseTransformComponent(JToken componentJson)
+        static private TransformComponent ParseTransformComponent(JsonEnvironment env, JToken componentJson)
         {
             TransformComponent component = new TransformComponent();
 
@@ -28,8 +29,8 @@ namespace Nexus_Horizon_Game.Json
             }
             else if (componentJson.Type == JTokenType.Object)
             {
-                component.position = JsonHelper.TryParseVector2((JObject)componentJson, "position") ?? Vector2.Zero;
-                component.rotation = JsonHelper.TryParseFloat((JObject)componentJson, "rotation", 0.0f);
+                component.position = JsonHelper.TryParseVector2(env, (JObject)componentJson, "position") ?? Vector2.Zero;
+                component.rotation = JsonHelper.TryParseFloat(env, (JObject)componentJson, "rotation", 0.0f);
             }
             else
             {
@@ -39,7 +40,7 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
-        static private PhysicsBody2DComponent ParsePhysicsBody2DComponent(JToken componentJson)
+        static private PhysicsBody2DComponent ParsePhysicsBody2DComponent(JsonEnvironment env, JToken componentJson)
         {
             PhysicsBody2DComponent component = new PhysicsBody2DComponent();
 
@@ -70,7 +71,7 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
-        static private SpriteComponent ParseSpriteComponent(JToken componentJson)
+        static private SpriteComponent ParseSpriteComponent(JsonEnvironment env, JToken componentJson)
         {
             SpriteComponent component = new SpriteComponent();
 
@@ -87,8 +88,8 @@ namespace Nexus_Horizon_Game.Json
             }
             else if (componentJson.Type == JTokenType.Object)
             {
-                component = new SpriteComponent(JsonHelper.TryParseString((JObject)componentJson, "textureName", required: true));
-                component.centered = JsonHelper.TryParseBool((JObject)componentJson, "centered", false);
+                component = new SpriteComponent(JsonHelper.TryParseString(env, (JObject)componentJson, "textureName", required: true));
+                component.centered = JsonHelper.TryParseBool(env, (JObject)componentJson, "centered", false);
             }
             else
             {
@@ -98,7 +99,7 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
-        static private State ParseState(JObject json)
+        static private State ParseState(JsonEnvironment env, JObject json)
         {
             if (!json.TryGetValue("stateType", out JToken stateType))
                 throw new Exception("Every state must have a \"stateType\" property");
@@ -109,21 +110,27 @@ namespace Nexus_Horizon_Game.Json
             {
                 case "BirdEnemyState":
                     {
-                        return new BirdEnemyState(EnemyFactory.sampleBirdPath1(), new[] { 1 });
+                        var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
+                        var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
+
+                        return new BirdEnemyState(path, attackPaths);
                     }
                 case "CatEnemyState":
                     {
-                        return new CatEnemyState(EnemyFactory.sampleCatPath1(80), new[] { 1, 2 });
+                        var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
+                        var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
+
+                        return new CatEnemyState(path, attackPaths);
                     }
                 case "ChefBossStage1State":
                     {
-                        var timeLength = JsonHelper.TryParseFloat(json, "timeLength", required: true);
+                        var timeLength = JsonHelper.TryParseFloat(env, json, "timeLength", required: true);
 
                         return new ChefBossStage1State(timeLength, Tag.ENEMY_PROJECTILE);
                     }
                 case "ChefBossStage2State":
                     {
-                        var timeLength = JsonHelper.TryParseFloat(json, "timeLength", required: true);
+                        var timeLength = JsonHelper.TryParseFloat(env, json, "timeLength", required: true);
 
                         return new ChefBossStage2State(timeLength, Tag.ENEMY_PROJECTILE);
                     }
@@ -133,14 +140,14 @@ namespace Nexus_Horizon_Game.Json
                     }
                 case "GuineaPigBossState":
                     {
-                        var timeLength = JsonHelper.TryParseFloat(json, "timeLength", required: true);
+                        var timeLength = JsonHelper.TryParseFloat(env, json, "timeLength", required: true);
 
                         return new GuineaPigBossState(timeLength, Tag.ENEMY_PROJECTILE);
                     }
                 case "MoveToPointState":
                     {
-                        var stopPoint = JsonHelper.TryParseVector2(json, "stopPoint", required: true) ?? Vector2.Zero;
-                        var speed = JsonHelper.TryParseFloat(json, "speed", required: true);
+                        var stopPoint = JsonHelper.TryParseVector2(env, json, "stopPoint", required: true) ?? Vector2.Zero;
+                        var speed = JsonHelper.TryParseFloat(env, json, "speed", required: true);
 
                         return new MoveToPointState(stopPoint, speed);
                     }
@@ -149,7 +156,7 @@ namespace Nexus_Horizon_Game.Json
             throw new Exception("Unrecognized state.");
         }
 
-        static private StateComponent ParseStateComponent(JToken componentJson)
+        static private StateComponent ParseStateComponent(JsonEnvironment env, JToken componentJson)
         {
             StateComponent component = new StateComponent(new List<State>());
 
@@ -175,7 +182,7 @@ namespace Nexus_Horizon_Game.Json
 
                 foreach (JObject state in statesArray)
                 {
-                    component.states.Add(ParseState(state));
+                    component.states.Add(ParseState(env, state));
                 }
             }
             else
@@ -186,7 +193,7 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
-        static private TagComponent ParseTagComponent(JToken componentJson)
+        static private TagComponent ParseTagComponent(JsonEnvironment env, JToken componentJson)
         {
             TagComponent component = new TagComponent();
 
@@ -237,7 +244,7 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
-        static private ColliderComponent ParseColliderComponent(JToken componentJson)
+        static private ColliderComponent ParseColliderComponent(JsonEnvironment env, JToken componentJson)
         {
             ColliderComponent component;
 
@@ -254,8 +261,8 @@ namespace Nexus_Horizon_Game.Json
             }
             else if (componentJson.Type == JTokenType.Object)
             {
-                var size = JsonHelper.TryParseVector2((JObject)componentJson, "size", required: true) ?? Vector2.Zero;
-                var position = JsonHelper.TryParseVector2((JObject)componentJson, "position", null);
+                var size = JsonHelper.TryParseVector2(env, (JObject)componentJson, "size", required: true) ?? Vector2.Zero;
+                var position = JsonHelper.TryParseVector2(env, (JObject)componentJson, "position", null);
 
                 component = new ColliderComponent(new Point((int)size.X, (int)size.Y),
                     position == null ? null : new Point((int)position?.X, (int)position?.Y));
@@ -289,7 +296,7 @@ namespace Nexus_Horizon_Game.Json
             Scene.Loaded.ECS.SetComponentInEntity(entity, stateComp);
         }
 
-        static private HealthComponent ParseHealthComponent(JToken componentJson)
+        static private HealthComponent ParseHealthComponent(JsonEnvironment env, JToken componentJson)
         {
             HealthComponent component;
 
@@ -306,7 +313,7 @@ namespace Nexus_Horizon_Game.Json
             }
             else if (componentJson.Type == JTokenType.Object)
             {
-                var health = JsonHelper.TryParseFloat((JObject)componentJson, "health", required: true);
+                var health = JsonHelper.TryParseFloat(env, (JObject)componentJson, "health", required: true);
 
                 component = new HealthComponent(health, (entity) =>
                 {
@@ -321,17 +328,17 @@ namespace Nexus_Horizon_Game.Json
             return component;
         }
 
-        static public List<IComponent> ParseComponentList(JObject jsonComponents)
+        static public List<IComponent> ParseComponentList(JsonEnvironment env, JObject jsonComponents)
         {
             List<IComponent> components = new List<IComponent>();
 
-            if (jsonComponents.ContainsKey("TransformComponent")) components.Add(ParseTransformComponent(jsonComponents.GetValue("TransformComponent")));
-            if (jsonComponents.ContainsKey("PhysicsBody2DComponent")) components.Add(ParsePhysicsBody2DComponent(jsonComponents.GetValue("PhysicsBody2DComponent")));
-            if (jsonComponents.ContainsKey("SpriteComponent")) components.Add(ParseSpriteComponent(jsonComponents.GetValue("SpriteComponent")));
-            if (jsonComponents.ContainsKey("StateComponent")) components.Add(ParseStateComponent(jsonComponents.GetValue("StateComponent")));
-            if (jsonComponents.ContainsKey("TagComponent")) components.Add(ParseTagComponent(jsonComponents.GetValue("TagComponent")));
-            if (jsonComponents.ContainsKey("ColliderComponent")) components.Add(ParseColliderComponent(jsonComponents.GetValue("ColliderComponent")));
-            if (jsonComponents.ContainsKey("HealthComponent")) components.Add(ParseHealthComponent(jsonComponents.GetValue("HealthComponent")));
+            if (jsonComponents.ContainsKey("TransformComponent")) components.Add(ParseTransformComponent(env, jsonComponents.GetValue("TransformComponent")));
+            if (jsonComponents.ContainsKey("PhysicsBody2DComponent")) components.Add(ParsePhysicsBody2DComponent(env, jsonComponents.GetValue("PhysicsBody2DComponent")));
+            if (jsonComponents.ContainsKey("SpriteComponent")) components.Add(ParseSpriteComponent(env, jsonComponents.GetValue("SpriteComponent")));
+            if (jsonComponents.ContainsKey("StateComponent")) components.Add(ParseStateComponent(env, jsonComponents.GetValue("StateComponent")));
+            if (jsonComponents.ContainsKey("TagComponent")) components.Add(ParseTagComponent(env, jsonComponents.GetValue("TagComponent")));
+            if (jsonComponents.ContainsKey("ColliderComponent")) components.Add(ParseColliderComponent(env, jsonComponents.GetValue("ColliderComponent")));
+            if (jsonComponents.ContainsKey("HealthComponent")) components.Add(ParseHealthComponent(env, jsonComponents.GetValue("HealthComponent")));
 
             return components;
         }

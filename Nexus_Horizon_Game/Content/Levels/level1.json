@@ -1,4 +1,86 @@
 {
+  "constants": [
+    [ "float", "boss_speed", 30.0 ],
+    {
+      "type": "MultiPath",
+      "name": "bird_path",
+      "paths": [
+        {
+          "type": "QuadraticPath",
+          "points": [
+            [ 0.0, 0.0 ],
+            [ 0.0, 44.0 ],
+            [ 44.0, 44.0 ]
+          ]
+        },
+        {
+          "type": "LinePath",
+          "points": [
+            [ 44.0, 44.0 ],
+            [ 132.0, 44.0 ]
+          ]
+        },
+        {
+          "type": "QuadraticPath",
+          "points": [
+            [ 132.0, 44.0 ],
+            [ 176.0, 44.0 ],
+            [ 176.0, 0.0 ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "MultiPath",
+      "name": "cat_path1",
+      "paths": [
+        {
+          "type": "LinePath",
+          "points": [
+            [ 80.0, 0.0 ],
+            [ 80.0, 85.0 ]
+          ]
+        },
+        {
+          "type": "WaitPath",
+          "point": [ 80.0, 85.0 ],
+          "time": 90.0
+        },
+        {
+          "type": "LinePath",
+          "points": [
+            [ 80.0, 85.0 ],
+            [ 0.0, 150.0 ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "MultiPath",
+      "name": "cat_path2",
+      "paths": [
+        {
+          "type": "LinePath",
+          "points": [
+            [ 80.0, 0.0 ],
+            [ 80.0, 85.0 ]
+          ]
+        },
+        {
+          "type": "WaitPath",
+          "point": [ 80.0, 85.0 ],
+          "time": 90.0
+        },
+        {
+          "type": "LinePath",
+          "points": [
+            [ 80.0, 85.0 ],
+            [ 176.0, 150.0 ]
+          ]
+        }
+      ]
+    }
+  ],
   "movementTypes": [
     {
       "typeNameId": "BirdMovement",
@@ -24,7 +106,9 @@
         "StateComponent": {
           "states": [
             {
-              "stateType": "BirdEnemyState"
+              "stateType": "BirdEnemyState",
+              "movementPath": "bird_path",
+              "attackPaths": [1]
             }
           ]
         },
@@ -51,7 +135,9 @@
         "StateComponent": {
           "states": [
             {
-              "stateType": "CatEnemyState"
+              "stateType": "CatEnemyState",
+              "movementPath": "cat_path1",
+              "attackPaths": [1, 2]
             }
           ]
         },
@@ -80,7 +166,7 @@
             {
               "stateType": "MoveToPointState",
               "stopPoint": ["arena_mid_x", 40.0],
-              "speed": 30.0
+              "speed": "boss_speed"
             },
             {
               "stateType": "GuineaPigBossState",
@@ -90,7 +176,7 @@
             {
               "stateType": "MoveToPointState",
               "stopPoint": ["arena_mid_x", -20.0],
-              "speed": 30.0
+              "speed": "boss_speed"
             }
           ]
         },
@@ -120,7 +206,7 @@
             {
               "stateType": "MoveToPointState",
               "stopPoint": ["arena_mid_x", 40.0],
-              "speed": 30.0
+              "speed": "boss_speed"
             },
             {
               "stateType": "ChefBossStage1State",
@@ -135,7 +221,7 @@
             {
               "stateType": "MoveToPointState",
               "stopPoint": ["arena_mid_x", -20.0],
-              "speed": 30.0
+              "speed": "boss_speed"
             }
           ]
         },
