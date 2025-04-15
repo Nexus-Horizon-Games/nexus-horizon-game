@@ -14,13 +14,13 @@ namespace Nexus_Horizon_Game.Json
 {
     internal static class JsonParser
     {
-        static private Dictionary<string, PrefabEntity> ParseEntityTypes(JArray entityTypes)
+        static private Dictionary<string, PrefabEntity> ParseEntityTypes(JsonEnvironment env, JArray entityTypes)
         {
             Dictionary<string, PrefabEntity> entityTypesLookup = new();
 
             foreach (dynamic entityType in entityTypes)
             {
-                var prefabEntity = new PrefabEntity(ComponentParser.ParseComponentList(entityType.components));
+                var prefabEntity = new PrefabEntity(ComponentParser.ParseComponentList(env, entityType.components));
 
                 entityTypesLookup[(string)entityType.typeNameId] = prefabEntity;
             }
@@ -38,9 +38,15 @@ namespace Nexus_Horizon_Game.Json
             int[] attack = { 1 };
             int[] catattack = { 1, 2 };
 
+            JsonEnvironment env = new JsonEnvironment();
+
+            JsonConstantParser.ParseConstants(env, json.constants);
+            env.constants["arena_mid_x"] = Arena.Size.X / 2.0f;
+            env.constants["arena_mid_y"] = Arena.Size.Y / 2.0f;
+
             JArray movementTypes = json.movementTypes;
 
-            var entityTypesLookup = ParseEntityTypes(json.entityTypes);
+            var entityTypesLookup = ParseEntityTypes(env, json.entityTypes);
 
             JArray stages = json.stages;
             Debug.WriteLine($"stages: {stages.Count}");
