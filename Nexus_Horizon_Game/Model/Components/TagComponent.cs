@@ -25,7 +25,7 @@ namespace Nexus_Horizon_Game.Components
     {
         private bool isEmpty;
 
-        private Tag tag;
+        private Tag tag = 0;
 
         public TagComponent(Tag tag)
         {

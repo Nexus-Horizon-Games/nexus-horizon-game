@@ -31,7 +31,7 @@ namespace Nexus_Horizon_Game.States
 
         private Tag bulletsTag;
 
-        public ChefBossStage2State(int entity, float timeLength, Tag bulletsTag = 0) : base(entity, timeLength)
+        public ChefBossStage2State(float timeLength, Tag bulletsTag = 0) : base(timeLength)
         {
             this.bulletsTag = bulletsTag;
         }
@@ -181,6 +181,23 @@ namespace Nexus_Horizon_Game.States
             }
 
             return playerPosition;
+        }
+
+
+        public override State Clone()
+        {
+            ChefBossStage2State clone;
+
+            if (timer is DelayTimer delayTimer)
+            {
+                clone = new ChefBossStage2State(delayTimer.Delay);
+            }
+            else
+            {
+                clone = new ChefBossStage2State(0.0f);
+            }
+
+            return clone;
         }
     }
 }

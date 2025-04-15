@@ -95,13 +95,6 @@ namespace Nexus_Horizon_Game.Controller
 
                     Debug.WriteLine("spawning an entity -----");
                     int entityID = Scene.Loaded.ECS.CreateEntity(entity.Clone()); // spawn the entity
-
-                    // Need to get a following entityID to find it transform to check for collision
-                    if (Scene.Loaded.ECS.EntityHasComponent<ColliderComponent>(entityID, out ColliderComponent Collcomponent))
-                    {
-                        Collcomponent.SetEntityIDFollowingTo(entityID);
-                        Scene.Loaded.ECS.SetComponentInEntity<ColliderComponent>(entityID, Collcomponent);
-                    }
                 }
             }
         }

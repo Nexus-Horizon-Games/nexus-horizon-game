@@ -41,6 +41,14 @@ namespace Nexus_Horizon_Game.Components
             this.transitionFunction = transitionFunction;
         }
 
+        public void Initalize(int entity)
+        {
+            foreach (var state in states)
+            {
+                state.Initalize(entity);
+            }
+        }
+
         public int LinearTransitionFunction(int currentState)
         {
             return ++currentState;
