@@ -8,6 +8,7 @@ using System.Linq;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Model.EntityFactory;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.States
 {
@@ -18,12 +19,12 @@ namespace Nexus_Horizon_Game.States
         private float speed = 0.3f;
         private TimerContainer timerContainer = new TimerContainer();
         private MultiPath movementPath;
-        private int[] attackPaths;
+        private List<int> attackPaths;
         private int spawnerEntity;
 
         private Tag bulletsTag;
 
-        public CatEnemyState(MultiPath movementPath, int[] attackPaths, Tag bulletsTag = 0)
+        public CatEnemyState(MultiPath movementPath, List<int> attackPaths, Tag bulletsTag = 0)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;
