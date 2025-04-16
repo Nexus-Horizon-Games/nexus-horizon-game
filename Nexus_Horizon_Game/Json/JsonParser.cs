@@ -65,7 +65,23 @@ namespace Nexus_Horizon_Game.Json
                     double startTime = spawner.time;
 
                     dynamic entityToSpawn = spawner.entity;
-                    string entityType = entityToSpawn.entityType;
+                    PrefabEntity entityPrefab = entityTypesLookup[(string)entityToSpawn.entityType].Clone();
+                    JObject componentsToSet = entityToSpawn.setComponents;
+                    if (componentsToSet != null)
+                    {
+                        var listOfComponents = ComponentParser.ParseComponentList(env, componentsToSet);
+
+                        foreach (var componentToSet in listOfComponents)
+                        {
+                            for (int i = 0; i < entityPrefab.Components.Count; i++)
+                            {
+                                if (entityPrefab.Components[i].GetType() == componentToSet.GetType())
+                                {
+                                    entityPrefab.Components[i] = componentToSet;
+                                }
+                            }
+                        }
+                    }
 
                     if (type == "multiple")
                     {
@@ -74,12 +90,12 @@ namespace Nexus_Horizon_Game.Json
 
                         wave.entitiesToSpawn.Enqueue(new PrefabEntity(new List<IComponent>
                         {
-                            new BehaviourComponent(new TimedEntitySpanwerBehaviour(entityTypesLookup[entityType], new LoopTimer((float)interval), (float)interval * entityCount))
+                            new BehaviourComponent(new TimedEntitySpanwerBehaviour(entityPrefab, new LoopTimer((float)interval), (float)interval * entityCount))
                         }), startTime);
                     }
                     else if (type == "single")
                     {
-                        wave.entitiesToSpawn.Enqueue(entityTypesLookup[entityType], startTime);
+                        wave.entitiesToSpawn.Enqueue(entityPrefab, startTime);
                     }
                 }
 
