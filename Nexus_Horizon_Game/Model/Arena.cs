@@ -11,7 +11,7 @@ namespace Nexus_Horizon_Game
         public static Vector2 Position { get { return position; } }
         public static Vector2 Size { get { return size; } }
 
-        public static Vector2 Origin { get => new Vector2(((size.X) / 2) + position.X, (size.Y / 2) + position.Y); }
+        public static Vector2 Origin { get => new Vector2(((size.X) / 2), (size.Y / 2)); }
 
         public static float Top { get { return position.Y; } }
         public static float Bottom { get { return position.Y + size.Y; } }

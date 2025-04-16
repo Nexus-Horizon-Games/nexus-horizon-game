@@ -2,11 +2,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
-using System;
-using System.Collections.Generic;
 using Nexus_Horizon_Game.Timers;
-using System.Diagnostics;
-using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.View.InputSystem;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
