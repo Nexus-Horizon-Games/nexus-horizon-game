@@ -7,8 +7,8 @@ using Nexus_Horizon_Game.Model.GameManagers;
 using Nexus_Horizon_Game.View.InputSystem;
 using System;
 using System.Collections.Generic;
-using Nexus_Horizon_Game.Controller;
 using Nexus_Horizon_Game.Json;
+using Nexus_Horizon_Game.Controller.Waves;
 
 namespace Nexus_Horizon_Game.Model.Scenes
 {
