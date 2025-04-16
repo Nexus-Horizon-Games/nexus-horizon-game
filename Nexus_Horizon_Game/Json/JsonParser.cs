@@ -2,10 +2,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.Controller;
+using Nexus_Horizon_Game.Controller.Waves;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Timers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -51,11 +52,47 @@ namespace Nexus_Horizon_Game.Json
             JArray stages = json.stages;
             Debug.WriteLine($"stages: {stages.Count}");
 
+            int waveIndex = 0;
             foreach (dynamic stage in stages)
             {
                 Wave wave = new Wave();
-                wave.duration = (double)stage.duration;
+                wave.id = waveIndex;
+                wave.duration = JsonHelper.TryParseFloat(env, stage, "duration", defaultValue: float.PositiveInfinity);
+
                 wave.startTime = (double)stage.startTime;
+
+                JToken relativeTo = stage.startTimeRelativeTo;
+                if (relativeTo != null)
+                {
+                    if (relativeTo.Type == JTokenType.String)
+                    {
+                        var str = (string)relativeTo;
+
+                        switch (str)
+                        {
+                            case "previous":
+                                {
+                                    wave.startTimeRelativeTo = waveIndex - 1; // if waveIndex is 0, then startTimeRelativeTo will just become -1 (which is intended)
+                                    break;
+                                }
+                            case "beginning":
+                                {
+                                    wave.startTimeRelativeTo = -1;
+                                    break;
+                                }
+                        }
+                    }
+                    else if (relativeTo.Type == JTokenType.Integer)
+                    {
+                        wave.startTimeRelativeTo = (int)relativeTo;
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid startTimeRelativeTo type");
+                    }
+                }
+
+                wave.endWhenEntitiesDie = JsonHelper.TryParseBool(env, json, "endWhenEntitiesDie", true);
 
                 JArray spawners = stage.spawners;
 
@@ -90,7 +127,8 @@ namespace Nexus_Horizon_Game.Json
 
                         wave.entitiesToSpawn.Enqueue(new PrefabEntity(new List<IComponent>
                         {
-                            new BehaviourComponent(new TimedEntitySpanwerBehaviour(entityPrefab, new LoopTimer((float)interval), (float)interval * entityCount))
+                            new BehaviourComponent(new TimedEntitySpanwerBehaviour(entityPrefab, new LoopTimer((float)interval), (float)interval * entityCount)),
+                            new TagComponent(Tag.ENEMY) // so that the wave does not end prematurely
                         }), startTime);
                     }
                     else if (type == "single")
@@ -100,6 +138,7 @@ namespace Nexus_Horizon_Game.Json
                 }
 
                 waves.Add(wave);
+                waveIndex++;
             }
 
             return waves;

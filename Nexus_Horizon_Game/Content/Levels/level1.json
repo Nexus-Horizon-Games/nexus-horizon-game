@@ -270,7 +270,6 @@
   "stages": [
     {
       "startTime": 2.0,
-      "duration": 10,
       "spawners": [
         {
           "spawnerType": "multiple",
@@ -316,8 +315,8 @@
       ]
     },
     {
-      "startTime": 12.0,
-      "duration": 10,
+      "startTime": 2.0,
+      "startTimeRelativeTo": "previous",
       "spawners": [
         {
           "spawnerType": "single",
@@ -329,8 +328,55 @@
       ]
     },
     {
-      "startTime": 22.0,
-      "duration": 10,
+      "startTime": 2.0,
+      "startTimeRelativeTo": "previous",
+      "spawners": [
+        {
+          "spawnerType": "multiple",
+          "time": 0,
+          "interval": 0.35,
+          "entityCount": 10,
+          "entity": {
+            "entityType": "Bird"
+          },
+          "position": [-10, 30]
+        },
+        {
+          "spawnerType": "multiple",
+          "time": 3.0,
+          "interval": 0.35,
+          "entityCount": 10,
+          "entity": {
+            "entityType": "Bird",
+            "setComponents": {
+              "StateComponent": {
+                "states": [
+                  {
+                    "stateType": "BirdEnemyState",
+                    "movementPath": "bird_path2",
+                    "attackPaths": [1]
+                  }
+                ]
+              }
+            }
+          },
+          "position": [110, 30]
+        },
+        {
+          "spawnerType": "multiple",
+          "time": 6.0,
+          "interval": 0.6,
+          "entityCount": 2,
+          "entity": {
+            "entityType": "Cat"
+          },
+          "position": [110, 30]
+        }
+      ]
+    },
+    {
+      "startTime": 2.0,
+      "startTimeRelativeTo": "previous",
       "spawners": [
         {
           "spawnerType": "single",

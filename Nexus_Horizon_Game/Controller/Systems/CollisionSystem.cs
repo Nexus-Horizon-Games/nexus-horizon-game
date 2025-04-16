@@ -1,16 +1,8 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.Entity_Type_Behaviours;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.GameManagers;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Controller
 {
