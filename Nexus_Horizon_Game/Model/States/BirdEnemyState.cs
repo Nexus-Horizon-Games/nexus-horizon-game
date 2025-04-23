@@ -18,14 +18,16 @@ namespace Nexus_Horizon_Game.States
         private MultiPath movementPath;
         private List<int> attackPaths;
         private int spawnerEntity;
+        private IFiringPattern firingPattern;
 
         private Tag bulletsTag;
 
-        public BirdEnemyState(MultiPath movementPath, List<int> attackPaths, Tag bulletsTag = 0)
+        public BirdEnemyState(MultiPath movementPath, List<int> attackPaths, Tag bulletsTag = 0, IFiringPattern? firingPattern = null)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;
             this.bulletsTag = bulletsTag;
+            this.firingPattern = firingPattern ?? new DirectFiringPattern(7.0f);
         }
 
         public override void OnStart()
@@ -67,13 +69,13 @@ namespace Nexus_Horizon_Game.States
         {
             Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new DirectFiringPattern(), gameTime, timerContainer);
+            entitySpawner.SpawnEntitiesWithPattern(firingPattern, gameTime, timerContainer);
             //call on spawner to spawn bullets
         }
 
         public override State Clone()
         {
-            var clone = new BirdEnemyState(movementPath, attackPaths);
+            var clone = new BirdEnemyState(movementPath, attackPaths, firingPattern: firingPattern);
             return clone;
         }
     }

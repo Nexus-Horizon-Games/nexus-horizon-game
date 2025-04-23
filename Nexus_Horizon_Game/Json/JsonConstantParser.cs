@@ -1,5 +1,6 @@
 ﻿
 using Newtonsoft.Json.Linq;
+using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Paths;
 using System;
 
@@ -7,6 +8,157 @@ namespace Nexus_Horizon_Game.Json
 {
     internal static class JsonConstantParser
     {
+        public static DirectFiringPattern ParseDirectFiringPattern(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (DirectFiringPattern)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                return new DirectFiringPattern(
+                    JsonHelper.ParseFloat(env, json["velocity"])
+                );
+            }
+
+            throw new Exception("Invalid format");
+        }
+
+        public static ArcFiringPattern ParseArcFiringPattern(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (ArcFiringPattern)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                return new ArcFiringPattern(
+                    JsonHelper.ParseFloat(env, json["velocity"]),
+                    JsonHelper.TryParseFloat(env, (JObject)json, "bulletAngle", 15.0f),
+                    (int)JsonHelper.TryParseFloat(env, (JObject)json, "bursts", 3.0f), // TODO: these should be TryParseInt
+                    (int)JsonHelper.TryParseFloat(env, (JObject)json, "spread", 3.0f),
+                    JsonHelper.TryParseFloat(env, (JObject)json, "burstInterval", 0.3f)
+                );
+            }
+
+            throw new Exception("Invalid format");
+        }
+
+        public static ChefBossPattern1 ParseChefBossPattern1(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (ChefBossPattern1)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                return new ChefBossPattern1();
+            }
+
+            throw new Exception("Invalid format");
+        }
+
+        public static ChefBossPattern2 ParseChefBossPattern2(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (ChefBossPattern2)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                return new ChefBossPattern2();
+            }
+
+            throw new Exception("Invalid format");
+        }
+        
+        public static CicleFiringPattern1 ParseCircleFiringPattern(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (CicleFiringPattern1)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                return new CicleFiringPattern1();
+            }
+
+            throw new Exception("Invalid format");
+        }
+
+        public static TriangleFiringPattern ParseTriangleFiringPattern(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (TriangleFiringPattern)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                return new TriangleFiringPattern(
+                    JsonHelper.ParseFloat(env, json["velocity"]),
+                    JsonHelper.TryParseFloat(env, (JObject)json, "bulletTimeInterval", 0.08f)
+                );
+            }
+
+            throw new Exception("Invalid format");
+        }
+
+        public static IFiringPattern ParseFiringPattern(JsonEnvironment env, JToken json)
+        {
+            if (json.Type == JTokenType.String)
+            {
+                return (IFiringPattern)env.constants[(string)json];
+            }
+            else if (json.Type == JTokenType.Object)
+            {
+                switch ((string)json["type"])
+                {
+                    case "ArcFiringPattern":
+                        {
+                            return ParseArcFiringPattern(env, json);
+                        }
+                    case "ChefBossPattern1":
+                        {
+                            return ParseChefBossPattern1(env, json);
+                        }
+                    case "ChefBossPattern2":
+                        {
+                            return ParseChefBossPattern2(env, json);
+                        }
+                    case "CircleFiringPattern":
+                        {
+                            return ParseCircleFiringPattern(env, json);
+                        }
+                    case "ClockwiseRingFiringPattern1":
+                        {
+                            return new ClockwiseRingFiringPattern1();
+                        }
+                    case "ClockwiseRingFiringPattern2":
+                        {
+                            return new ClockwiseRingFiringPattern2();
+                        }
+                    case "CounterClockwiseRingFiringPattern1":
+                        {
+                            return new CounterClockwiseRingFiringPattern1();
+                        }
+                    case "CounterClockwiseRingFiringPattern2":
+                        {
+                            return new CounterClockwiseRingFiringPattern2();
+                        }
+                    case "DirectFiringPattern":
+                        {
+                            return ParseDirectFiringPattern(env, json);
+                        }
+                    case "TriangleFiringPattern":
+                        {
+                            return ParseTriangleFiringPattern(env, json);
+                        }
+                }
+            }
+
+            throw new Exception("Invalid format");
+        }
+
         public static LinePath ParseLinePath(JsonEnvironment env, JToken json)
         {
             if (json.Type == JTokenType.String)
@@ -126,6 +278,10 @@ namespace Nexus_Horizon_Game.Json
                 case "MultiPath":
                     {
                         return ParseMultiPath(env, json);
+                    }
+                case "DirectFiringPattern":
+                    {
+                        return ParseDirectFiringPattern(env, json);
                     }
             }
 
