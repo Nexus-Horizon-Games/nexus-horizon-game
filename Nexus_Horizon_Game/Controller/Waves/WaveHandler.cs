@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
-namespace Nexus_Horizon_Game.Controller
+namespace Nexus_Horizon_Game.Controller.Waves
 {
     internal class WaveHandler
     {
@@ -15,7 +16,7 @@ namespace Nexus_Horizon_Game.Controller
 
         public WaveHandler()
         {
-            this.waves = new List<Wave>();
+            waves = new List<Wave>();
         }
 
         public WaveHandler(IEnumerable<Wave> waves)
@@ -25,7 +26,7 @@ namespace Nexus_Horizon_Game.Controller
 
         public void AddWave(Wave wave)
         {
-            this.waves.Add(wave);
+            waves.Add(wave);
         }
 
         public bool Started { get; set; } = false;
@@ -42,6 +43,7 @@ namespace Nexus_Horizon_Game.Controller
 
             //Debug.WriteLine($"currentWaves: {currentWaves.Count}, waves: {waves.Count}");
 
+            // Start waves
             for (int i = waves.Count - 1; i >= 0; i--) // Iterate backwards since we are potentially removing elements
             {
                 Wave wave = waves[i];
@@ -51,20 +53,29 @@ namespace Nexus_Horizon_Game.Controller
                 {
                     waveStartTime = wave.startTime;
                 }
-                else                
+                else
                 {
-                    waveStartTime = waveEndTimes[wave.startTimeRelativeTo] + wave.startTime;
+                    if (waveEndTimes.TryGetValue(wave.startTimeRelativeTo, out double value))
+                    {
+                        waveStartTime = value + wave.startTime;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 //Debug.WriteLine($"wave start time: {waveStartTime}");
 
                 if (elapsedSinceStart >= waveStartTime)
                 {
+                    Debug.WriteLine("STARTING A WAVE");
                     currentWaves.Add(wave);
                     waves.Remove(wave);
                 }
             }
 
+            // Update the waves
             for (int i = currentWaves.Count - 1; i >= 0; i--) // Iterate backwards since we are potentially removing elements
             {
                 Wave wave = currentWaves[i];
@@ -83,7 +94,32 @@ namespace Nexus_Horizon_Game.Controller
                 {
                     waveEndTimes[wave.id] = waveStartTime + wave.duration;
                     currentWaves.Remove(wave);
+                    Debug.WriteLine("WAVE ENDED (by duration ending)!!");
                     continue;
+                }
+                else if (wave.entitiesToSpawn.Count == 0)
+                {
+                    var tagedEntities = Scene.Loaded.ECS.GetEntitiesWithComponent<TagComponent>();
+                    var enemyExists = false;
+
+                    foreach (int e in tagedEntities)
+                    {
+                        var tagComp = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(e);
+
+                        if ((tagComp.Tag & Tag.ENEMY) == Tag.ENEMY)
+                        {
+                            enemyExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!enemyExists)
+                    {
+                        Debug.WriteLine("WAVE ENDED (by no more enities)!!");
+                        waveEndTimes[wave.id] = elapsedSinceStart;
+                        currentWaves.Remove(wave);
+                        continue;
+                    }
                 }
 
                 // Update the wave:

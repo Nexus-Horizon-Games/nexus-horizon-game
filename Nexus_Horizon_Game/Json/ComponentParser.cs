@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
+using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.States;
 using System;
@@ -113,14 +114,26 @@ namespace Nexus_Horizon_Game.Json
                         var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
                         var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
 
-                        return new BirdEnemyState(path, attackPaths);
+                        IFiringPattern? firingPattern = null;
+                        if (json["firingPattern"] != null)
+                        {
+                            firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
+                        }
+
+                        return new BirdEnemyState(path, attackPaths, firingPattern: firingPattern);
                     }
                 case "CatEnemyState":
                     {
                         var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
                         var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
 
-                        return new CatEnemyState(path, attackPaths);
+                        IFiringPattern? firingPattern = null;
+                        if (json["firingPattern"] != null)
+                        {
+                            firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
+                        }
+
+                        return new CatEnemyState(path, attackPaths, firingPattern: firingPattern);
                     }
                 case "ChefBossStage1State":
                     {

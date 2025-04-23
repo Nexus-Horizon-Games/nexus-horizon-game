@@ -1,42 +1,28 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
-using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.Timers;
-using System;
 
 namespace Nexus_Horizon_Game.States
 {
     internal class GuineaPigBossState : TimedState
     {
         // Constants 
-        private const float EnteringSpeed = 4.0f;
         private const float IdealY = 50.0f;  // Adjust as needed to match your chef boss IdealY.
         private const float MovementVelocity = 4.0f;  // Speed while on-screen.
         private const float TimeBeforeFirstAttack = 1.5f;
         private const float TimeBetweenAttacks = 4.0f;
-        private const float Phase1Length = 15.0f;  // Duration in Phase1 before exiting.
         private const float MovementInterval = 2.0f; // Update movement every 2 seconds
 
         // Projectile Sizes
         private const float BigBulletScale = 0.5f;
         private const float SmallBulletScale = 0.2f;
-        private const float MediumBulletScale = 0.35f;
-
-        // Bullet Factories
-        private readonly BulletFactory bulletFactoryBig = new BulletFactory("BulletSample");
-        private readonly BulletFactory bulletFactorySmall = new BulletFactory("BulletSample");
-        private readonly BulletFactory bulletFactoryMedium = new BulletFactory("BulletSample");
 
         // Movement Boundaries
         private Vector2 MovementAreaPosition;
         private Vector2 MovementAreaSize;
-
-        // Exit point (similar to the chef boss exit point)
-        private readonly Vector2 ExitPoint;
 
         // Timers
         private TimerContainer timerContainer = new TimerContainer();
@@ -200,7 +186,7 @@ namespace Nexus_Horizon_Game.States
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(bigSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(bigSpawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new ArcFiringPattern(), gameTime, timerContainer);
+            entitySpawner.SpawnEntitiesWithPattern(new ArcFiringPattern(7.0f), gameTime, timerContainer);
         }
 
         /// <summary>
