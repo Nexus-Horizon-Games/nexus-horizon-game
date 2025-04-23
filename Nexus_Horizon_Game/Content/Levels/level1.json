@@ -137,7 +137,11 @@
             {
               "stateType": "BirdEnemyState",
               "movementPath": "bird_path1",
-              "attackPaths": [1]
+              "attackPaths": [1],
+              "firingPattern": {
+                "type": "DirectFiringPattern",
+                "velocity": 7.0
+              }
             }
           ]
         },
@@ -166,7 +170,11 @@
             {
               "stateType": "CatEnemyState",
               "movementPath": "cat_path1",
-              "attackPaths": [1, 2]
+              "attackPaths": [1, 2],
+              "firingPattern": {
+                "type": "TriangleFiringPattern",
+                "velocity": 7.0
+              }
             }
           ]
         },

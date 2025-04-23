@@ -1,36 +1,37 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.Entity_Type_Behaviours;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Timers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Model.EntityPatterns
 {
     internal class TriangleFiringPattern : AbstractFiringPattern, IFiringPattern
     {
+        private readonly float velocity;
+        private readonly float bulletTimeInterval;
+
+        public TriangleFiringPattern(float velocity, float bulletTimeInterval = 0.08f)
+        {
+            this.velocity = velocity;
+            this.bulletTimeInterval = bulletTimeInterval;
+        }
+
         public void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer)
         {
             List<int> firedEntities = new List<int>();
             List<IComponent> components = prefab.Components;
             Vector2 position = ((TransformComponent)prefab.Components.FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
-            float velocity = 7f;
             var playerPosition = GetPlayerPosition();
             double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
             Vector2 fireDirection = GetVectFromDirection(direction, 0);
 
-            float speed = 5f;
-            float timeInterval = 0.08f;
+            float speed = velocity;
             int bulletNum = 1;
 
-            timerContainer.StartTemporaryTimer(new LoopTimer(timeInterval, (gameTime, data) =>
+            timerContainer.StartTemporaryTimer(new LoopTimer(bulletTimeInterval, (gameTime, data) =>
             {
                 double startTime = (double)data;
                 double time = gameTime.TotalGameTime.TotalSeconds - startTime;
@@ -57,7 +58,7 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
                     SpawnEntity(position, fireDirection, speed, prefab);
                 }
                 bulletNum++;
-            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: timeInterval * 4));
+            }, data: gameTime.TotalGameTime.TotalSeconds, stopAfter: bulletTimeInterval * 4));
             return;
         }
     }
