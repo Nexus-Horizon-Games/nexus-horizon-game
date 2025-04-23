@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Nexus_Horizon_Game.Json
 {
@@ -17,7 +18,18 @@ namespace Nexus_Horizon_Game.Json
             else if (json.Type == JTokenType.String)
             {
                 var str = (string)json;
-                return (float)env.constants[str];
+
+                if (Regex.IsMatch(str, "[0-9]+%(x|y)"))
+                {
+                    float arenaSize = str[str.Length - 1] == 'x' ? Arena.Size.X : Arena.Size.Y;
+                    float percentage = int.Parse(str.Substring(0, str.Length - 2)) / 100.0f;
+
+                    return arenaSize * percentage;
+                }
+                else
+                {
+                    return (float)env.constants[str];
+                }
             }
             else if (json.Type == JTokenType.Object)
             {

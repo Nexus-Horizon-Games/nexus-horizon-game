@@ -38,7 +38,7 @@ namespace Nexus_Horizon_Game
 
                     if (!spriteComp.IsUI)
                     {
-                        Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.Z);
+                        Renderer.Draw(spriteComp.textureName, transformComp.position + spriteComp.position + Arena.Position, spriteComp.sourceRectangle, spriteComp.color, (float)transformComp.rotation + spriteComp.rotation, Vector2.Zero, spriteComp.scale, SpriteEffects.None, spriteComp.Z);
                     }
                     else
                     {

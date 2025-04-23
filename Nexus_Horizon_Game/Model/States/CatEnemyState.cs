@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Timers;
 using Nexus_Horizon_Game.Paths;
-using System;
-using System.Linq;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityPatterns;
 using Nexus_Horizon_Game.Model.EntityFactory;
@@ -21,14 +18,16 @@ namespace Nexus_Horizon_Game.States
         private MultiPath movementPath;
         private List<int> attackPaths;
         private int spawnerEntity;
+        private IFiringPattern firingPattern;
 
         private Tag bulletsTag;
 
-        public CatEnemyState(MultiPath movementPath, List<int> attackPaths, Tag bulletsTag = 0)
+        public CatEnemyState(MultiPath movementPath, List<int> attackPaths, Tag bulletsTag = 0, IFiringPattern? firingPattern = null)
         {
             this.movementPath = movementPath;
             this.attackPaths = attackPaths;
             this.bulletsTag = bulletsTag;
+            this.firingPattern = firingPattern ?? new TriangleFiringPattern(7.0f);
         }
 
         public override void OnStart()
@@ -71,12 +70,12 @@ namespace Nexus_Horizon_Game.States
             
             Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new TriangleFiringPattern(), gameTime, timerContainer);
+            entitySpawner.SpawnEntitiesWithPattern(firingPattern, gameTime, timerContainer);
         }
 
         public override State Clone()
         {
-            var clone = new CatEnemyState(movementPath, attackPaths);
+            var clone = new CatEnemyState(movementPath, attackPaths, firingPattern: firingPattern);
             return clone;
         }
     }

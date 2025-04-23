@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nexus_Horizon_Game.Controller
+namespace Nexus_Horizon_Game.Controller.Waves
 {
     internal class Wave
     {
@@ -34,7 +34,7 @@ namespace Nexus_Horizon_Game.Controller
         public bool endWhenEntitiesDie = true;
 
         /// <summary>
-        /// The duration in seconds of this wave. Will be ignored if <see cref="endWhenEntitiesDie"/> is true.
+        /// The duration in seconds of this wave. May be cut short if <see cref="endWhenEntitiesDie"/> is true.
         /// </summary>
         public double duration;
     }
