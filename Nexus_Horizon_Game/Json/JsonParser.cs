@@ -15,18 +15,14 @@ namespace Nexus_Horizon_Game.Json
 {
     internal static class JsonParser
     {
-        static private Dictionary<string, PrefabEntity> ParseEntityTypes(JsonEnvironment env, JArray entityTypes)
+        static private void ParseEntityTypes(JsonEnvironment env, JArray entityTypes)
         {
-            Dictionary<string, PrefabEntity> entityTypesLookup = new();
-
             foreach (dynamic entityType in entityTypes)
             {
                 var prefabEntity = new PrefabEntity(ComponentParser.ParseComponentList(env, entityType.components));
 
-                entityTypesLookup[(string)entityType.typeNameId] = prefabEntity;
+                env.entities[(string)entityType.typeNameId] = prefabEntity;
             }
-
-            return entityTypesLookup;
         }
 
         static public List<Wave> Parse(string levelFilename)
@@ -47,7 +43,7 @@ namespace Nexus_Horizon_Game.Json
 
             JArray movementTypes = json.movementTypes;
 
-            var entityTypesLookup = ParseEntityTypes(env, json.entityTypes);
+            ParseEntityTypes(env, json.entityTypes);
 
             JArray stages = json.stages;
             Debug.WriteLine($"stages: {stages.Count}");
@@ -102,7 +98,7 @@ namespace Nexus_Horizon_Game.Json
                     double startTime = spawner.time;
 
                     dynamic entityToSpawn = spawner.entity;
-                    PrefabEntity entityPrefab = entityTypesLookup[(string)entityToSpawn.entityType].Clone();
+                    PrefabEntity entityPrefab = env.entities[(string)entityToSpawn.entityType].Clone();
                     JObject componentsToSet = entityToSpawn.setComponents;
                     if (componentsToSet != null)
                     {
