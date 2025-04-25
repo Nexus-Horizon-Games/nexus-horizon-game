@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
+using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Paths;
 using Nexus_Horizon_Game.States;
 using System;
@@ -91,6 +92,8 @@ namespace Nexus_Horizon_Game.Json
             {
                 component = new SpriteComponent(JsonHelper.TryParseString(env, (JObject)componentJson, "textureName", required: true));
                 component.centered = JsonHelper.TryParseBool(env, (JObject)componentJson, "centered", false);
+                component.scale = JsonHelper.TryParseFloat(env, (JObject)componentJson, "scale", 1.0f);
+                component.spriteLayer = (uint)JsonHelper.TryParseFloat(env, (JObject)componentJson, "spriteLayer", 0); // TODO: should be parse uint
             }
             else
             {
@@ -109,10 +112,18 @@ namespace Nexus_Horizon_Game.Json
 
             switch (stateTypeString)
             {
-                case "BirdEnemyState":
+                case "GruntEnemyState":
                     {
                         var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
                         var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
+                        var speed = JsonHelper.TryParseFloat(env, json, "speed", 0.4f);
+                        var fireRate = JsonHelper.TryParseFloat(env, json, "fireRate", 0.2f);
+
+                        PrefabEntity? projectile = null;
+                        if (json.ContainsKey("projectile"))
+                        {
+                            projectile = ParseEntity(env, json["projectile"]);
+                        }
 
                         IFiringPattern? firingPattern = null;
                         if (json["firingPattern"] != null)
@@ -120,32 +131,49 @@ namespace Nexus_Horizon_Game.Json
                             firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
                         }
 
-                        return new BirdEnemyState(path, attackPaths, firingPattern: firingPattern);
-                    }
-                case "CatEnemyState":
-                    {
-                        var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
-                        var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
-
-                        IFiringPattern? firingPattern = null;
-                        if (json["firingPattern"] != null)
-                        {
-                            firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
-                        }
-
-                        return new CatEnemyState(path, attackPaths, firingPattern: firingPattern);
+                        return new GruntEnemyState(path, attackPaths, speed, fireRate, firingPattern: firingPattern, projectile: projectile);
                     }
                 case "ChefBossStage1State":
                     {
                         var timeLength = JsonHelper.TryParseFloat(env, json, "timeLength", required: true);
 
-                        return new ChefBossStage1State(timeLength, Tag.ENEMY_PROJECTILE);
+                        PrefabEntity? projectile = null;
+                        if (json.ContainsKey("projectile"))
+                        {
+                            projectile = ParseEntity(env, json["projectile"]);
+                        }
+
+                        IFiringPattern? firingPattern = null;
+                        if (json["firingPattern"] != null)
+                        {
+                            firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
+                        }
+
+                        return new ChefBossStage1State(timeLength, firingPattern, projectile);
                     }
                 case "ChefBossStage2State":
                     {
                         var timeLength = JsonHelper.TryParseFloat(env, json, "timeLength", required: true);
 
-                        return new ChefBossStage2State(timeLength, Tag.ENEMY_PROJECTILE);
+                        PrefabEntity? projectile1 = null;
+                        if (json.ContainsKey("projectile"))
+                        {
+                            projectile1 = ParseEntity(env, json["projectile"]);
+                        }
+
+                        PrefabEntity? projectile2 = null;
+                        if (json.ContainsKey("projectile2"))
+                        {
+                            projectile2 = ParseEntity(env, json["projectile2"]);
+                        }
+
+                        IFiringPattern? firingPattern = null;
+                        if (json["firingPattern"] != null)
+                        {
+                            firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
+                        }
+
+                        return new ChefBossStage2State(timeLength, firingPattern, projectile1, projectile2);
                     }
                 case "DeathState":
                     {
@@ -155,7 +183,25 @@ namespace Nexus_Horizon_Game.Json
                     {
                         var timeLength = JsonHelper.TryParseFloat(env, json, "timeLength", required: true);
 
-                        return new GuineaPigBossState(timeLength, Tag.ENEMY_PROJECTILE);
+                        PrefabEntity? projectile1 = null;
+                        if (json.ContainsKey("projectile"))
+                        {
+                            projectile1 = ParseEntity(env, json["projectile"]);
+                        }
+
+                        PrefabEntity? projectile2 = null;
+                        if (json.ContainsKey("projectile2"))
+                        {
+                            projectile2 = ParseEntity(env, json["projectile2"]);
+                        }
+
+                        IFiringPattern? firingPattern = null;
+                        if (json["firingPattern"] != null)
+                        {
+                            firingPattern = JsonConstantParser.ParseFiringPattern(env, json["firingPattern"]);
+                        }
+
+                        return new GuineaPigBossState(timeLength, firingPattern, projectile1, projectile2);
                     }
                 case "MoveToPointState":
                     {
@@ -339,6 +385,29 @@ namespace Nexus_Horizon_Game.Json
             }
 
             return component;
+        }
+        
+        static public PrefabEntity ParseEntity(JsonEnvironment env, JToken entityJson)
+        {
+            if (entityJson.Type == JTokenType.String)
+            {
+                return env.entities[(string)entityJson];
+            }
+            else if (entityJson.Type == JTokenType.Object)
+            {
+                var entityObject = (JObject)entityJson;
+
+                if (entityObject.ContainsKey("components"))
+                {
+                    return new PrefabEntity(ParseComponentList(env, (JObject)entityObject["components"]));
+                }
+                else
+                {
+                    return new PrefabEntity(ParseComponentList(env, entityObject));
+                }
+            }
+
+            throw new Exception("Failed to parse entity");
         }
 
         static public List<IComponent> ParseComponentList(JsonEnvironment env, JObject jsonComponents)

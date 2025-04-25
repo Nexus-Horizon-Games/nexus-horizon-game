@@ -5,8 +5,9 @@ using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
+using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Timers;
-using System;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.States
 {
@@ -29,11 +30,21 @@ namespace Nexus_Horizon_Game.States
         private int defaultSpawnerEntity;
         private int ringSpawnerEntity;
 
-        private Tag bulletsTag;
+        private PrefabEntity projectile1;
+        private PrefabEntity projectile2;
+        private IFiringPattern firingPattern;
 
-        public ChefBossStage2State(float timeLength, Tag bulletsTag = 0) : base(timeLength)
+        public ChefBossStage2State(float timeLength, IFiringPattern? firingPattern = null, PrefabEntity? projectile1 = null, PrefabEntity? projectile2 = null) : base(timeLength)
         {
-            this.bulletsTag = bulletsTag;
+            this.firingPattern = firingPattern ?? new DirectFiringPattern(7.0f);
+            this.projectile1 = projectile1 ?? new PrefabEntity(new List<IComponent>
+            {
+                new TransformComponent(Vector2.Zero),
+                new SpriteComponent("BulletSample", color: Color.White, scale: 0.25f, spriteLayer: 0, centered: true),
+                new TagComponent(Tag.ENEMY_PROJECTILE),
+            });
+
+            this.projectile2 = projectile2 ?? projectile1;
         }
 
         public override void OnStart()
@@ -50,8 +61,8 @@ namespace Nexus_Horizon_Game.States
                 OnMoveAction(gameTime, null); // start first move
                 timerContainer.GetTimer("move_action").Start();
             }));
-            this.defaultSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
-            this.ringSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
+            this.defaultSpawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile1);
+            this.ringSpawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile2);
         }
 
         public override void OnStop()
@@ -141,8 +152,8 @@ namespace Nexus_Horizon_Game.States
         private void FireBulletRing2(GameTime gameTime, bool counterClockwise)
         {
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
-            Scene.Loaded.ECS.SetComponentInEntity(defaultSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
-            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
+            Scene.Loaded.ECS.SetComponentInEntity(ringSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
+            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(ringSpawnerEntity).Behaviour);
             if (counterClockwise)
             {
                 entitySpawner.SpawnEntitiesWithPattern(new CounterClockwiseRingFiringPattern2(), gameTime, timerContainer);
@@ -157,7 +168,7 @@ namespace Nexus_Horizon_Game.States
         {
             Scene.Loaded.ECS.SetComponentInEntity(defaultSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(defaultSpawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new ChefBossPattern2(), gameTime, timerContainer);
+            entitySpawner.SpawnEntitiesWithPattern(firingPattern, gameTime, timerContainer);
         }
 
         private Vector2 GetPlayerPosition()
@@ -190,11 +201,11 @@ namespace Nexus_Horizon_Game.States
 
             if (timer is DelayTimer delayTimer)
             {
-                clone = new ChefBossStage2State(delayTimer.Delay);
+                clone = new ChefBossStage2State(delayTimer.Delay, firingPattern, projectile1, projectile2);
             }
             else
             {
-                clone = new ChefBossStage2State(0.0f);
+                clone = new ChefBossStage2State(0.0f, firingPattern, projectile1, projectile2);
             }
 
             return clone;
