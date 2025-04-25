@@ -124,6 +124,76 @@
   ],
   "entityTypes": [
     {
+      "typeNameId": "BirdBullet",
+      "components": {
+        "TransformComponent": "default",
+        "SpriteComponent": {
+          "textureName": "egg_projectile",
+          "centered": true,
+          "scale": 0.6
+        },
+        "TagComponent": {
+          "tags": ["enemy_projectile"]
+        }
+      }
+    },
+    {
+      "typeNameId": "CatBullet",
+      "components": {
+        "TransformComponent": "default",
+        "SpriteComponent": {
+          "textureName": "yarn_ball_projectile",
+          "centered": true,
+          "scale": 0.6
+        },
+        "TagComponent": {
+          "tags": ["enemy_projectile"]
+        }
+      }
+    },
+    {
+      "typeNameId": "ChefBossBullet",
+      "components": {
+        "TransformComponent": "default",
+        "SpriteComponent": {
+          "textureName": "coal_projectile",
+          "centered": true,
+          "scale": 0.8
+        },
+        "TagComponent": {
+          "tags": ["enemy_projectile"]
+        }
+      }
+    },
+    {
+      "typeNameId": "MidBossBullet1",
+      "components": {
+        "TransformComponent": "default",
+        "SpriteComponent": {
+          "textureName": "BulletSample3",
+          "centered": true,
+          "scale": 0.2
+        },
+        "TagComponent": {
+          "tags": ["enemy_projectile"]
+        }
+      }
+    },
+    {
+      "typeNameId": "MidBossBullet2",
+      "components": {
+        "TransformComponent": "default",
+        "SpriteComponent": {
+          "textureName": "guinea_pig",
+          "centered": true,
+          "scale": 0.6
+        },
+        "TagComponent": {
+          "tags": ["enemy_projectile"]
+        }
+      }
+    },
+    {
       "typeNameId": "Bird",
       "components": {
         "TransformComponent": "default",
@@ -135,9 +205,10 @@
         "StateComponent": {
           "states": [
             {
-              "stateType": "BirdEnemyState",
+              "stateType": "GruntEnemyState",
               "movementPath": "bird_path1",
-              "attackPaths": [1],
+              "attackPaths": [ 1 ],
+              "projectile": "BirdBullet",
               "firingPattern": {
                 "type": "DirectFiringPattern",
                 "velocity": 7.0
@@ -168,9 +239,12 @@
         "StateComponent": {
           "states": [
             {
-              "stateType": "CatEnemyState",
+              "stateType": "GruntEnemyState",
               "movementPath": "cat_path1",
-              "attackPaths": [1, 2],
+              "attackPaths": [ 1, 2 ],
+              "speed": 0.3,
+              "fireRate": 0.5,
+              "projectile": "CatBullet",
               "firingPattern": {
                 "type": "TriangleFiringPattern",
                 "velocity": 7.0
@@ -208,7 +282,12 @@
             {
               "stateType": "GuineaPigBossState",
               "timeLength": 15.0,
-              "bulletsTag": "enemy_projectile"
+              "projectile": "MidBossBullet1",
+              "projectile2": "MidBossBullet2",
+              "firingPattern": {
+                "type": "ArcFiringPattern",
+                "velocity": 7.0
+              }
             },
             {
               "stateType": "MoveToPointState",
@@ -248,12 +327,18 @@
             {
               "stateType": "ChefBossStage1State",
               "timeLength": 35.0,
-              "bulletsTag": "enemy_projectile"
+              "projectile": "ChefBossBullet",
+              "firingPattern": {
+                "type": "ChefBossPattern1"
+              }
             },
             {
               "stateType": "ChefBossStage2State",
               "timeLength": 30.0,
-              "bulletsTag": "enemy_projectile"
+              "projectile": "ChefBossBullet",
+              "firingPattern": {
+                "type": "ChefBossPattern2"
+              }
             },
             {
               "stateType": "MoveToPointState",
@@ -300,9 +385,14 @@
               "StateComponent": {
                 "states": [
                   {
-                    "stateType": "BirdEnemyState",
+                    "stateType": "GruntEnemyState",
                     "movementPath": "bird_path2",
-                    "attackPaths": [1]
+                    "attackPaths": [ 1 ],
+                    "projectile": "BirdBullet",
+                    "firingPattern": {
+                      "type": "DirectFiringPattern",
+                      "velocity": 7.0
+                    }
                   }
                 ]
               }
@@ -360,9 +450,14 @@
               "StateComponent": {
                 "states": [
                   {
-                    "stateType": "BirdEnemyState",
+                    "stateType": "GruntEnemyState",
                     "movementPath": "bird_path2",
-                    "attackPaths": [1]
+                    "attackPaths": [1],
+                    "projectile": "BirdBullet",
+                    "firingPattern": {
+                      "type": "DirectFiringPattern",
+                      "velocity": 7.0
+                    }
                   }
                 ]
               }
