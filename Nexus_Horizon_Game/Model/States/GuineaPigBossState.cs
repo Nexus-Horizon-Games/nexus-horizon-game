@@ -3,7 +3,9 @@ using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
+using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Timers;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.States
 {
@@ -29,10 +31,21 @@ namespace Nexus_Horizon_Game.States
         private int smallSpawnerEntity;
         private int bigSpawnerEntity;
 
-        private Tag bulletsTag;
-        public GuineaPigBossState(float timeLength, Tag bulletsTag = 0) : base(timeLength)
+        private PrefabEntity projectile1;
+        private PrefabEntity projectile2;
+        private IFiringPattern firingPattern;
+
+        public GuineaPigBossState(float timeLength, IFiringPattern? firingPattern = null, PrefabEntity? projectile1 = null, PrefabEntity? projectile2 = null) : base(timeLength)
         {
-            this.bulletsTag = bulletsTag;
+            this.firingPattern = firingPattern ?? new DirectFiringPattern(7.0f);
+            this.projectile1 = projectile1 ?? new PrefabEntity(new List<IComponent>
+            {
+                new TransformComponent(Vector2.Zero),
+                new SpriteComponent("BulletSample", color: Color.White, scale: 0.25f, spriteLayer: 0, centered: true),
+                new TagComponent(Tag.ENEMY_PROJECTILE),
+            });
+
+            this.projectile2 = projectile2 ?? projectile1;
         }
 
         public override void Initalize(int entity)
@@ -72,8 +85,9 @@ namespace Nexus_Horizon_Game.States
 
             // Start the movement timer now that we're on-screen.
             timerContainer.GetTimer("move_action").Start();
-            this.smallSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", SmallBulletScale, 99, projectileTag: bulletsTag);
-            this.bigSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", BigBulletScale, 99, projectileTag: bulletsTag);
+
+            this.smallSpawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile1);
+            this.bigSpawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile2);
         }
 
         public override void OnStop()
@@ -186,7 +200,7 @@ namespace Nexus_Horizon_Game.States
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(bigSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(bigSpawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new ArcFiringPattern(7.0f), gameTime, timerContainer);
+            entitySpawner.SpawnEntitiesWithPattern(firingPattern, gameTime, timerContainer);
         }
 
         /// <summary>
@@ -208,11 +222,11 @@ namespace Nexus_Horizon_Game.States
 
             if (timer is DelayTimer delayTimer)
             {
-                clone = new GuineaPigBossState(delayTimer.Delay);
+                clone = new GuineaPigBossState(delayTimer.Delay, firingPattern, projectile1, projectile2);
             }
             else
             {
-                clone = new GuineaPigBossState(0.0f);
+                clone = new GuineaPigBossState(0.0f, firingPattern, projectile1, projectile2);
             }
 
             return clone;

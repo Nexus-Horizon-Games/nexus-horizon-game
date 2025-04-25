@@ -1,20 +1,18 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
+using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Timers;
-using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.States
 {
     internal class ChefBossStage1State : TimedState
     {
         private const float IdealY = 40.0f;
-        private const int CircleBulletsCount = 16;
         private const float MovementVelocity = 10.0f;
         private const float TimeBeforeFirstAttack = 2.0f;
 
@@ -24,16 +22,21 @@ namespace Nexus_Horizon_Game.States
         private Vector2 MovementAreaPosition;
         private Vector2 MovementAreaSize;
 
-        private BulletFactory bulletFactory = new BulletFactory("BulletSample");
-
         private TimerContainer timerContainer = new TimerContainer();
         private int spawnerEntity;
 
-        private Tag bulletsTag;
+        private PrefabEntity projectile;
+        private IFiringPattern firingPattern;
 
-        public ChefBossStage1State(float timeLength, Tag bulletsTag = 0) : base(timeLength)
+        public ChefBossStage1State(float timeLength, IFiringPattern? firingPattern = null, PrefabEntity? projectile = null) : base(timeLength)
         {
-            this.bulletsTag = bulletsTag;
+            this.firingPattern = firingPattern ?? new DirectFiringPattern(7.0f);
+            this.projectile = projectile ?? new PrefabEntity(new List<IComponent>
+            {
+                new TransformComponent(Vector2.Zero),
+                new SpriteComponent("BulletSample", color: Color.White, scale: 0.25f, spriteLayer: 0, centered: true),
+                new TagComponent(Tag.ENEMY_PROJECTILE),
+            });
         }
 
         public override void Initalize(int entity)
@@ -65,7 +68,8 @@ namespace Nexus_Horizon_Game.States
                 OnMoveAction(gameTime, null); // start first move
                 timerContainer.GetTimer("move_action").Start();
             }));
-            this.spawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", projectileTag: bulletsTag);
+
+            this.spawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile);
         }
 
         public override void OnStop()
@@ -171,11 +175,12 @@ namespace Nexus_Horizon_Game.States
                 entitySpawner.SpawnEntitiesWithPattern(new ClockwiseRingFiringPattern1(), gameTime, timerContainer);
             }
         }
+
         private void FireBulletPattern1(GameTime gameTime)
         {
             Scene.Loaded.ECS.SetComponentInEntity(spawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
             EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(spawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new ChefBossPattern1(), gameTime, timerContainer);
+            entitySpawner.SpawnEntitiesWithPattern(firingPattern, gameTime, timerContainer);
         }
 
         private Vector2 GetPlayerPosition()
@@ -207,11 +212,11 @@ namespace Nexus_Horizon_Game.States
 
             if (timer is DelayTimer delayTimer)
             {
-                clone = new ChefBossStage1State(delayTimer.Delay);
+                clone = new ChefBossStage1State(delayTimer.Delay, firingPattern, projectile);
             }
             else
             {
-                clone = new ChefBossStage1State(0.0f);
+                clone = new ChefBossStage1State(0.0f, firingPattern, projectile);
             }
 
             return clone;
