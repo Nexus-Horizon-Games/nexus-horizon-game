@@ -1,10 +1,10 @@
-### CPTS 487 – Special Feature A  
-### “Screen Flip Gimmick”  
-### Nexus Horizon  
+### CPTS 487 – Special Feature A
+### “Screen Flip Gimmick”
+### Nexus Horizon
 
 # Secret Feature Design Plan: Generic Screen‑Flip Gimmick
 
-## Overview  
+## Overview
 We want a “flip” system that can mirror or rotate the entire play area on demand.  
 **Flip modes**  
 - **Horizontal**: mirror left ↔ right  
@@ -52,7 +52,7 @@ We want a “flip” system that can mirror or rotate the entire play area on de
 
 ---
 
-## Where to Use
+## Where to Use
 
 - **Boss fights**: for example, after 10 s, flip for 5 s, then back.
 - **AnywhereDesired**: any code can call `StartFlip(...)`
@@ -64,7 +64,7 @@ Can use `TimerContainer` + `DelayTimer` or call `StartFlip` and let `FlipManager
 
 ---
 
-## Design Notes
+## Design Notes
 
 - only need one `FlipManager.Instance`
 
@@ -86,6 +86,7 @@ Can use `TimerContainer` + `DelayTimer` or call `StartFlip` and let `FlipManager
 
 **We can add things like this**
 
+```
 public enum FlipType 
 {
   None,
@@ -102,8 +103,11 @@ internal struct FlipState
   public FlipType Type;    // which flip is active
   public double EndTime;    // when to stop flipping (in seconds)
 }
+```
 
 **In Renderer**
+
+```
 public static void BeginRender()
  {
 -    spriteBatch.Begin(…);
@@ -112,13 +116,17 @@ public static void BeginRender()
 +        sortMode: SpriteSortMode.Deferred,
 +        samplerState: SamplerState.PointClamp);
  }
+```
 
 **In Game**
+
+```
  protected override void LoadContent()
  {
      … 
 +    FlipManager.Instance.Init();
  }
+```
 
 ---
 
