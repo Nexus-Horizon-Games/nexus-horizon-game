@@ -94,6 +94,7 @@ namespace Nexus_Horizon_Game.Json
                 component.centered = JsonHelper.TryParseBool(env, (JObject)componentJson, "centered", false);
                 component.scale = JsonHelper.TryParseFloat(env, (JObject)componentJson, "scale", 1.0f);
                 component.spriteLayer = (uint)JsonHelper.TryParseFloat(env, (JObject)componentJson, "spriteLayer", 0); // TODO: should be parse uint
+                component.animationFrames = (int)JsonHelper.TryParseFloat(env, (JObject)componentJson, "animationFrames", 0);
             }
             else
             {
@@ -117,8 +118,7 @@ namespace Nexus_Horizon_Game.Json
                         var path = JsonConstantParser.ParseMultiPath(env, json["movementPath"]);
                         var attackPaths = JsonHelper.ParseIntegerArray(env, json["attackPaths"]);
                         var speed = JsonHelper.TryParseFloat(env, json, "speed", 0.4f);
-                        var fireRate = JsonHelper.TryParseFloat(env, json, "fireRate", 0.2f);
-
+                        var fireRate = JsonHelper.TryParseFloat(env, json, "fireRate", 0.3f);
                         PrefabEntity? projectile = null;
                         if (json.ContainsKey("projectile"))
                         {

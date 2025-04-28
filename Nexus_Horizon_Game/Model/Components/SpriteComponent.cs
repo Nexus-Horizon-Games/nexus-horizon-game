@@ -8,6 +8,7 @@ namespace Nexus_Horizon_Game.Components
         private bool isEmpty;
         private bool isUI = false;
         public string textureName = "";
+        public string sourceTexture = "";
         public bool isVisible = true;
         public Vector2 position = Vector2.Zero;
         public float rotation = 0.0f;
@@ -16,16 +17,20 @@ namespace Nexus_Horizon_Game.Components
         public Rectangle? sourceRectangle = null; // used to render only a section of an image (for tiles)
         public bool centered = false;
         public uint spriteLayer = 0; // layer order of sprite  (Bring to Front >) (bring to back <)
+        public int animationFrames = 0;
+        public int currentFrame = 0;
 
-        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true, bool isUI = false)
+        public SpriteComponent(string textureName, Color? color = null, Rectangle? sourceRectangle = null, float scale = 1.0f, uint spriteLayer = 0, bool centered = false, bool isVisible = true, bool isUI = false, int animationFrames = 0)
         {
             this.textureName = textureName;
+            this.sourceTexture = textureName;
             this.color = color ?? Color.White;
             this.sourceRectangle = sourceRectangle;
             this.scale = scale;
             this.spriteLayer = spriteLayer;
             this.centered = centered;
             this.isVisible = isVisible;
+            this.animationFrames = animationFrames;
             this.isUI = isUI;
         }
 
@@ -99,6 +104,54 @@ namespace Nexus_Horizon_Game.Components
                 isEmpty = true,
             };
             return sprite;
+        }
+
+        public void incrementAnimation()
+        {
+            if (animationFrames == 0)
+            {
+                return;
+            }
+            if (currentFrame < animationFrames) 
+            {
+                currentFrame++;
+                textureName = sourceTexture + currentFrame;
+            }
+        }
+
+        public void decrementAnimation()
+        {
+            if (animationFrames == 0)
+            {
+                return;
+            }
+            if (currentFrame > 1)
+            {
+                currentFrame--;
+                textureName = sourceTexture + currentFrame;
+            }
+            else
+            {
+                textureName = sourceTexture;
+            }
+        }
+
+        public void incrementAnimationWrap()
+        {
+            if (animationFrames == 0)
+            {
+                return;
+            }
+            if (currentFrame < animationFrames)
+            {
+                currentFrame++;
+                textureName = sourceTexture + currentFrame;
+            }
+            else
+            {
+                currentFrame = 0;
+                textureName = sourceTexture;
+            }
         }
     }
 }

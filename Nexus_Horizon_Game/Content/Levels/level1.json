@@ -66,19 +66,19 @@
         {
           "type": "LinePath",
           "points": [
-            [ "50%x", 0.0 ],
-            [ "50%x", "50%y" ]
+            [ "40%x", 0.0 ],
+            [ "40%x", "50%y" ]
           ]
         },
         {
           "type": "WaitPath",
-          "point": [ "50%x", "50%y" ],
+          "point": [ "40%x", "50%y" ],
           "time": 90.0
         },
         {
           "type": "LinePath",
           "points": [
-            [ "50%x", "50%y" ],
+            [ "40%x", "50%y" ],
             [ 0.0, "100%y" ]
           ]
         }
@@ -91,19 +91,19 @@
         {
           "type": "LinePath",
           "points": [
-            [ "50%x", 0.0 ],
-            [ "50%x", "50%y" ]
+            [ "60%x", 0.0 ],
+            [ "60%x", "50%y" ]
           ]
         },
         {
           "type": "WaitPath",
-          "point": [ "50%x", "50%y" ],
+          "point": [ "60%x", "50%y" ],
           "time": 90.0
         },
         {
           "type": "LinePath",
           "points": [
-            [ "50%x", "50%y" ],
+            [ "60%x", "50%y" ],
             [ "100%x", "100%y" ]
           ]
         }
@@ -133,7 +133,7 @@
           "scale": 0.6
         },
         "TagComponent": {
-          "tags": ["enemy_projectile"]
+          "tags": [ "enemy_projectile" ]
         }
       }
     },
@@ -147,7 +147,7 @@
           "scale": 0.6
         },
         "TagComponent": {
-          "tags": ["enemy_projectile"]
+          "tags": [ "enemy_projectile" ]
         }
       }
     },
@@ -161,7 +161,7 @@
           "scale": 0.8
         },
         "TagComponent": {
-          "tags": ["enemy_projectile"]
+          "tags": [ "enemy_projectile" ]
         }
       }
     },
@@ -175,7 +175,7 @@
           "scale": 0.2
         },
         "TagComponent": {
-          "tags": ["enemy_projectile"]
+          "tags": [ "enemy_projectile" ]
         }
       }
     },
@@ -189,7 +189,7 @@
           "scale": 0.6
         },
         "TagComponent": {
-          "tags": ["enemy_projectile"]
+          "tags": [ "enemy_projectile" ]
         }
       }
     },
@@ -200,6 +200,7 @@
         "PhysicsBody2DComponent": "default",
         "SpriteComponent": {
           "textureName": "bird",
+          "animationFrames": 4,
           "centered": true
         },
         "StateComponent": {
@@ -217,10 +218,10 @@
           ]
         },
         "TagComponent": {
-          "tags": ["enemy", "smallgrunt"]
+          "tags": [ "enemy", "smallgrunt" ]
         },
         "ColliderComponent": {
-          "size": [10.0, 6.0]
+          "size": [ 10.0, 6.0 ]
         },
         "HealthComponent": {
           "health": 1
@@ -234,6 +235,7 @@
         "PhysicsBody2DComponent": "default",
         "SpriteComponent": {
           "textureName": "cat",
+          "animationFrames": 4,
           "centered": true
         },
         "StateComponent": {
@@ -253,10 +255,47 @@
           ]
         },
         "TagComponent": {
-          "tags": ["enemy", "mediumgrunt"]
+          "tags": [ "enemy", "mediumgrunt" ]
         },
         "ColliderComponent": {
-          "size": [10.0, 6.0]
+          "size": [ 10.0, 6.0 ]
+        },
+        "HealthComponent": {
+          "health": 7
+        }
+      }
+    },
+    {
+      "typeNameId": "CatTwo",
+      "components": {
+        "TransformComponent": "default",
+        "PhysicsBody2DComponent": "default",
+        "SpriteComponent": {
+          "textureName": "cat",
+          "animationFrames": 4,
+          "centered": true
+        },
+        "StateComponent": {
+          "states": [
+            {
+              "stateType": "GruntEnemyState",
+              "movementPath": "cat_path2",
+              "attackPaths": [ 1, 2 ],
+              "speed": 0.3,
+              "fireRate": 0.5,
+              "projectile": "CatBullet",
+              "firingPattern": {
+                "type": "TriangleFiringPattern",
+                "velocity": 7.0
+              }
+            }
+          ]
+        },
+        "TagComponent": {
+          "tags": [ "enemy", "mediumgrunt" ]
+        },
+        "ColliderComponent": {
+          "size": [ 10.0, 6.0 ]
         },
         "HealthComponent": {
           "health": 7
@@ -270,13 +309,15 @@
         "PhysicsBody2DComponent": "default_with_acceleration",
         "SpriteComponent": {
           "textureName": "evil_guinea_pig",
+
+          "animationFrames": 5,
           "centered": true
         },
         "StateComponent": {
           "states": [
             {
               "stateType": "MoveToPointState",
-              "stopPoint": ["50%x", 40.0],
+              "stopPoint": [ "50%x", 40.0 ],
               "speed": "boss_speed"
             },
             {
@@ -291,17 +332,17 @@
             },
             {
               "stateType": "MoveToPointState",
-              "stopPoint": ["50%x", -20.0],
+              "stopPoint": [ "50%x", -20.0 ],
               "speed": "boss_speed"
             }
           ]
         },
         "TagComponent": {
-          "tags": ["enemy", "halfboss"]
+          "tags": [ "enemy", "halfboss" ]
         },
         "ColliderComponent": {
-          "size": [17.0, 17.0],
-          "position": [-8.0, -8.0]
+          "size": [ 17.0, 17.0 ],
+          "position": [ -8.0, -8.0 ]
         },
         "HealthComponent": {
           "health": 101
@@ -315,13 +356,14 @@
         "PhysicsBody2DComponent": "default_with_acceleration",
         "SpriteComponent": {
           "textureName": "chef_boss",
+          "animationFrames":  5,
           "centered": true
         },
         "StateComponent": {
           "states": [
             {
               "stateType": "MoveToPointState",
-              "stopPoint": ["50%x", 40.0],
+              "stopPoint": [ "50%x", 40.0 ],
               "speed": "boss_speed"
             },
             {
@@ -342,17 +384,17 @@
             },
             {
               "stateType": "MoveToPointState",
-              "stopPoint": ["50%x", -20.0],
+              "stopPoint": [ "50%x", -20.0 ],
               "speed": "boss_speed"
             }
           ]
         },
         "TagComponent": {
-          "tags": ["enemy", "boss"]
+          "tags": [ "enemy", "boss" ]
         },
         "ColliderComponent": {
-          "size": [12.0, 18.0],
-          "position": [-6.0, -9.0]
+          "size": [ 12.0, 18.0 ],
+          "position": [ -6.0, -9.0 ]
         },
         "HealthComponent": {
           "health": 164
@@ -401,14 +443,22 @@
           "position": [110, 30]
         },
         {
-          "spawnerType": "multiple",
+          "spawnerType": "single",
           "time": 6.0,
           "interval": 0.6,
-          "entityCount": 2,
           "entity": {
             "entityType": "Cat"
           },
-          "position": [110, 30]
+          "position": [ 110, 30 ]
+        },
+        {
+          "spawnerType": "single",
+          "time": 6.0,
+          "interval": 0.6,
+          "entity": {
+            "entityType": "CatTwo"
+          },
+          "position": [ 110, 30 ]
         }
       ]
     },
@@ -437,7 +487,7 @@
           "entity": {
             "entityType": "Bird"
           },
-          "position": [-10, 30]
+          "position": [ -10, 30 ]
         },
         {
           "spawnerType": "multiple",
@@ -452,7 +502,7 @@
                   {
                     "stateType": "GruntEnemyState",
                     "movementPath": "bird_path2",
-                    "attackPaths": [1],
+                    "attackPaths": [ 1 ],
                     "projectile": "BirdBullet",
                     "firingPattern": {
                       "type": "DirectFiringPattern",
@@ -463,17 +513,25 @@
               }
             }
           },
-          "position": [110, 30]
+          "position": [ 110, 30 ]
         },
         {
-          "spawnerType": "multiple",
+          "spawnerType": "single",
           "time": 6.0,
           "interval": 0.6,
-          "entityCount": 2,
           "entity": {
             "entityType": "Cat"
           },
-          "position": [110, 30]
+          "position": [ 110, 30 ]
+        },
+        {
+          "spawnerType": "single",
+          "time": 6.0,
+          "interval": 0.6,
+          "entity": {
+            "entityType": "CatTwo"
+          },
+          "position": [ 110, 30 ]
         }
       ]
     },

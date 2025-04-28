@@ -18,7 +18,7 @@ namespace Nexus_Horizon_Game.States
         private List<int> attackPaths;
         private IFiringPattern firingPattern;
         private PrefabEntity projectile;
-
+        int animBuffer = 0;
         private TimerContainer timerContainer = new TimerContainer();
         private int spawnerEntity;
         private float t = 0;
@@ -60,6 +60,7 @@ namespace Nexus_Horizon_Game.States
                 {
                     timerContainer.GetTimer("fire").Start();
                 }
+                incrementAnimationBuffered();
             }
             else
             {
@@ -67,6 +68,8 @@ namespace Nexus_Horizon_Game.States
                 {
                     timerContainer.GetTimer("fire").Stop();
                 }
+                decrementAnimationBuffered();
+
             }
 
             t += movementPath.GetDeltaT(t, speed);
