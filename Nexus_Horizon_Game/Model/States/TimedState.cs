@@ -7,7 +7,12 @@ namespace Nexus_Horizon_Game.States
 {
     internal class TimedState : State
     {
-        private readonly Timer timer;
+        protected readonly Timer timer;
+
+        public TimedState(float timeLength)
+        {
+            timer = new DelayTimer(timeLength, (_, _) => { OnStop(); });
+        }
 
         public TimedState(int entity, float timeLength)
             : base(entity)

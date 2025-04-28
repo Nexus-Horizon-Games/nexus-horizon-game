@@ -14,13 +14,13 @@ using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Model.EntityPatterns
 {
-    internal class CicleFiringPattern1 : IFiringPattern
+    internal class CicleFiringPattern1 : AbstractFiringPattern, IFiringPattern
     {
         public void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer)
         {
             List<int> firedEntities = new List<int>();
-            List<IComponent> components = prefab.getComponents();
-            Vector2 position = ((TransformComponent)prefab.getComponents().FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
+            List<IComponent> components = prefab.Components;
+            Vector2 position = ((TransformComponent)prefab.Components.FirstOrDefault(x => x.GetType() == typeof(TransformComponent))).position;
             float velocity = 7f;
             var playerPosition = GetPlayerPosition();
             double direction = Math.Atan2((double)(playerPosition.Y - position.Y), (double)(playerPosition.X - position.X));
@@ -39,56 +39,11 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
                     for (int j = 0; j < 27; j++)
                     {
                         Vector2 direction = new Vector2((float)Math.Cos(j * arcInterval), (float)Math.Sin(j * arcInterval));
-                        spawnEntity(position, direction, 5.0f, prefab);
+                        SpawnEntity(position, direction, 5.0f, prefab);
                     }
                 }));
             }
             return;
-        }
-        private void spawnEntity(Vector2 position, Vector2 fireDirection, float speed, PrefabEntity prefab)
-        {
-            List<IComponent> components = prefab.getComponents();
-            components.RemoveAll(x => x.GetType() == typeof(TransformComponent));
-            components.Add(new PhysicsBody2DComponent()
-            {
-                Velocity = new Vector2(speed * fireDirection.X, speed * fireDirection.Y)
-            });
-            components.Add(new TransformComponent()
-            {
-                position = position
-            });
-            int firedEntity = Scene.Loaded.ECS.CreateEntity(components);
-            Scene.Loaded.ECS.SetComponentInEntity<BehaviourComponent>(firedEntity, new BehaviourComponent(new Bullet(firedEntity)));
-        }
-        public Vector2 GetVectFromDirection(double direction, double variation)
-        {
-            direction += variation;
-            float xComponent = (float)(Math.Cos(direction));
-            float yComponent = (float)(Math.Sin(direction));
-            return new Vector2(xComponent, yComponent);
-        }
-
-        public Vector2 GetPlayerPosition()
-        {
-            var entitesWithTag = Scene.Loaded.ECS.GetEntitiesWithComponent<TagComponent>();
-            var playerEntity = -1;
-            foreach (var entity in entitesWithTag)
-            {
-                var tag = Scene.Loaded.ECS.GetComponentFromEntity<TagComponent>(entity);
-                if (tag.Tag == Tag.PLAYER)
-                {
-                    playerEntity = entity;
-                    break;
-                }
-            }
-
-            Vector2 playerPosition = Vector2.Zero;
-            if (playerEntity != -1)
-            {
-                playerPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(playerEntity).position;
-            }
-            Debug.WriteLine("player position is " + playerPosition);
-            return playerPosition;
         }
     }
 }

@@ -11,12 +11,12 @@ namespace Nexus_Horizon_Game.Components
         /// </summary>
         public float health;
 
-        public delegate void OnDeath();
+        public delegate void OnDeath(int entity);
 
         /// <summary>
         /// Triggered when health goes below 1.
         /// </summary>
-        public event OnDeath onDeathEvent;
+        public event OnDeath? onDeathEvent;
 
         public HealthComponent(float health)
         {
@@ -39,11 +39,11 @@ namespace Nexus_Horizon_Game.Components
         /// Checks whether death has happened and triggers the onDeathEvent.
         /// </summary>
         /// <returns>Whether death has happened.</returns>
-        public bool CheckForDeath()
+        public bool CheckForDeath(int entity)
         {
             if (health <= 0)
             {
-                onDeathEvent?.Invoke();
+                onDeathEvent?.Invoke(entity);
                 return true;
             }
 
@@ -76,6 +76,7 @@ namespace Nexus_Horizon_Game.Components
             HealthComponent healthComp = new HealthComponent(-1)
             {
                 isEmpty = true,
+                onDeathEvent = null,
             };
 
             return healthComp;

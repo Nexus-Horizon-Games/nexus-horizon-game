@@ -13,8 +13,6 @@ namespace Nexus_Horizon_Game.Model.EntityPatterns
 {
     internal interface IFiringPattern
     {
-        
-        void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer);
-        
+        void Fire(PrefabEntity prefab, GameTime gameTime, TimerContainer timerContainer); 
     }
 }
