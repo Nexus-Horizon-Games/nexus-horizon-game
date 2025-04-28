@@ -169,8 +169,6 @@
 /processorParam:TextureFormat=Color
 /build:chef_boss.png
 
-<<<<<<< Updated upstream
-=======
 #begin chef_boss1.png
 /importer:TextureImporter
 /processor:TextureProcessor
