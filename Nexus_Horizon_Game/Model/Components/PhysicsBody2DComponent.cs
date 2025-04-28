@@ -75,6 +75,7 @@ namespace Nexus_Horizon_Game.Components
         public bool AccelerationEnabled
         {
             get => accelerationEnabled;
+            set => accelerationEnabled = value;
         }
 
         #endregion

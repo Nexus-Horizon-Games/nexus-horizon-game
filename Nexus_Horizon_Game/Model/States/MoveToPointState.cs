@@ -12,7 +12,7 @@ namespace Nexus_Horizon_Game.States
         private IPath path;
         private float time;
 
-        public MoveToPointState(int entity, Vector2 stopPoint, float speed) : base(entity)
+        public MoveToPointState(Vector2 stopPoint, float speed) : base()
         {
             this.stopPoint = stopPoint;
             this.speed = speed;
@@ -36,6 +36,12 @@ namespace Nexus_Horizon_Game.States
             var transform = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity);
             transform.position = path.GetPoint(time);
             Scene.Loaded.ECS.SetComponentInEntity(this.Entity, transform);
+        }
+
+        public override State Clone()
+        {
+            MoveToPointState clone = new MoveToPointState(stopPoint, speed);
+            return clone;
         }
     }
 }

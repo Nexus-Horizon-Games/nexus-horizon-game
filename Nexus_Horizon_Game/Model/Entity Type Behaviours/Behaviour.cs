@@ -11,6 +11,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
     {
         private int entity = 0;
 
+        protected Behaviour() { }
+
         protected Behaviour(int entity)
         {
             this.entity = entity;
@@ -22,6 +24,7 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         }
 
 
+        public virtual void Initalize(int entity) { this.entity = entity; }
         public virtual void OnUpdate(GameTime gameTime) { }
     }
 }

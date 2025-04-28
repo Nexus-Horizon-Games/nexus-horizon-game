@@ -11,6 +11,7 @@ namespace Nexus_Horizon_Game.Systems
         {
             var stateComponent = Scene.Loaded.ECS.GetComponentFromEntity<StateComponent>(entity);
             stateComponent.states[stateComponent.currentState].OnStopEvent += () => { OnStateStopped(entity); };
+            stateComponent.Initalize(entity);
             stateComponent.states[stateComponent.currentState].OnStart();
         }
 
