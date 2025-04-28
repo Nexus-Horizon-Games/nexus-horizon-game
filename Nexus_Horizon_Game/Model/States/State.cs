@@ -6,6 +6,7 @@ namespace Nexus_Horizon_Game.States
     internal abstract class State
     {
         private readonly int entity = 0;
+        private int entity = 0;
         private int animBuffer = 0;
         protected State() { }
 
