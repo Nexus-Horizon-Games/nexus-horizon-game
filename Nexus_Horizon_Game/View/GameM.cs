@@ -67,6 +67,8 @@ namespace Nexus_Horizon_Game
             {
                 systemsController.Update(gameTime);
             }
+
+            Scene.Loaded.Update(gameTime);
             
             base.Update(gameTime);
         }

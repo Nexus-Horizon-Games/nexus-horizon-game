@@ -2,31 +2,21 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
 using Nexus_Horizon_Game.EntityFactory;
-using System;
-using System.Collections.Generic;
 using Nexus_Horizon_Game.Timers;
-using System.Diagnostics;
-using Nexus_Horizon_Game.Pooling;
 using Nexus_Horizon_Game.View.InputSystem;
 
 namespace Nexus_Horizon_Game.Entity_Type_Behaviours
 {
     internal class Player : Behaviour
     {
-        // For Disposing
-        private bool _disposed = false; // whenever the player is disposed this will be true.
-        private List<(Keys, Action<Keys>)> keyDownListeners = new List<(Keys, Action<Keys>)>();
-        private List<(Keys, Action<Keys>)> keyUpListeners = new List<(Keys, Action<Keys>)>();
-
         // bullets
         private float xBulletOffset = 4f;
         private float yBulletOffset = -2f;
         private float bulletSpeed = 50f;
-        private static BulletFactory hamsterBallBullets = new BulletFactory("BulletSample");
+        private static BulletFactory hamsterBallBullets = new BulletFactory("laser_projectile");
         private Timer bulletTimerConstant;
         private Timer bulletTimerEndShots;
         private const float bulletTimeInterval = 0.05f;
-        
 
         // collision
         private int hitboxEntityID;
@@ -41,9 +31,9 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
         /// <summary>
         /// entity id of player collider.
         /// </summary>
-        public int HitBoxEntityID
+        public int HitboxEntityID
         {
-            get => HitBoxEntityID;
+            get => hitboxEntityID;
         }
 
 
@@ -103,8 +93,8 @@ namespace Nexus_Horizon_Game.Entity_Type_Behaviours
             Vector2 leftBulletPosition = new Vector2(playerPosition.X - xBulletOffset, playerPosition.Y + yBulletOffset);
             Vector2 rightBulletPosition = new Vector2(playerPosition.X + xBulletOffset, playerPosition.Y + yBulletOffset);
 
-            int leftBulletEntity = hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, null, 0.25f, 99, true);
-            int rightBulletEntity = hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, null, 0.25f, 99, true);
+            int leftBulletEntity = hamsterBallBullets.CreateEntity(leftBulletPosition, shotDirection, bulletSpeed, null, 0.6f, 99, true);
+            int rightBulletEntity = hamsterBallBullets.CreateEntity(rightBulletPosition, shotDirection, bulletSpeed, null, 0.6f, 99, true);
         }
 
         /// <summary>
