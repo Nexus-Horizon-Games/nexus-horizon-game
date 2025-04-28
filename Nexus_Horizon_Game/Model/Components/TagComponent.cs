@@ -6,19 +6,26 @@ using System.Threading.Tasks;
 
 namespace Nexus_Horizon_Game.Components
 {
+    [Flags]
     internal enum Tag
     {
-        PLAYER,
-        ENEMY,
-        PLAYER_PROJECTILE,
-        ENEMY_PROJECTILE
+        PLAYER = 1,
+        ENEMY = 2,
+        PLAYER_PROJECTILE= 4,
+        ENEMY_PROJECTILE = 8,
+        SMALLGRUNT = 16,
+        MEDIUMGRUNT = 32,
+        HALFBOSS = 64,
+        BOSS = 128,
+        POWERDROP = 256,
+        POINTDROP = 512,
     }
 
     internal struct TagComponent : IComponent
     {
         private bool isEmpty;
 
-        private Tag tag;
+        private Tag tag = 0;
 
         public TagComponent(Tag tag)
         {

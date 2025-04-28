@@ -1,49 +1,66 @@
 ﻿using Microsoft.Xna.Framework;
 using Nexus_Horizon_Game.Components;
-using Nexus_Horizon_Game.EntityFactory;
 using Nexus_Horizon_Game.Model.Entity_Type_Behaviours;
 using Nexus_Horizon_Game.Model.EntityFactory;
 using Nexus_Horizon_Game.Model.EntityPatterns;
-using Nexus_Horizon_Game.Pooling;
+using Nexus_Horizon_Game.Model.Prefab;
 using Nexus_Horizon_Game.Timers;
-using System;
+using System.Collections.Generic;
 
 namespace Nexus_Horizon_Game.States
 {
     internal class GuineaPigBossState : TimedState
     {
         // Constants 
-        private const float EnteringSpeed = 4.0f;
         private const float IdealY = 50.0f;  // Adjust as needed to match your chef boss IdealY.
         private const float MovementVelocity = 4.0f;  // Speed while on-screen.
         private const float TimeBeforeFirstAttack = 1.5f;
         private const float TimeBetweenAttacks = 4.0f;
-        private const float Phase1Length = 15.0f;  // Duration in Phase1 before exiting.
         private const float MovementInterval = 2.0f; // Update movement every 2 seconds
 
         // Projectile Sizes
         private const float BigBulletScale = 0.5f;
         private const float SmallBulletScale = 0.2f;
-        private const float MediumBulletScale = 0.35f;
-
-        // Bullet Factories
-        private readonly BulletFactory bulletFactoryBig = new BulletFactory("BulletSample");
-        private readonly BulletFactory bulletFactorySmall = new BulletFactory("BulletSample");
-        private readonly BulletFactory bulletFactoryMedium = new BulletFactory("BulletSample");
 
         // Movement Boundaries
         private Vector2 MovementAreaPosition;
         private Vector2 MovementAreaSize;
 
-        // Exit point (similar to the chef boss exit point)
-        private readonly Vector2 ExitPoint;
-
         // Timers
         private TimerContainer timerContainer = new TimerContainer();
         private int smallSpawnerEntity;
         private int bigSpawnerEntity;
-        public GuineaPigBossState(int entity, float timeLength) : base(entity, timeLength)
+
+        private PrefabEntity projectile1;
+        private PrefabEntity projectile2;
+        private IFiringPattern firingPattern;
+
+        public GuineaPigBossState(float timeLength, IFiringPattern? firingPattern = null, PrefabEntity? projectile1 = null, PrefabEntity? projectile2 = null) : base(timeLength)
         {
+            this.firingPattern = firingPattern ?? new DirectFiringPattern(7.0f);
+            this.projectile1 = projectile1 ?? new PrefabEntity(new List<IComponent>
+            {
+                new TransformComponent(Vector2.Zero),
+                new SpriteComponent("BulletSample", color: Color.White, scale: 0.25f, spriteLayer: 0, centered: true),
+                new TagComponent(Tag.ENEMY_PROJECTILE),
+            });
+
+            this.projectile2 = projectile2 ?? projectile1;
+        }
+
+        public override void Initalize(int entity)
+        {
+            base.Initalize(entity);
+
+            // Make sure acceleration is enabled
+            if (Scene.Loaded.ECS.EntityHasComponent<PhysicsBody2DComponent>(entity, out PhysicsBody2DComponent component))
+            {
+                component.AccelerationEnabled = true;
+            }
+            else
+            {
+                Scene.Loaded.ECS.AddComponent<PhysicsBody2DComponent>(entity, new PhysicsBody2DComponent(accelerationEnabled: true));
+            }
         }
 
         public override void OnStart()
@@ -70,8 +87,9 @@ namespace Nexus_Horizon_Game.States
 
             // Start the movement timer now that we're on-screen.
             timerContainer.GetTimer("move_action").Start();
-            this.smallSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", SmallBulletScale, 99);
-            this.bigSpawnerEntity = EntitySpawnerFactory.CreateBulletSpawner("BulletSample", BigBulletScale, 99);
+
+            this.smallSpawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile1);
+            this.bigSpawnerEntity = EntitySpawnerFactory.CreateEntitySpawner(projectile2);
         }
 
         public override void OnStop()
@@ -185,8 +203,8 @@ namespace Nexus_Horizon_Game.States
             
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(bigSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
-            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(bigSpawnerEntity).Behaviour);
-            entitySpawner.SpawnEntitiesWithPattern(new ArcFiringPattern(), gameTime, timerContainer);
+            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(bigSpawnerEntity).Behaviour);
+            entitySpawner.SpawnEntitiesWithPattern(firingPattern, gameTime, timerContainer);
         }
 
         /// <summary>
@@ -199,8 +217,24 @@ namespace Nexus_Horizon_Game.States
             
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             Scene.Loaded.ECS.SetComponentInEntity(smallSpawnerEntity, new TransformComponent(Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position));
-            EntitySpawner entitySpawner = (EntitySpawner)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(smallSpawnerEntity).Behaviour);
+            EntitySpawnerBehaviour entitySpawner = (EntitySpawnerBehaviour)(Scene.Loaded.ECS.GetComponentFromEntity<BehaviourComponent>(smallSpawnerEntity).Behaviour);
             entitySpawner.SpawnEntitiesWithPattern(new CicleFiringPattern1(), gameTime, timerContainer);
+        }
+
+        public override State Clone()
+        {
+            GuineaPigBossState clone;
+
+            if (timer is DelayTimer delayTimer)
+            {
+                clone = new GuineaPigBossState(delayTimer.Delay, firingPattern, projectile1, projectile2);
+            }
+            else
+            {
+                clone = new GuineaPigBossState(0.0f, firingPattern, projectile1, projectile2);
+            }
+
+            return clone;
         }
     }
 }

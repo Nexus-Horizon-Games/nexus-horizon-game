@@ -1,5 +1,6 @@
 using Nexus_Horizon_Game.Systems;
 using Nexus_Horizon_Game.Components;
+using Microsoft.Xna.Framework;
 
 namespace Nexus_Horizon_Game
 {
@@ -25,6 +26,10 @@ namespace Nexus_Horizon_Game
                 if (componentType == typeof(StateComponent))
                 {
                     StateSystem.OnNewStateComponent(entity);
+                }
+                else if (componentType == typeof(BehaviourComponent))
+                {
+                    BehaviourSystem.OnNewBehaviourComponent(entity);
                 }
             };
         }
@@ -68,5 +73,7 @@ namespace Nexus_Horizon_Game
         protected abstract void LoadScene();
 
         protected abstract void Initialize();
+
+        public virtual void Update(GameTime gameTime) { }
     }
 }

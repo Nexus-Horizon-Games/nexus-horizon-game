@@ -41,6 +41,14 @@ namespace Nexus_Horizon_Game.Components
             this.transitionFunction = transitionFunction;
         }
 
+        public void Initalize(int entity)
+        {
+            foreach (var state in states)
+            {
+                state.Initalize(entity);
+            }
+        }
+
         public int LinearTransitionFunction(int currentState)
         {
             return ++currentState;
@@ -86,6 +94,24 @@ namespace Nexus_Horizon_Game.Components
         public bool IsEmptyComponent()
         {
             return isEmpty;
+        }
+
+        /// <inheritdoc/>
+        public IComponent Clone()
+        {
+            var clone = new StateComponent(new List<State>());
+            this.states.ForEach(state =>
+            {
+                clone.states.Add(state.Clone());
+            });
+
+
+            clone.isEmpty = this.isEmpty;
+            clone.currentState = this.currentState;
+            clone.transitionFunction = this.transitionFunction;
+            clone.transitions = this.transitions; // TODO: this needs to be cloned
+
+            return clone; 
         }
 
         /// <inheritdoc/>
