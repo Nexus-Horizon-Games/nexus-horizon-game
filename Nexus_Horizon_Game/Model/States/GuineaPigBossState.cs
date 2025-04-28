@@ -59,6 +59,8 @@ namespace Nexus_Horizon_Game.States
             // Prepare the movement timer (but do not start it yet)
             timerContainer.AddTimer(new LoopTimer(MovementInterval, (gt, data) => { Move(gt); }), "move_action");
 
+
+
             // Delay before first attack and then start the repeating attack timer.
             timerContainer.StartTemporaryTimer(new DelayTimer(TimeBeforeFirstAttack, (gt, data) =>
             {
@@ -151,6 +153,7 @@ namespace Nexus_Horizon_Game.States
         private void OnPhase1Attack(GameTime gameTime, object? data)
         {
             // Example attack: fire big bullets followed by small bullets after a short delay.
+            
             FireBigBullets(gameTime);
             timerContainer.StartTemporaryTimer(new DelayTimer(0.7f, (gt, d) => FireSmallBullets(gameTime)));
         }
@@ -177,6 +180,7 @@ namespace Nexus_Horizon_Game.States
         /// </summary>
         private void FireBigBullets(GameTime gameTime)
         {
+            incrementAnimation();
             var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
@@ -190,6 +194,7 @@ namespace Nexus_Horizon_Game.States
         /// </summary>
         private void FireSmallBullets(GameTime gameTime)
         {
+            incrementAnimation();
             var bossPosition = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;
             
             var position = Scene.Loaded.ECS.GetComponentFromEntity<TransformComponent>(this.Entity).position;

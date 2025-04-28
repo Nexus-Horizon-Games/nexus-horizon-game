@@ -71,6 +71,7 @@ namespace Nexus_Horizon_Game.States
             var body = Scene.Loaded.ECS.GetComponentFromEntity<PhysicsBody2DComponent>(this.Entity);
             body.Acceleration = body.Velocity * -3.0f;
             Scene.Loaded.ECS.SetComponentInEntity(this.Entity, body);
+
         }
 
         private void OnMoveAction(GameTime gameTime, object? data)
